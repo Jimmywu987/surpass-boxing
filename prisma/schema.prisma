@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+enum UserStatusEnum {
+  ACTIVE
+  DELETED
+}
+
+enum UserAuthOptionsEnum {
+  GOOGLE
+  CREDENTIAL
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  password    String
+  email       String  @unique
+  username    String
+  profileImg  String
+  phoneNumber String
+  admin       Boolean @default(false)
+
+  authOption             UserAuthOptionsEnum
+  status                 UserStatusEnum           @default(ACTIVE)
+  bookingTimeSlots       BookingTimeSlots[]
+  lessions               Lessions[]
+  UserOnBookingTimeSlots UserOnBookingTimeSlots[]
+}
+
+model Lessions {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  expiryDate DateTime
+  lession    Int
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ClassesType {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name                    String
+  regularBookingTimeSlots RegularBookingTimeSlots[]
+  bookingTimeSlots        BookingTimeSlots[]
+}
+
+model RegularBookingTimeSlots {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  monday    Boolean
+  tuesday   Boolean
+  wednesday Boolean
+  thursday  Boolean
+  friday    Boolean
+  saturday  Boolean
+  sunday    Boolean
+  startTime DateTime
+  duration  Float
+
+  classTypeId String
+  classType   ClassesType @relation(fields: [classTypeId], references: [id], onDelete: Cascade)
+}
+
+model BookingTimeSlots {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  date      DateTime
+  startTime DateTime
+  duration  Float
+  confirmed Boolean
+
+  classTypeId String
+  classType   ClassesType @relation(fields: [classTypeId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  userOnBookingTimeSlots UserOnBookingTimeSlots[]
+}
+
+model UserOnBookingTimeSlots {
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  bookingTimeSlots  BookingTimeSlots @relation(fields: [bookingTimeSlotId], references: [id])
+  bookingTimeSlotId String
+
+  createdAt DateTime @default(now())
+
+  @@id([userId, bookingTimeSlotId])
+}
+
+model News {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title   String
+  acticle String
+  img     String
+
+  url String?
+}

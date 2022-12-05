@@ -1,0 +1,15 @@
+{
+  "localeDetection": false,
+  "locales": [
+    "zh-HK",
+    "en"
+  ],
+  "defaultLocale": "zh-HK",
+  "domains": [],
+  "pages": {
+    "*": [
+      "common",
+      "auth"
+    ]
+  }
+}
