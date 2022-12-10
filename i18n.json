@@ -9,7 +9,8 @@
   "pages": {
     "*": [
       "common",
-      "auth"
+      "auth",
+      "classes"
     ]
   }
 }

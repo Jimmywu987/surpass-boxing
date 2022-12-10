@@ -1,3 +1,3 @@
 export const MobileNavbar = () => {
-  return <nav className=""></nav>;
+  return <div className=""></div>;
 };

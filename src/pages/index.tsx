@@ -3,7 +3,7 @@ import useTranslation from "next-translate/useTranslation";
 export default function HomePage() {
   const { t } = useTranslation("common");
 
-  return <h1 className="">{t("hi")}</h1>;
+  return <h1 className="">HI</h1>;
 }
 
 export async function getServerSideProps(context: any) {

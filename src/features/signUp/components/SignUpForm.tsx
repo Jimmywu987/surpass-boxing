@@ -18,12 +18,18 @@ import { SubmitButton } from "@/features/common/components/buttons/SubmitButton"
 import { createStandaloneToast } from "@chakra-ui/toast";
 import useTranslation from "next-translate/useTranslation";
 
-export const SignUpForm = () => {
+import { signIn } from "next-auth/react";
+
+export const SignUpForm = ({
+  LoginButton,
+}: {
+  LoginButton: React.ReactNode;
+}) => {
   const { t } = useTranslation("auth");
 
   const { register, watch } = useForm();
   const { toast } = createStandaloneToast();
-  const router = useRouter();
+
   const dispatch = useDispatch();
   const { loading } = useSelector(loadingSelector);
 
@@ -54,6 +60,7 @@ export const SignUpForm = () => {
       ...data,
       profileImg: imgUrl,
     });
+
     if (res && res.status === 201) {
       dispatch(isLoading({ isLoading: false }));
       toast({
@@ -62,7 +69,10 @@ export const SignUpForm = () => {
         duration: 4000,
         isClosable: true,
       });
-      router.push("/login");
+      await signIn("credentials", {
+        ...data,
+        redirect: false,
+      });
       return;
     }
     toast({
@@ -76,6 +86,9 @@ export const SignUpForm = () => {
 
   return (
     <FormProvider {...signUpFormMethods}>
+      <h1 className="text-2xl text-theme-color text-center">
+        {t("sign_up.sign_up")}
+      </h1>
       <form onSubmit={onSubmit} className="flex flex-col space-y-3 w-full">
         <FormTextInput
           type="text"
@@ -122,6 +135,11 @@ export const SignUpForm = () => {
       </form>
       <hr />
       <GoogleButton loading={loading} />
+      <div className="border-b border-b-gray-200 my-2" />
+      <div className="flex justify-center">
+        <span>{t("join_already")}</span>
+        {LoginButton}
+      </div>
     </FormProvider>
   );
 };

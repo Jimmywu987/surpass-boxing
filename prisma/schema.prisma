@@ -18,6 +18,12 @@ enum UserAuthOptionsEnum {
   CREDENTIAL
 }
 
+enum BookingTimeSlotStatusEnum {
+  CONFIRM
+  PENDING
+  CANCELED
+}
+
 model User {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -82,15 +88,17 @@ model BookingTimeSlots {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  date      DateTime
-  startTime DateTime
-  duration  Float
-  confirmed Boolean
+  date                 DateTime
+  startTime            DateTime
+  duration             Float
+  status               BookingTimeSlotStatusEnum
+  numberOfParticipants Int?
 
   classTypeId String
   classType   ClassesType @relation(fields: [classTypeId], references: [id], onDelete: Cascade)
-  userId      String
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   userOnBookingTimeSlots UserOnBookingTimeSlots[]
 }

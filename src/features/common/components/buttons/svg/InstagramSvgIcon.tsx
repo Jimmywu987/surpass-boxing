@@ -1,55 +1,23 @@
-export const InstagramSvgIcon = ({ className }: { className: string }) => {
+export const InstagramSvgIcon = ({
+  className,
+  w = "40",
+  h = "40",
+}: {
+  className: string;
+  w?: string;
+  h?: string;
+}) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 48 48"
-      width="40px"
-      height="40px"
+      x="0px"
+      y="0px"
+      width={w}
+      height={h}
       className={className}
+      viewBox="0 0 50 50"
     >
-      <radialGradient
-        id="yOrnnhliCrdS2gy~4tD8ma"
-        cx="19.38"
-        cy="42.035"
-        r="44.899"
-        gradientUnits="userSpaceOnUse"
-      >
-        <stop offset="0" stop-color="#fd5" />
-        <stop offset=".328" stop-color="#ff543f" />
-        <stop offset=".348" stop-color="#fc5245" />
-        <stop offset=".504" stop-color="#e64771" />
-        <stop offset=".643" stop-color="#d53e91" />
-        <stop offset=".761" stop-color="#cc39a4" />
-        <stop offset=".841" stop-color="#c837ab" />
-      </radialGradient>
-      <path
-        fill="url(#yOrnnhliCrdS2gy~4tD8ma)"
-        d="M34.017,41.99l-20,0.019c-4.4,0.004-8.003-3.592-8.008-7.992l-0.019-20	c-0.004-4.4,3.592-8.003,7.992-8.008l20-0.019c4.4-0.004,8.003,3.592,8.008,7.992l0.019,20	C42.014,38.383,38.417,41.986,34.017,41.99z"
-      />
-      <radialGradient
-        id="yOrnnhliCrdS2gy~4tD8mb"
-        cx="11.786"
-        cy="5.54"
-        r="29.813"
-        gradientTransform="matrix(1 0 0 .6663 0 1.849)"
-        gradientUnits="userSpaceOnUse"
-      >
-        <stop offset="0" stop-color="#4168c9" />
-        <stop offset=".999" stop-color="#4168c9" stop-opacity="0" />
-      </radialGradient>
-      <path
-        fill="url(#yOrnnhliCrdS2gy~4tD8mb)"
-        d="M34.017,41.99l-20,0.019c-4.4,0.004-8.003-3.592-8.008-7.992l-0.019-20	c-0.004-4.4,3.592-8.003,7.992-8.008l20-0.019c4.4-0.004,8.003,3.592,8.008,7.992l0.019,20	C42.014,38.383,38.417,41.986,34.017,41.99z"
-      />
-      <path
-        fill="#fff"
-        d="M24,31c-3.859,0-7-3.14-7-7s3.141-7,7-7s7,3.14,7,7S27.859,31,24,31z M24,19c-2.757,0-5,2.243-5,5	s2.243,5,5,5s5-2.243,5-5S26.757,19,24,19z"
-      />
-      <circle cx="31.5" cy="16.5" r="1.5" fill="#fff" />
-      <path
-        fill="#fff"
-        d="M30,37H18c-3.859,0-7-3.14-7-7V18c0-3.86,3.141-7,7-7h12c3.859,0,7,3.14,7,7v12	C37,33.86,33.859,37,30,37z M18,13c-2.757,0-5,2.243-5,5v12c0,2.757,2.243,5,5,5h12c2.757,0,5-2.243,5-5V18c0-2.757-2.243-5-5-5H18z"
-      />
+      <path d="M 16 3 C 8.8324839 3 3 8.8324839 3 16 L 3 34 C 3 41.167516 8.8324839 47 16 47 L 34 47 C 41.167516 47 47 41.167516 47 34 L 47 16 C 47 8.8324839 41.167516 3 34 3 L 16 3 z M 16 5 L 34 5 C 40.086484 5 45 9.9135161 45 16 L 45 34 C 45 40.086484 40.086484 45 34 45 L 16 45 C 9.9135161 45 5 40.086484 5 34 L 5 16 C 5 9.9135161 9.9135161 5 16 5 z M 37 11 A 2 2 0 0 0 35 13 A 2 2 0 0 0 37 15 A 2 2 0 0 0 39 13 A 2 2 0 0 0 37 11 z M 25 14 C 18.936712 14 14 18.936712 14 25 C 14 31.063288 18.936712 36 25 36 C 31.063288 36 36 31.063288 36 25 C 36 18.936712 31.063288 14 25 14 z M 25 16 C 29.982407 16 34 20.017593 34 25 C 34 29.982407 29.982407 34 25 34 C 20.017593 34 16 29.982407 16 25 C 16 20.017593 20.017593 16 25 16 z"></path>
     </svg>
   );
 };

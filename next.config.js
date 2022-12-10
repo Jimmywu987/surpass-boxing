@@ -4,6 +4,12 @@ const nextTranslate = require("next-translate");
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  images: {
+    domains: [
+      "surpass-boxing.s3.ap-southeast-1.amazonaws.com",
+      "lh3.googleusercontent.com",
+    ],
+  },
   publicRuntimeConfig: {},
   serverRuntimeConfig: {
     env: {

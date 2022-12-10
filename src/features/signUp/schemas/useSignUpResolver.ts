@@ -1,11 +1,11 @@
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import useTranslation from "next-translate/useTranslation";
 import { z } from "zod";
 
 export const useSignUpResolver = () => {
   const { t } = useTranslation("auth");
 
-  return yupResolver(
+  return zodResolver(
     z
       .object({
         username: z

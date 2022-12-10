@@ -1,10 +1,13 @@
 {
-    "hi": "HI-----",
     "login": "登入",
     "sign_up": "註冊",
     "logout": "登出",
     "classes": "課堂",
     "coaches": "教練",
     "home": "首頁",
-    "location": "地址"
+    "location": "地址",
+    "current_language": "中文(繁體)",
+    "action": {
+        "confirm": "確認"
+    }
 }
