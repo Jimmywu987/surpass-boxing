@@ -7,17 +7,21 @@ import { SessionProvider } from "next-auth/react";
 import { store } from "@/redux/configureStore";
 import Layout from "@/features/common/layout";
 import { ChakraProvider } from "@chakra-ui/react";
+import { QueryClient, QueryClientProvider } from "react-query";
+const queryClient = new QueryClient();
 
 const App = ({ Component, session, pageProps, data }: AppProps & any) => {
   return (
     <SessionProvider session={session}>
-      <Provider store={store}>
-        <ChakraProvider>
-          <Layout initData={data}>
-            <Component {...pageProps} initData={data} />
-          </Layout>
-        </ChakraProvider>
-      </Provider>
+      <QueryClientProvider client={queryClient}>
+        <Provider store={store}>
+          <ChakraProvider>
+            <Layout initData={data}>
+              <Component {...pageProps} initData={data} />
+            </Layout>
+          </ChakraProvider>
+        </Provider>
+      </QueryClientProvider>
     </SessionProvider>
   );
 };

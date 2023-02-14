@@ -8,6 +8,9 @@
     "location": "Location",
     "current_language": "English",
     "action": {
-        "confirm": "Confirm"
+        "confirm": "Confirm",
+        "update": "Update",
+        "previous": "Previous",
+        "next": "Next"
     }
 }

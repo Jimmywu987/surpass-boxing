@@ -8,6 +8,9 @@
     "location": "地址",
     "current_language": "中文(繁體)",
     "action": {
-        "confirm": "確認"
+        "confirm": "確認",
+        "update": "更改",
+        "previous": "上一頁",
+        "next": "下一頁"
     }
 }

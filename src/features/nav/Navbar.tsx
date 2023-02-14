@@ -9,7 +9,7 @@ import { NavLink } from "@/features/nav/components/NavLink";
 import { clearUserInfo, updateUser, userSelector } from "@/redux/user";
 import { User } from "@prisma/client";
 import Image from "next/image";
-import { signOut, useSession, getSession } from "next-auth/react";
+import { useSession, getSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -75,7 +75,7 @@ export const Navbar = () => {
           <Link
             href="/"
             passHref
-            className="relative w-24 h-24 border-2 border-theme-color rounded-full duration-200"
+            className="relative w-24 h-24 border-2 border-white rounded-full duration-200"
           >
             <Image
               src={LogoIcon}
@@ -84,25 +84,6 @@ export const Navbar = () => {
               alt="logo-image"
             />
           </Link>
-          {isAuthenticated && (
-            <div className="flex self-end">
-              <Link
-                href={`/profile/${user.id}`}
-                passHref
-                className="flex items-center space-x-2 transition hover:bg-link-bgHover hover:scale-110 text-white hover:text-theme-color rounded p-1 text-lg text-link-normal "
-              >
-                <div className="w-10 h-10 relative">
-                  <Image
-                    src={reduxUser.profileImg ?? DefaultProfileImg}
-                    alt={`${reduxUser.username} profile image`}
-                    className="w-full h-full rounded-full object-cover"
-                    fill
-                  />
-                </div>
-                <span className="">{reduxUser.username}</span>
-              </Link>
-            </div>
-          )}
         </div>
         <div className="hidden md:flex flex-col justify-start">
           <div className="flex h-28">
@@ -154,11 +135,34 @@ export const Navbar = () => {
                 <NavLink text={t("location")} url="/location" />
               </div>
             </div>
-            <div className="flex space-x-3 ">
-              {/* @todo: implement the links */}
-              <WhatsappSvgIcon className="fill-white hover:fill-green-600 hover:scale-110 duration-200" />
-              <FacebookSvgIcon className="fill-white hover:fill-blue-600 hover:scale-110 duration-200" />
-              <InstagramSvgIcon className="fill-white hover:fill-pink-600 hover:scale-110 duration-200" />
+            <div className="flex flex-col justify-between">
+              <div className="flex space-x-3 ">
+                {/* @todo: implement the links */}
+                <WhatsappSvgIcon className="fill-white hover:fill-green-600 hover:scale-110 duration-200" />
+                <FacebookSvgIcon className="fill-white hover:fill-blue-600 hover:scale-110 duration-200" />
+                <InstagramSvgIcon className="fill-white hover:fill-pink-600 hover:scale-110 duration-200" />
+              </div>
+              {isAuthenticated && (
+                <div className="flex self-end ">
+                  <Link
+                    href={`/profile/${user.id}`}
+                    passHref
+                    className="flex items-center space-x-2 transition hover:bg-link-bgHover hover:scale-110 text-white hover:text-theme-color rounded p-1 text-lg text-link-normal "
+                  >
+                    <div className="w-10 h-10 relative">
+                      <Image
+                        src={reduxUser.profileImg ?? DefaultProfileImg}
+                        alt={`${reduxUser.username} profile image`}
+                        className="w-full h-full rounded-full object-cover"
+                        fill
+                      />
+                    </div>
+                    <span className="truncate w-[4.5rem]">
+                      {reduxUser.username}
+                    </span>
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>

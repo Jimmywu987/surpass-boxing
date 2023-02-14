@@ -1,4 +1,4 @@
-import { createUser } from "@/apis/api";
+import { useCreateUserMutation } from "@/apis/api";
 import { FormTextInput } from "@/features/common/components/input/FormTextInput";
 import { ShowPassword } from "@/features/common/components/ShowPassword";
 import { useSignUpResolver } from "@/features/signUp/schemas/useSignUpResolver";
@@ -26,7 +26,7 @@ export const SignUpForm = ({
   LoginButton: React.ReactNode;
 }) => {
   const { t } = useTranslation("auth");
-
+  const { mutateAsync, isLoading } = useCreateUserMutation();
   const { register, watch } = useForm();
   const { toast } = createStandaloneToast();
 
@@ -49,20 +49,16 @@ export const SignUpForm = ({
   const updatedProfileImg = profileImg && profileImg.length === 1;
 
   const onSubmit = signUpFormMethods.handleSubmit(async (data) => {
-    dispatch(isLoading({ isLoading: true }));
-
     let imgUrl = "/default-profile-img.png";
     if (updatedProfileImg) {
       const { url } = await uploadToS3(profileImg[0]);
       imgUrl = url;
     }
-    const res = await createUser({
+    const res = await mutateAsync({
       ...data,
       profileImg: imgUrl,
     });
-
     if (res && res.status === 201) {
-      dispatch(isLoading({ isLoading: false }));
       toast({
         title: t("sign_up.account_created"),
         status: "success",
@@ -129,12 +125,12 @@ export const SignUpForm = ({
             {...register("profileImg")}
           />
         </div>
-        <SubmitButton type="submit" disabled={loading}>
+        <SubmitButton type="submit" disabled={isLoading}>
           {t("sign_up.sign_up")}
         </SubmitButton>
       </form>
       <hr />
-      <GoogleButton loading={loading} />
+      <GoogleButton loading={isLoading} />
       <div className="border-b border-b-gray-200 my-2" />
       <div className="flex justify-center">
         <span>{t("join_already")}</span>

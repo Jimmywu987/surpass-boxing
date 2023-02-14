@@ -23,13 +23,11 @@ instance.interceptors.response.use(
 );
 
 export async function req(method: string, url: string, data = null) {
-  let accessToken = "";
   method = method.toLocaleLowerCase();
 
   switch (method) {
     case "get":
       return instance.get(url, {
-        headers: { authorization: "Bearer " + accessToken },
         params: data,
       });
     case "post":

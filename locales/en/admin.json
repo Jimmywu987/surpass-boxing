@@ -1,0 +1,29 @@
+{
+    "classes": "Classes",
+    "members": "Members",
+    "coaches": "Coaches",
+    "news_board": "News Board",
+    "regular_class": "Regular Class",
+    "add_regular_class": "Add regular class",
+    "edit_requested_class": "Edit requested class",
+    "add_class": "Add class",
+    "class_type": "Class Type",
+    "add_class_type": "Add class type",
+    "not_limited": "Not limited",
+    "seven_days": "In seven Days",
+    "classes_in_past": "Classes in the past",
+    "one_day": "This day only",
+    "one_week": "This week only",
+    "one_month": "This month only",
+    "one_year": "This year only",
+    "all": "All",
+    "no_data": "No class available",
+    "in_total": "Total classes",
+    "total_confirmed": "Confirmed classes",
+    "total_canceled": "Canceled classes",
+    "total_pending": "Pending classes",
+    "action": {
+        "confirm": "Confirm",
+        "cancel": "Cancel"
+    }
+}

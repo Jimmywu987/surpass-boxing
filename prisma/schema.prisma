@@ -36,11 +36,12 @@ model User {
   phoneNumber String
   admin       Boolean @default(false)
 
-  authOption             UserAuthOptionsEnum
-  status                 UserStatusEnum           @default(ACTIVE)
-  bookingTimeSlots       BookingTimeSlots[]
-  lessions               Lessions[]
-  UserOnBookingTimeSlots UserOnBookingTimeSlots[]
+  authOption UserAuthOptionsEnum
+  status     UserStatusEnum      @default(ACTIVE)
+
+  lessions                Lessions[]
+  userOnBookingTimeSlots  UserOnBookingTimeSlots[]
+  regularBookingTimeSlots RegularBookingTimeSlots[]
 }
 
 model Lessions {
@@ -59,9 +60,7 @@ model ClassesType {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  name                    String
-  regularBookingTimeSlots RegularBookingTimeSlots[]
-  bookingTimeSlots        BookingTimeSlots[]
+  name String
 }
 
 model RegularBookingTimeSlots {
@@ -69,18 +68,20 @@ model RegularBookingTimeSlots {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  monday    Boolean
-  tuesday   Boolean
-  wednesday Boolean
-  thursday  Boolean
-  friday    Boolean
-  saturday  Boolean
-  sunday    Boolean
-  startTime DateTime
-  duration  Float
+  monday               Boolean
+  tuesday              Boolean
+  wednesday            Boolean
+  thursday             Boolean
+  friday               Boolean
+  saturday             Boolean
+  sunday               Boolean
+  startTime            Int
+  endTime              Int
+  coachId              String
+  coach                User    @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  numberOfParticipants Int?
 
-  classTypeId String
-  classType   ClassesType @relation(fields: [classTypeId], references: [id], onDelete: Cascade)
+  className String
 }
 
 model BookingTimeSlots {
@@ -89,16 +90,15 @@ model BookingTimeSlots {
   updatedAt DateTime @updatedAt
 
   date                 DateTime
-  startTime            DateTime
-  duration             Float
-  status               BookingTimeSlotStatusEnum
+  startTime            Int
+  endTime              Int
+  status               BookingTimeSlotStatusEnum @default(PENDING)
   numberOfParticipants Int?
 
-  classTypeId String
-  classType   ClassesType @relation(fields: [classTypeId], references: [id], onDelete: Cascade)
+  regularBookingTimeSlotId String?
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  className String
+  coachName String?
 
   userOnBookingTimeSlots UserOnBookingTimeSlots[]
 }
