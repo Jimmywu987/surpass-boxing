@@ -7,7 +7,7 @@ import DefaultProfileImg from "@/../public/default-profile-img.png";
 import Link from "next/link";
 import { useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
-import { format } from "date-fns";
+import { isAfter } from "date-fns";
 import { AdminViewAccountOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
 import { useState } from "react";
 import { ViewAccount } from "@/features/admin/components/AdminAccount/ViewAccount";
@@ -31,7 +31,14 @@ export const AccountContent = ({
   const [view, setView] = useState(AdminViewAccountOptionEnums.VIEW_ACCOUNT);
 
   if (view === AdminViewAccountOptionEnums.VIEW_UNUSED_CLASS) {
-    return <ViewUnusedClass account={viewAccount} setView={setView} />;
+    return (
+      <ViewUnusedClass
+        lessons={viewAccount.lessons.filter((lesson) =>
+          isAfter(lesson.expiryDate, new Date())
+        )}
+        setView={setView}
+      />
+    );
   }
   if (view === AdminViewAccountOptionEnums.VIEW_USED_CLASS) {
     return (
