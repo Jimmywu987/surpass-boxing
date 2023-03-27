@@ -27,7 +27,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         .json({ errors: "Email has already been registered" });
     }
     const isValidInput = validateSignUpInput(email, password);
-
     if (!isValidInput) {
       return res.status(422).json({ errors: "Invalid Input" });
     }

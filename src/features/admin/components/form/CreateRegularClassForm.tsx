@@ -47,7 +47,7 @@ export const CreateRegularClassForm = ({
 }) => {
   const { t } = useTranslation("classes");
   const { data } = useClassTypeQuery();
-  const { data: userData } = useUsersQuery(true);
+  const { data: userData } = useUsersQuery(true, {});
   const queryClient = useQueryClient();
 
   const { mutateAsync, isLoading } = useCreateRegularClassMutation();

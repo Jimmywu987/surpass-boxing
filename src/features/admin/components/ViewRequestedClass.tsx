@@ -14,7 +14,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { EditRequestedClassForm } from "./EditRequestedClassForm";
+import { EditRequestedClassForm } from "@/features/admin/components/form/EditRequestedClassForm";
 import { useQueryClient } from "react-query";
 
 export const ViewRequestedClass = ({

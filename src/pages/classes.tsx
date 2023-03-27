@@ -15,8 +15,9 @@ import {
 import { OpenModelType } from "@/features/common/enums/OpenModelType";
 import { useSession } from "next-auth/react";
 import { User } from "@prisma/client";
-import { CreateBookingTimeSlotForm } from "@/features/classes/components/CreateBookingTimeSlotForm";
+
 import { ModalComponent } from "@/features/common/components/Modal";
+import { CreateBookingTimeSlotForm } from "@/features/classes/components/CreateBookingTimeSlotForm";
 const ClassesPage = () => {
   const { t, lang } = useTranslation("classes");
   const session = useSession();

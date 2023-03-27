@@ -19,10 +19,9 @@ import useTranslation from "next-translate/useTranslation";
 import { FormProvider, useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { useRequestedClassInputResolver } from "@/features/admin/schemas/useRequestedClassInputResolver";
-import { format } from "date-fns";
+import { format, intervalToDuration } from "date-fns";
 import { WeekSelectionCheckBox } from "./WeekSelectionCheckBox";
 import { TimeSlotsType } from "@/types/timeSlots";
-import { intervalToDuration } from "date-fns";
 import { getTimeDisplay } from "@/helpers/getTime";
 
 type EditRequestedClassInputType = {
@@ -47,7 +46,7 @@ export const EditRequestedClassForm = ({
   const { t } = useTranslation("classes");
   const { data } = useClassTypeQuery();
   const queryClient = useQueryClient();
-  const { data: userData } = useUsersQuery(true);
+  const { data: userData } = useUsersQuery(true, {});
   const session = useSession();
   const user = session.data?.user as User;
   const { mutateAsync, isLoading } = useUpdateRequestedClassMutation();

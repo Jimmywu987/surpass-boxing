@@ -16,14 +16,28 @@
     "one_month": "這月",
     "one_year": "這年",
     "all": "所有",
+    "member": "有堂學員",
+    "idle_member": "冇堂學員",
     "classes_in_past": "已開課堂",
     "no_data": "未有課堂",
+    "no_account": "未有學員",
     "in_total": "總課堂數",
     "total_confirmed": "已確認課堂數",
     "total_canceled": "已取消課堂數",
     "total_pending": "未確認課堂數",
     "action": {
         "confirm": "確認",
-        "cancel": "取消"
-    }
+        "cancel": "取消",
+        "search": "搜尋"
+    },
+    "search_account": "搜尋學員",
+    "used_lessons": "已使用堂數",
+    "expired_lessons": "過期堂數",
+    "unused_lessons": "未用堂數",
+    "total_lessons": "總堂數",
+    "add_lesson": "增加",
+    "duration": "為期",
+    "lesson_number": "堂數",
+    "check": "查看",
+    "edit": "更改"
 }

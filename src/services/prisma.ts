@@ -16,7 +16,7 @@ export const getUserWithUserId = async (user_id: string) => {
       createdAt: true,
       admin: true,
       authOption: true,
-      lessions: true,
+      lessons: true,
     },
   });
 

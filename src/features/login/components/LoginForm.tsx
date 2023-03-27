@@ -54,7 +54,11 @@ export const LoginForm = ({
         {t("login.login")}
       </h1>
       <form onSubmit={onSubmit} className="flex flex-col space-y-3 w-full">
-        <FormTextInput type="email" name="email" label={t("email_address")} />
+        <FormTextInput
+          type="email"
+          name="email"
+          label={t("common:account.email_address")}
+        />
         <FormTextInput
           type={showPassword ? "text" : "password"}
           name="password"
