@@ -50,15 +50,15 @@ export const SignUpForm = ({
 
   const onSubmit = signUpFormMethods.handleSubmit(async (data) => {
     let imgUrl = "/default-profile-img.png";
-    if (updatedProfileImg) {
-      const { url } = await uploadToS3(profileImg[0]);
-      imgUrl = url;
-    }
-    const res = await mutateAsync({
-      ...data,
-      profileImg: imgUrl,
-    });
-    if (res && res.status === 201) {
+    try {
+      if (updatedProfileImg) {
+        const { url } = await uploadToS3(profileImg[0]);
+        imgUrl = url;
+      }
+      await mutateAsync({
+        ...data,
+        profileImg: imgUrl,
+      });
       toast({
         title: t("sign_up.account_created"),
         status: "success",
@@ -69,15 +69,15 @@ export const SignUpForm = ({
         ...data,
         redirect: false,
       });
-      return;
+    } catch (error) {
+      toast({
+        title: t("sign_up.create_account_fail"),
+        description: t("sign_up.create_account_fail_description"),
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
     }
-    toast({
-      title: t("sign_up.create_account_fail"),
-      description: t("sign_up.create_account_fail_description"),
-      status: "error",
-      duration: 4000,
-      isClosable: true,
-    });
   });
 
   return (
@@ -89,9 +89,13 @@ export const SignUpForm = ({
         <FormTextInput
           type="text"
           name="username"
-          label={t("sign_up.username")}
+          label={t("common:account.username")}
         />
-        <FormTextInput type="email" name="email" label={t("email_address")} />
+        <FormTextInput
+          type="email"
+          name="email"
+          label={t("common:account.email_address")}
+        />
         <FormTextInput
           type={showPassword ? "text" : "password"}
           name="password"

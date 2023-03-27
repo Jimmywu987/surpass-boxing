@@ -12,5 +12,11 @@
         "update": "更改",
         "previous": "上一頁",
         "next": "下一頁"
+    },
+    "account": {
+        "email_address": "電郵地址",
+        "username": "用戶名稱",
+        "phone_number": "電話號碼",
+        "created_at": "加入日期"
     }
 }

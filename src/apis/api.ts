@@ -9,13 +9,14 @@ import {
   BookingTimeSlots,
   BookingTimeSlotStatusEnum,
   ClassesType,
-  Lessions,
+  Lessons,
   News,
   RegularBookingTimeSlots,
   User,
   UserOnBookingTimeSlots,
 } from "@prisma/client";
 import { SortedBookingTimeSlotsType } from "@/types/timeSlots";
+import { UserType } from "@/types";
 
 const fetcher = async (url: string, params?: any) => {
   const res = await req("post", url, params);
@@ -107,11 +108,13 @@ export const useClassTypeQuery = () =>
     return await fetcher("/api/class/fetch");
   });
 
-export const useBookingTimeSlotQuery = () =>
+export const useBookingTimeSlotQuery = ({ ids }: { ids: string[] }) =>
   useQuery<{ bookingTimeSlots: BookingTimeSlots[] }>(
-    ["bookingTimeSlot"],
+    ["bookingTimeSlot", ids],
     async () => {
-      return await fetcher("/api/booking-time-slot/fetch");
+      return await fetcher("/api/booking-time-slot/fetch", {
+        ids,
+      });
     }
   );
 
@@ -122,11 +125,16 @@ export const useNewsQuery = () =>
 
 export const useUsersQuery = (admin = false, variable?: unknown) =>
   useQuery<{
-    users: Partial<User & { lessons: Partial<Lessions>[] }>[];
+    users: UserType[];
     totalUsersCount: number;
   }>(["users", variable], async () => {
     return await fetcher(
       `/api/users/fetch${admin ? "?admin=true" : ""}`,
       variable
     );
+  });
+
+export const useAddClassMutation = () =>
+  useMutation(["addClass"], async (params: any) => {
+    return await fetcher("/api/class/add", params);
   });

@@ -1,9 +1,14 @@
 import useTranslation from "next-translate/useTranslation";
+import { signOut, useSession } from "next-auth/react";
 
 export default function HomePage() {
   const { t } = useTranslation("common");
 
-  return <h1 className="">HI</h1>;
+  return (
+    <>
+      <h1 className="text-white">HI</h1>
+    </>
+  );
 }
 
 export async function getServerSideProps(context: any) {

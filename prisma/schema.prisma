@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider     = "mysql"
-  url          = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+
   relationMode = "prisma"
 }
 
@@ -39,18 +40,18 @@ model User {
   authOption UserAuthOptionsEnum
   status     UserStatusEnum      @default(ACTIVE)
 
-  lessions                Lessions[]
+  lessons                 Lessons[]
   userOnBookingTimeSlots  UserOnBookingTimeSlots[]
   regularBookingTimeSlots RegularBookingTimeSlots[]
 }
 
-model Lessions {
+model Lessons {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   expiryDate DateTime
-  lession    Int
+  lesson     Int
   userId     String
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

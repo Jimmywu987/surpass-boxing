@@ -12,5 +12,11 @@
         "update": "Update",
         "previous": "Previous",
         "next": "Next"
+    },
+    "account": {
+        "email_address": "Email Address",
+        "username": "Username",
+        "phone_number": "Phone Number",
+        "created_at": "Joined Date"
     }
 }

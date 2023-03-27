@@ -17,7 +17,7 @@ import {
 } from "@prisma/client";
 import { TimeSlotsType } from "@/types/timeSlots";
 import { EditRequestedClassForm } from "./form/EditRequestedClassForm";
-import { ViewRequestedClass } from "./form/ViewRequestedClass";
+import { ViewRequestedClass } from "./ViewRequestedClass";
 import { useDispatch, useSelector } from "react-redux";
 import { timeSlotSelector, updateTimeSlot } from "@/redux/timeSlot";
 import { useQueryClient } from "react-query";

@@ -8,7 +8,7 @@ export const useRequestedClassInputResolver = (joinedPeopleNum?: number) => {
   return zodResolver(
     z
       .object({
-        id: z.string(),
+        id: z.string().optional(),
         date: z.date(),
         startTime: z.number(),
         endTime: z.number(),

@@ -17,13 +17,27 @@
     "one_month": "This month only",
     "one_year": "This year only",
     "all": "All",
+    "member": "Members",
+    "idle_member": "Idle members",
     "no_data": "No class available",
+    "no_account": "No account available",
     "in_total": "Total classes",
     "total_confirmed": "Confirmed classes",
     "total_canceled": "Canceled classes",
     "total_pending": "Pending classes",
     "action": {
         "confirm": "Confirm",
-        "cancel": "Cancel"
-    }
+        "cancel": "Cancel",
+        "search": "Search"
+    },
+    "search_account": "Search member",
+    "used_lessons": "Used Lessons",
+    "expired_lessons": "Expired Lessons",
+    "unused_lessons": "Unused Lessons",
+    "total_lessons": "Total Lessons",
+    "add_lesson": "Add",
+    "duration": "Duration",
+    "lesson_number": "Lesson Number",
+    "check": "Check",
+    "edit": "Edit"
 }

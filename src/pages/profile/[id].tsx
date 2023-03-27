@@ -32,7 +32,7 @@ const ProfilePage = (props: ProfilePageProps) => {
         </div>
         <p>{reduxUser.username}</p>
       </div>
-      <div>
+      <div className="text-white flex flex-col">
         <Link href="/admin" passHref className="">
           管理課堂/帳戶
         </Link>
