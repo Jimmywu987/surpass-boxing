@@ -10,18 +10,18 @@ import { useDispatch } from "react-redux";
 import { format } from "date-fns";
 import { AdminViewAccountOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
 import { Dispatch, SetStateAction, useState } from "react";
+import { Lessons } from "@prisma/client";
 
 export const ViewUnusedClass = ({
-  account,
+  lessons,
   setView,
 }: {
-  account: UserType;
+  lessons: Lessons[];
   setView: Dispatch<SetStateAction<AdminViewAccountOptionEnums>>;
 }) => {
   const { t } = useTranslation("classes");
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
 
-  console.log("account", account);
   return <></>;
 };
