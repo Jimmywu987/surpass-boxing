@@ -23,5 +23,21 @@ export const ViewUnusedClass = ({
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
 
-  return <></>;
+  return (
+    <div>
+      {lessons.map((lesson, index) => {
+        return (
+          <div key={index}>
+            <p>
+              {t("admin:lesson_number")}: {lesson.lesson}
+            </p>
+            <p>
+              {t("admin:expired_date")}:{" "}
+              {format(new Date(lesson.expiryDate), "dd/MM/yyyy")}
+            </p>
+          </div>
+        );
+      })}
+    </div>
+  );
 };

@@ -33,6 +33,7 @@
     "search_account": "搜尋學員",
     "used_lessons": "已使用堂數",
     "expired_lessons": "過期堂數",
+    "expired_date": "過期日",
     "unused_lessons": "未用堂數",
     "total_lessons": "總堂數",
     "add_lesson": "增加",
