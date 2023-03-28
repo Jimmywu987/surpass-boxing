@@ -28,5 +28,5 @@ export const ViewUsedClass = ({
   if (isLoading || !data) {
     return <></>;
   }
-  return <></>;
+  return <div></div>;
 };
