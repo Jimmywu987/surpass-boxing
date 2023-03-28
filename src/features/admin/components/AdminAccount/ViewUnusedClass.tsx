@@ -28,6 +28,7 @@ export const ViewUnusedClass = ({
       {lessons.map((lesson, index) => {
         return (
           <div key={index}>
+            <div></div>
             <p>
               {t("admin:lesson_number")}: {lesson.lesson}
             </p>
