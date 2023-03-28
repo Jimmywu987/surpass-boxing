@@ -1,5 +1,4 @@
 import { UserType } from "@/types";
-import { UseDisclosureReturn } from "@chakra-ui/react";
 import useTranslation from "next-translate/useTranslation";
 import Image from "next/image";
 import DefaultProfileImg from "@/../public/default-profile-img.png";
@@ -52,6 +51,7 @@ export const ViewAccount = ({
         lessons: [...prev.lessons, result],
       };
     });
+    queryClient.invalidateQueries("users");
   });
   return (
     <div className="flex flex-col space-y-2">
