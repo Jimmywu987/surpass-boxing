@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import { AdminViewAccountOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Lessons } from "@prisma/client";
+import { ChevronLeftIcon } from "@chakra-ui/icons";
 
 export const ViewUnusedClass = ({
   lessons,
@@ -25,6 +26,13 @@ export const ViewUnusedClass = ({
 
   return (
     <div>
+      <ChevronLeftIcon
+        fontSize="3xl"
+        cursor={"pointer"}
+        onClick={() => {
+          setView(AdminViewAccountOptionEnums.VIEW_ACCOUNT);
+        }}
+      />
       {lessons.map((lesson, index) => {
         return (
           <div key={index}>
