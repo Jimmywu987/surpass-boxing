@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import { AdminViewAccountOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useBookingTimeSlotQuery } from "@/apis/api";
+import { ChevronLeftIcon } from "@chakra-ui/icons";
 
 export const ViewUsedClass = ({
   bookingTimeSlotIds,
@@ -28,5 +29,15 @@ export const ViewUsedClass = ({
   if (isLoading || !data) {
     return <></>;
   }
-  return <div></div>;
+  return (
+    <div>
+      <ChevronLeftIcon
+        fontSize="3xl"
+        cursor={"pointer"}
+        onClick={() => {
+          setView(AdminViewAccountOptionEnums.VIEW_ACCOUNT);
+        }}
+      />
+    </div>
+  );
 };

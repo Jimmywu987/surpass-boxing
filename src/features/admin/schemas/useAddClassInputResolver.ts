@@ -10,6 +10,7 @@ export const useAddClassInputResolver = () => {
       lesson: z.number().positive(),
       durationUnit: z.string(),
       duration: z.number().positive(),
+      userId: z.string(),
     })
   );
 };

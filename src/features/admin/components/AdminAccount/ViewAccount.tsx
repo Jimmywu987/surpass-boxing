@@ -35,6 +35,7 @@ export const ViewAccount = ({
       lesson: 5,
       duration: 1,
       durationUnit: "months",
+      userId: account.id,
     },
   });
   const { handleSubmit, formState, register, setValue } =

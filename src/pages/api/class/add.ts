@@ -10,15 +10,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (session && req.method === "POST") {
     const data = req.body;
     const user = session?.user as User;
+
     if (!user.admin) {
       return res.status(401).json({ errorMessage: "Unauthorized" });
     }
-    const { lesson, durationUnit, duration } = data;
+    const { lesson, durationUnit, duration, userId } = data;
     const response = await prisma.lessons.create({
       data: {
         lesson,
         expiryDate: add(new Date(), { [durationUnit]: duration }),
-        userId: user.id,
+        userId,
       },
     });
 
