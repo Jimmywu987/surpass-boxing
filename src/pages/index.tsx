@@ -5,9 +5,9 @@ export default function HomePage() {
   const { t } = useTranslation("common");
 
   return (
-    <>
+    <div>
       <h1 className="text-white">HI</h1>
-    </>
+    </div>
   );
 }
 
