@@ -26,6 +26,7 @@ export const ViewUsedClass = ({
   const { data, isLoading } = useBookingTimeSlotQuery({
     ids: bookingTimeSlotIds,
   });
+
   if (isLoading || !data) {
     return <></>;
   }
