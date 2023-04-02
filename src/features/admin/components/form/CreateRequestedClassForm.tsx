@@ -151,9 +151,10 @@ export const CreateRequestedClassForm = ({
             <div>
               {t("duration")}:{" "}
               {t(
-                ...(getDuration(watch("startTime"), watch("endTime")) as [
-                  string
-                ])
+                ...(getDuration({
+                  startTime: watch("startTime"),
+                  endTime: watch("endTime"),
+                }) as [string])
               )}
             </div>
           </div>

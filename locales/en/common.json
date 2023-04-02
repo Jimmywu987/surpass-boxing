@@ -10,6 +10,7 @@
     "action": {
         "confirm": "Confirm",
         "update": "Update",
+        "delete": "Delete",
         "previous": "Previous",
         "next": "Next"
     },

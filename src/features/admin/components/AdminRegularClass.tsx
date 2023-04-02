@@ -10,7 +10,7 @@ import {
 import { ModalComponent } from "@/features/common/components/Modal";
 import { WEEK_NAMES } from "@/features/common/constants/weekNames";
 import { getDuration } from "@/helpers/getDuration";
-import { getTimeDisplay } from "@/helpers/getTime";
+import { getTimeDuration } from "@/helpers/getTime";
 import { intervalToDuration } from "date-fns";
 import { useQueryClient } from "react-query";
 import { CreateRegularClassForm } from "@/features/admin/components/form/CreateRegularClassForm";
@@ -53,14 +53,8 @@ export const AdminRegularClass = () => {
         </Button>
         <div className="space-y-1">
           {data.regularBookingTimeSlots.map((timeSlot) => {
-            const startTime = intervalToDuration({
-              start: 0,
-              end: timeSlot.startTime,
-            });
-            const endTime = intervalToDuration({
-              start: 0,
-              end: timeSlot.endTime,
-            });
+            const { startTime, endTime } = timeSlot;
+
             return (
               <div
                 key={timeSlot.id}
@@ -87,19 +81,17 @@ export const AdminRegularClass = () => {
                     })}
                   </div>
                   <div>
-                    {getTimeDisplay(
-                      startTime.hours ?? 0,
-                      startTime.minutes ?? 0
-                    )}
-                    {" - "}
-                    {getTimeDisplay(endTime.hours ?? 0, endTime.minutes ?? 0)}
+                    {getTimeDuration({
+                      startTime,
+                      endTime,
+                    })}
                     <div>
                       {t("classes:duration")}:{" "}
                       {t(
-                        ...(getDuration(
-                          timeSlot.startTime,
-                          timeSlot.endTime
-                        ) as [string])
+                        ...(getDuration({
+                          startTime,
+                          endTime,
+                        }) as [string])
                       )}
                     </div>
                   </div>

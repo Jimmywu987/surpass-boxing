@@ -1,6 +1,12 @@
 import { intervalToDuration } from "date-fns";
 
-export const getDuration = (startTime: number, endTime: number) => {
+export const getDuration = ({
+  startTime,
+  endTime,
+}: {
+  startTime: number;
+  endTime: number;
+}) => {
   if (endTime - startTime <= 0) {
     return ["classes:hours", { hours: 0 }];
   }

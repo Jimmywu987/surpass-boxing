@@ -1,30 +1,26 @@
-import { SubmitButton } from "@/features/common/components/buttons/SubmitButton";
 import {
+  useClassTypeQuery,
+  useCreateRegularClassMutation,
+  useUsersQuery,
+} from "@/apis/api";
+import { useRegularClassInputResolver } from "@/features/admin/schemas/useRegularClassInputResolver";
+import { SubmitButton } from "@/features/common/components/buttons/SubmitButton";
+import { getDuration } from "@/helpers/getDuration";
+import {
+  CheckboxGroup,
+  Input,
   InputGroup,
   Select,
   Skeleton,
   Stack,
   UseDisclosureReturn,
 } from "@chakra-ui/react";
-import { CheckboxGroup } from "@chakra-ui/react";
-import { isLoading, loadingSelector } from "@/redux/loading";
-import { Input } from "@chakra-ui/react";
-import { ClassesType, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import useTranslation from "next-translate/useTranslation";
-import { useRouter } from "next/router";
 import { FormProvider, useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { useRegularClassInputResolver } from "@/features/admin/schemas/useRegularClassInputResolver";
-import { WeekSelectionCheckBox } from "./WeekSelectionCheckBox";
-import { useState } from "react";
-import { getDuration } from "@/helpers/getDuration";
-import {
-  useClassTypeQuery,
-  useCreateRegularClassMutation,
-  useUsersQuery,
-} from "@/apis/api";
 import { useQueryClient } from "react-query";
+import { WeekSelectionCheckBox } from "./WeekSelectionCheckBox";
 type CreateRegularClassInputType = {
   monday: boolean;
   tuesday: boolean;
@@ -172,7 +168,10 @@ export const CreateRegularClassForm = ({
           <div>
             {t("duration")}:{" "}
             {t(
-              ...(getDuration(watch("startTime"), watch("endTime")) as [string])
+              ...(getDuration({
+                startTime: watch("startTime"),
+                endTime: watch("endTime"),
+              }) as [string])
             )}
           </div>
         </div>

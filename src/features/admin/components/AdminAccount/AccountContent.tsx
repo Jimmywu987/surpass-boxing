@@ -29,14 +29,15 @@ export const AccountContent = ({
   }
   const [viewAccount, setViewAccount] = useState<UserType>(account);
   const [view, setView] = useState(AdminViewAccountOptionEnums.VIEW_ACCOUNT);
-  console.log("viewAccount", viewAccount);
+
   if (view === AdminViewAccountOptionEnums.VIEW_UNUSED_CLASS) {
     return (
       <ViewUnusedClass
         lessons={viewAccount.lessons.filter((lesson) =>
-          isAfter(lesson.expiryDate, new Date())
+          isAfter(new Date(lesson.expiryDate), new Date())
         )}
         setView={setView}
+        setViewAccount={setViewAccount}
       />
     );
   }

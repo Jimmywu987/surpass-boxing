@@ -18,6 +18,7 @@ import { User } from "@prisma/client";
 
 import { ModalComponent } from "@/features/common/components/Modal";
 import { CreateBookingTimeSlotForm } from "@/features/classes/components/CreateBookingTimeSlotForm";
+import { useBookingTimeSlotForStudentQuery } from "@/apis/api";
 const ClassesPage = () => {
   const { t, lang } = useTranslation("classes");
   const session = useSession();
@@ -32,9 +33,12 @@ const ClassesPage = () => {
     }
     onOpen();
   };
-  const [date, setDate] = useState(new Date());
+  const [query, setQuery] = useState({
+    skip: 0,
+    date: new Date(),
+  });
   const minDate = endOfDay(subDays(new Date(), 1));
-
+  const { data, isLoading } = useBookingTimeSlotForStudentQuery(query);
   return (
     <>
       <div>
@@ -43,8 +47,10 @@ const ClassesPage = () => {
           <div className="w-36">
             <SingleDatepicker
               name="date-input"
-              date={date}
-              onDateChange={setDate}
+              date={query.date}
+              onDateChange={(value) => {
+                setQuery(() => ({ skip: 0, date: value }));
+              }}
               minDate={minDate}
               propsConfigs={{
                 dayOfMonthBtnProps: {
@@ -76,7 +82,7 @@ const ClassesPage = () => {
             />
           </div>
           <div className="text-white">
-            {t(format(date, "EEEE").toLowerCase())}
+            {t(format(query.date, "EEEE").toLowerCase())}
           </div>
           <div>
             <Button onClick={handleOpenModel}>{t("open_a_class")}</Button>

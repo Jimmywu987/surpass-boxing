@@ -6,10 +6,10 @@ import { useSession } from "next-auth/react";
 import useTranslation from "next-translate/useTranslation";
 
 import DefaultProfileImg from "@/../public/default-profile-img.png";
-import { getTimeDisplay } from "@/helpers/getTime";
+import { getTimeDuration } from "@/helpers/getTime";
 import { timeSlotSelector, updateTimeSlot } from "@/redux/timeSlot";
 import { CheckIcon } from "@chakra-ui/icons";
-import { format, intervalToDuration } from "date-fns";
+import { format } from "date-fns";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -37,14 +37,7 @@ export const ViewRequestedClass = ({
   }
   const session = useSession();
   const user = session.data?.user as User;
-  const startTime = intervalToDuration({
-    start: 0,
-    end: timeSlot.startTime,
-  });
-  const endTime = intervalToDuration({
-    start: 0,
-    end: timeSlot.endTime,
-  });
+  const { startTime, endTime } = timeSlot;
 
   const updateClassStatus = async (status: BookingTimeSlotStatusEnum) => {
     await mutateAsync({
@@ -104,16 +97,10 @@ export const ViewRequestedClass = ({
               </div>
 
               <div>
-                {getTimeDisplay(startTime.hours ?? 0, startTime.minutes ?? 0)}
-                {" - "}
-                {getTimeDisplay(endTime.hours ?? 0, endTime.minutes ?? 0)}
+                {getTimeDuration({ startTime, endTime })}
                 <div>
                   {t("classes:duration")}:{" "}
-                  {t(
-                    ...(getDuration(timeSlot.startTime, timeSlot.endTime) as [
-                      string
-                    ])
-                  )}
+                  {t(...(getDuration({ startTime, endTime }) as [string]))}
                 </div>
               </div>
             </div>
