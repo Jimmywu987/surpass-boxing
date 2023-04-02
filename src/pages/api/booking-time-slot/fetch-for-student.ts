@@ -1,4 +1,5 @@
 import { prisma } from "@/services/prisma";
+import { BookingTimeSlotStatusEnum } from "@prisma/client";
 import { format, startOfDay, endOfDay } from "date-fns";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -52,6 +53,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
         where: {
           date: whereQuery,
+          status: { not: BookingTimeSlotStatusEnum.CANCELED },
         },
         orderBy: {
           date: "desc",

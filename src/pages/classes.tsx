@@ -2,7 +2,7 @@ import { Button, Skeleton, Stack, useDisclosure } from "@chakra-ui/react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { subDays, endOfDay, format } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
-import { useRef, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
 import { SignUpForm } from "@/features/signUp/components/SignUpForm";
 import { LoginForm } from "@/features/login/components/LoginForm";
 
@@ -14,11 +14,22 @@ import {
 } from "@chakra-ui/react";
 import { OpenModelType } from "@/features/common/enums/OpenModelType";
 import { useSession } from "next-auth/react";
-import { User } from "@prisma/client";
+import {
+  User,
+  BookingTimeSlots,
+  RegularBookingTimeSlots,
+  BookingTimeSlotStatusEnum,
+  UserOnBookingTimeSlots,
+} from "@prisma/client";
 
 import { ModalComponent } from "@/features/common/components/Modal";
 import { CreateBookingTimeSlotForm } from "@/features/classes/components/CreateBookingTimeSlotForm";
 import { useBookingTimeSlotForStudentQuery } from "@/apis/api";
+import { SKIP_NUMBER, TAKE_NUMBER } from "@/constants";
+import { CheckIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { PageNumberDisplay } from "@/features/common/components/PageNumberDisplay";
+import { getTimeDuration } from "@/helpers/getTime";
+import { getDuration } from "@/helpers/getDuration";
 const ClassesPage = () => {
   const { t, lang } = useTranslation("classes");
   const session = useSession();
@@ -39,6 +50,16 @@ const ClassesPage = () => {
   });
   const minDate = endOfDay(subDays(new Date(), 1));
   const { data, isLoading } = useBookingTimeSlotForStudentQuery(query);
+  const classes = useMemo(() => {
+    if (!data) {
+      return [];
+    }
+    const bookingTimeSlots: (BookingTimeSlots | RegularBookingTimeSlots)[] =
+      data.bookingTimeSlots;
+    bookingTimeSlots.concat(data.regularBookingSlot);
+    bookingTimeSlots.sort((a, b) => a.startTime - b.startTime);
+    return bookingTimeSlots;
+  }, [data]);
   if (!data || isLoading) {
     return (
       <Stack>
@@ -46,6 +67,7 @@ const ClassesPage = () => {
       </Stack>
     );
   }
+
   return (
     <>
       <div>
@@ -95,7 +117,142 @@ const ClassesPage = () => {
             <Button onClick={handleOpenModel}>{t("open_a_class")}</Button>
           </div>
         </div>
-        <div>{/* @todo: render all classes of the day here */}</div>
+        <div>
+          {classes.map((slot, indx) => {
+            const { startTime, endTime } = slot;
+            const bookingTimeSlot = slot as BookingTimeSlots & {
+              userOnBookingTimeSlots: (UserOnBookingTimeSlots & {
+                user: {
+                  username: string;
+                  profileImg: string;
+                };
+              })[];
+            };
+            const regularBookingTimeSlot = slot as RegularBookingTimeSlots & {
+              coach: {
+                username: string;
+              };
+            };
+            const isRegularBookingTimeSlot = bookingTimeSlot.status
+              ? false
+              : true;
+            return (
+              <div
+                key={slot.id}
+                className="flex justify-between p-5 border border-gray-600 rounded-md shadow-lg hover:bg-gray-400 cursor-pointer"
+                onClick={() => {}}
+              >
+                <div className="space-y-2">
+                  <div className="text-2xl flex items-center space-x-2">
+                    {!isRegularBookingTimeSlot &&
+                      bookingTimeSlot.status ===
+                        BookingTimeSlotStatusEnum.CONFIRM && (
+                        <CheckIcon bg="green.600" rounded="full" p="1" />
+                      )}
+                    <span className="font-semibold">{slot.className}</span>
+                  </div>
+
+                  <div>
+                    {getTimeDuration({
+                      startTime,
+                      endTime,
+                    })}
+                    <div>
+                      {t("classes:duration")}:{" "}
+                      {t(
+                        ...(getDuration({
+                          startTime,
+                          endTime,
+                        }) as [string])
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col justify-between">
+                  <div>
+                    {!isRegularBookingTimeSlot &&
+                      !!bookingTimeSlot.coachName && (
+                        <div className="">
+                          {t("classes:coaches")}
+                          {": "}
+                          {bookingTimeSlot.coachName}
+                        </div>
+                      )}
+                    {isRegularBookingTimeSlot &&
+                      regularBookingTimeSlot.coach &&
+                      !!regularBookingTimeSlot.coach.username && (
+                        <div className="">
+                          {t("classes:coaches")}
+                          {": "}
+                          {regularBookingTimeSlot.coach.username}
+                        </div>
+                      )}
+                    {!isRegularBookingTimeSlot &&
+                      !!slot.numberOfParticipants && (
+                        <div>
+                          {t("classes:set_limit")}
+                          {": "}
+                          {`${bookingTimeSlot.userOnBookingTimeSlots.length} /${slot.numberOfParticipants}`}
+                        </div>
+                      )}
+                    {!isRegularBookingTimeSlot &&
+                      !slot.numberOfParticipants && (
+                        <div>
+                          {t("classes:number_of_participants")}
+                          {": "}
+                          {`${bookingTimeSlot.userOnBookingTimeSlots.length}`}
+                        </div>
+                      )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          {data.bookingTimeSlots.length !== 0 ? (
+            <div className="flex justify-between">
+              <button
+                className={`flex space-x-1 items-center ${
+                  query.skip === 0 && " cursor-default opacity-40 "
+                }`}
+                onClick={() => {
+                  setQuery((prev) => ({
+                    ...prev,
+                    skip: prev.skip - SKIP_NUMBER,
+                  }));
+                }}
+                disabled={query.skip === 0}
+              >
+                <ChevronLeftIcon className="text-xl" />
+                <span>{t("common:action.previous")}</span>
+              </button>
+              <PageNumberDisplay
+                currentPage={SKIP_NUMBER / TAKE_NUMBER + 1}
+                totalPages={Math.ceil(data.totalClassesCount / TAKE_NUMBER)}
+                setQuery={
+                  setQuery as Dispatch<SetStateAction<{ skip: number }>>
+                }
+              />
+              <button
+                className={`flex space-x-1 items-center ${
+                  data.totalClassesCount > query.skip + SKIP_NUMBER &&
+                  " cursor-default opacity-40 "
+                }`}
+                onClick={() => {
+                  setQuery((prev) => ({
+                    ...prev,
+                    skip: prev.skip + SKIP_NUMBER,
+                  }));
+                }}
+                disabled={data.totalClassesCount > query.skip + SKIP_NUMBER}
+              >
+                <span>{t("common:action.next")}</span>
+                <ChevronRightIcon className="text-xl" />
+              </button>
+            </div>
+          ) : (
+            <div>{t("admin:no_data")}</div>
+          )}
+        </div>
       </div>
       <ModalComponent
         modalDisclosure={modalDisclosure}

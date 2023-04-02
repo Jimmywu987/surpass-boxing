@@ -11,12 +11,12 @@ import { CheckIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { BookingTimeSlotStatusEnum } from "@prisma/client";
 import { endOfDay, format, intervalToDuration, subDays } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { ViewRequestedClass } from "./ViewRequestedClass";
-
-const SKIP_NUMBER = 10;
+import { SKIP_NUMBER, TAKE_NUMBER } from "@/constants";
+import { PageNumberDisplay } from "@/features/common/components/PageNumberDisplay";
 
 export const AdminRequestedClass = () => {
   const { t } = useTranslation("admin");
@@ -211,6 +211,11 @@ export const AdminRequestedClass = () => {
               <ChevronLeftIcon className="text-xl" />
               <span>{t("common:action.previous")}</span>
             </button>
+            <PageNumberDisplay
+              currentPage={SKIP_NUMBER / TAKE_NUMBER + 1}
+              totalPages={Math.ceil(data.totalClassesCount / TAKE_NUMBER)}
+              setQuery={setQuery as Dispatch<SetStateAction<{ skip: number }>>}
+            />
             <button
               className={`flex space-x-1 items-center ${
                 data.totalClassesCount > query.skip + SKIP_NUMBER &&

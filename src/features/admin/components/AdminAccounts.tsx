@@ -8,11 +8,9 @@ import {
   Stack,
   useDisclosure,
   ButtonGroup,
-  InputRightElement,
 } from "@chakra-ui/react";
 
 import { ModalComponent } from "@/features/common/components/Modal";
-import { AdminPageProps } from "@/pages/admin";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -31,9 +29,7 @@ import { UserType } from "@/types";
 import { AccountContent } from "@/features/admin/components/AdminAccount/AccountContent";
 import { AdminAccountFilterOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
 import { OptionButton } from "@/features/common/components/buttons/OptionButton";
-
-const SKIP_NUMBER = 10;
-const TAKE_NUMBER = 10;
+import { SKIP_NUMBER, TAKE_NUMBER } from "@/constants";
 
 export const AdminAccounts = () => {
   const searchAccountInputValue = useRef<HTMLInputElement>(null);
