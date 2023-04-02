@@ -6,12 +6,12 @@ import DefaultProfileImg from "@/../public/default-profile-img.png";
 import Link from "next/link";
 import { useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
-import { format } from "date-fns";
+import { format, isAfter } from "date-fns";
 import { AdminViewAccountOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useAddClassInputResolver } from "@/features/admin/schemas/useAddClassInputResolver";
-import { useAddClassMutation } from "@/apis/api";
+import { useAddLessonMutation } from "@/apis/api";
 
 const REG_NUM_CHECK = /^\d+$/;
 
@@ -27,7 +27,7 @@ export const ViewAccount = ({
   const { t } = useTranslation("classes");
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
-  const { mutateAsync } = useAddClassMutation();
+  const { mutateAsync } = useAddLessonMutation();
   const addClassInputFormMethods = useForm({
     resolver: useAddClassInputResolver(),
     mode: "onChange",
@@ -40,9 +40,18 @@ export const ViewAccount = ({
   });
   const { handleSubmit, formState, register, setValue } =
     addClassInputFormMethods;
-  const unusedLessonNum =
-    account.lessons?.filter((lesson) => lesson.expiryDate > new Date())
-      .length ?? 0;
+
+  const unusedLessonNum = useMemo(
+    () =>
+      account.lessons
+        ?.filter((lesson) => isAfter(new Date(lesson.expiryDate), new Date()))
+        .reduce((pre, cur) => pre + cur.lesson, 0) ?? 0,
+    [account.lessons]
+  );
+  const totalLessonNum = useMemo(
+    () => account.lessons?.reduce((pre, cur) => pre + cur.lesson, 0),
+    [account.lessons]
+  );
 
   const AddClass = handleSubmit(async (data) => {
     const result = await mutateAsync(data);
@@ -87,7 +96,7 @@ export const ViewAccount = ({
 
       <div className="flex justify-between">
         <p>
-          {t("admin:total_lessons")}: {account.lessons?.length ?? 0}
+          {t("admin:total_lessons")}: {totalLessonNum}
         </p>
         <button
           className="hover:bg-gray-400 bg-gray-500 px-3 py-1 rounded-md text-white"

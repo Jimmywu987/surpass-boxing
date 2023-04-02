@@ -2,25 +2,19 @@ import { Button, Skeleton, Stack, useDisclosure } from "@chakra-ui/react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 
 import { useRequestedClassQuery } from "@/apis/api";
+import { CreateRequestedClassForm } from "@/features/admin/components/form/CreateRequestedClassForm";
 import { ModalComponent } from "@/features/common/components/Modal";
+import { getDuration } from "@/helpers/getDuration";
+import { getTimeDuration } from "@/helpers/getTime";
+import { timeSlotSelector, updateTimeSlot } from "@/redux/timeSlot";
+import { CheckIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { BookingTimeSlotStatusEnum } from "@prisma/client";
 import { endOfDay, format, intervalToDuration, subDays } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
-import { useEffect, useState } from "react";
-import { CreateRequestedClassForm } from "@/features/admin/components/form/CreateRequestedClassForm";
-import { getTimeDisplay } from "@/helpers/getTime";
-import { getDuration } from "@/helpers/getDuration";
-import { CheckIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import {
-  BookingTimeSlots,
-  BookingTimeSlotStatusEnum,
-  UserOnBookingTimeSlots,
-} from "@prisma/client";
-import { TimeSlotsType } from "@/types/timeSlots";
-import { EditRequestedClassForm } from "./form/EditRequestedClassForm";
-import { ViewRequestedClass } from "./ViewRequestedClass";
-import { useDispatch, useSelector } from "react-redux";
-import { timeSlotSelector, updateTimeSlot } from "@/redux/timeSlot";
+import { useState } from "react";
 import { useQueryClient } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { ViewRequestedClass } from "./ViewRequestedClass";
 
 const SKIP_NUMBER = 10;
 
@@ -125,14 +119,8 @@ export const AdminRequestedClass = () => {
                 )}`}
               </div>
               {timeSlots.map((timeSlot) => {
-                const startTime = intervalToDuration({
-                  start: 0,
-                  end: timeSlot.startTime,
-                });
-                const endTime = intervalToDuration({
-                  start: 0,
-                  end: timeSlot.endTime,
-                });
+                const { startTime, endTime } = timeSlot;
+
                 return (
                   <div
                     key={timeSlot.id}
@@ -161,22 +149,17 @@ export const AdminRequestedClass = () => {
                       </div>
 
                       <div>
-                        {getTimeDisplay(
-                          startTime.hours ?? 0,
-                          startTime.minutes ?? 0
-                        )}
-                        {" - "}
-                        {getTimeDisplay(
-                          endTime.hours ?? 0,
-                          endTime.minutes ?? 0
-                        )}
+                        {getTimeDuration({
+                          startTime,
+                          endTime,
+                        })}
                         <div>
                           {t("classes:duration")}:{" "}
                           {t(
-                            ...(getDuration(
-                              timeSlot.startTime,
-                              timeSlot.endTime
-                            ) as [string])
+                            ...(getDuration({
+                              startTime,
+                              endTime,
+                            }) as [string])
                           )}
                         </div>
                       </div>

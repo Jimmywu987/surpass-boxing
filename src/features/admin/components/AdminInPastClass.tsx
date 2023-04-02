@@ -1,36 +1,28 @@
 import {
   Button,
-  Skeleton,
   ButtonGroup,
+  Skeleton,
   Stack,
   useDisclosure,
-  Collapse,
 } from "@chakra-ui/react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 
 import { useRequestedClassQuery } from "@/apis/api";
 import { ModalComponent } from "@/features/common/components/Modal";
-import { endOfDay, format, intervalToDuration, subDays } from "date-fns";
+import { getDuration } from "@/helpers/getDuration";
+import { getTimeDuration } from "@/helpers/getTime";
+import { CheckIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { BookingTimeSlotStatusEnum } from "@prisma/client";
+import { endOfDay, format, subDays } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
 import { Dispatch, SetStateAction, useState } from "react";
-import { CreateRequestedClassForm } from "@/features/admin/components/form/CreateRequestedClassForm";
-import { getTimeDisplay } from "@/helpers/getTime";
-import { getDuration } from "@/helpers/getDuration";
-import { CheckIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import {
-  BookingTimeSlots,
-  BookingTimeSlotStatusEnum,
-  UserOnBookingTimeSlots,
-} from "@prisma/client";
-import { TimeSlotsType } from "@/types/timeSlots";
-import { EditRequestedClassForm } from "./form/EditRequestedClassForm";
 
 import { ViewRequestedClass } from "@/features/admin/components/ViewRequestedClass";
 
-import { useDispatch, useSelector } from "react-redux";
-import { timeSlotSelector, updateTimeSlot } from "@/redux/timeSlot";
-import { AdminPeriodOptionsEnum } from "../enums/AdminOptionEnums";
 import { PageNumberDisplay } from "@/features/common/components/PageNumberDisplay";
+import { timeSlotSelector, updateTimeSlot } from "@/redux/timeSlot";
+import { useDispatch, useSelector } from "react-redux";
+import { AdminPeriodOptionsEnum } from "../enums/AdminOptionEnums";
 
 const SKIP_NUMBER = 10;
 const TAKE_NUMBER = 10;
@@ -166,14 +158,8 @@ export const AdminInPastClass = () => {
                     )}`}
                   </div>
                   {timeSlots.map((timeSlot) => {
-                    const startTime = intervalToDuration({
-                      start: 0,
-                      end: timeSlot.startTime,
-                    });
-                    const endTime = intervalToDuration({
-                      start: 0,
-                      end: timeSlot.endTime,
-                    });
+                    const { startTime, endTime } = timeSlot;
+
                     return (
                       <div
                         key={timeSlot.id}
@@ -202,22 +188,13 @@ export const AdminInPastClass = () => {
                           </div>
 
                           <div>
-                            {getTimeDisplay(
-                              startTime.hours ?? 0,
-                              startTime.minutes ?? 0
-                            )}
-                            {" - "}
-                            {getTimeDisplay(
-                              endTime.hours ?? 0,
-                              endTime.minutes ?? 0
-                            )}
+                            {getTimeDuration({ startTime, endTime })}
                             <div>
                               {t("classes:duration")}:{" "}
                               {t(
-                                ...(getDuration(
-                                  timeSlot.startTime,
-                                  timeSlot.endTime
-                                ) as [string])
+                                ...(getDuration({ startTime, endTime }) as [
+                                  string
+                                ])
                               )}
                             </div>
                           </div>

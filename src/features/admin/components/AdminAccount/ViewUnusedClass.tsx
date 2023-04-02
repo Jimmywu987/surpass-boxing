@@ -12,20 +12,36 @@ import { AdminViewAccountOptionEnums } from "@/features/admin/enums/AdminOptionE
 import { Dispatch, SetStateAction, useState } from "react";
 import { Lessons } from "@prisma/client";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
+import { useRemoveLessonMutation } from "@/apis/api";
 
 export const ViewUnusedClass = ({
   lessons,
   setView,
+  setViewAccount,
 }: {
   lessons: Lessons[];
   setView: Dispatch<SetStateAction<AdminViewAccountOptionEnums>>;
+  setViewAccount: Dispatch<SetStateAction<UserType>>;
 }) => {
   const { t } = useTranslation("classes");
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
-
+  const { mutateAsync, isLoading } = useRemoveLessonMutation({
+    onSuccess: () => {
+      queryClient.invalidateQueries("users");
+    },
+  });
+  const removeLesson = async (id: string) => {
+    await mutateAsync({ id });
+    setViewAccount((prev) => {
+      return {
+        ...prev,
+        lessons: prev.lessons.filter((lesson) => lesson.id !== id),
+      };
+    });
+  };
   return (
-    <div>
+    <div className="space-y-2">
       <ChevronLeftIcon
         fontSize="3xl"
         cursor={"pointer"}
@@ -33,20 +49,30 @@ export const ViewUnusedClass = ({
           setView(AdminViewAccountOptionEnums.VIEW_ACCOUNT);
         }}
       />
-      {lessons.map((lesson, index) => {
-        return (
-          <div key={index}>
-            <div></div>
-            <p>
-              {t("admin:lesson_number")}: {lesson.lesson}
-            </p>
-            <p>
-              {t("admin:expired_date")}:{" "}
-              {format(new Date(lesson.expiryDate), "dd/MM/yyyy")}
-            </p>
+      <div className="space-y-2">
+        {lessons.map(({ lesson, expiryDate, id }, index) => (
+          <div key={index} className="flex justify-between items-end">
+            <div>
+              <p>
+                {t("admin:lesson_number")}: {lesson}
+              </p>
+              <p>
+                {t("admin:expired_date")}:{" "}
+                {format(new Date(expiryDate), "dd/MM/yyyy")}
+              </p>
+            </div>
+            <button
+              className="bg-red-600 px-2 py-1 text-white rounded hover:bg-red-500"
+              onClick={async () => {
+                await removeLesson(id);
+              }}
+              disabled={isLoading}
+            >
+              {t("common:action.delete")}
+            </button>
           </div>
-        );
-      })}
+        ))}
+      </div>
     </div>
   );
 };

@@ -69,6 +69,7 @@ const getDurationWhereQuery = ({
     lte: yesterday.getTime() < endDateTime.getTime() ? yesterday : endDateTime,
   };
 };
+
 const TAKE_NUMBER = 10;
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "POST") {

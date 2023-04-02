@@ -12,6 +12,8 @@ import { AdminViewAccountOptionEnums } from "@/features/admin/enums/AdminOptionE
 import { Dispatch, SetStateAction, useState } from "react";
 import { useBookingTimeSlotQuery } from "@/apis/api";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
+import { getTimeDuration } from "@/helpers/getTime";
+import { getDuration } from "@/helpers/getDuration";
 
 export const ViewUsedClass = ({
   bookingTimeSlotIds,
@@ -39,6 +41,28 @@ export const ViewUsedClass = ({
           setView(AdminViewAccountOptionEnums.VIEW_ACCOUNT);
         }}
       />
+      <div>
+        {data.bookingTimeSlots.map((bookingTimeSlot, index) => {
+          const { startTime, endTime, className, coachName, date } =
+            bookingTimeSlot;
+          return (
+            <div key={index}>
+              <p>{className}</p>
+              <p>{coachName}</p>
+              <div>
+                <p>{format(new Date(date!), "yyyy-MM-dd")}</p>
+                <div>
+                  {getTimeDuration({ startTime, endTime })}
+                  <div>
+                    {t("classes:duration")}:{" "}
+                    {t(...(getDuration({ startTime, endTime }) as [string]))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

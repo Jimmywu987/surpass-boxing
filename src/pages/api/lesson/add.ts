@@ -1,9 +1,9 @@
 import { prisma } from "@/services/prisma";
-import { getSession } from "next-auth/react";
+import { add } from "date-fns";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { subDays, add, format } from "date-fns";
+import { getSession } from "next-auth/react";
 
-import { BookingTimeSlotStatusEnum, User } from "@prisma/client";
+import { User } from "@prisma/client";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });

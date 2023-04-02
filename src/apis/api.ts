@@ -25,6 +25,10 @@ const fetcher = async (url: string, params?: any) => {
   }
   throw Error(res?.data.errorMessage);
 };
+type UseReactQueryOption = Omit<
+  UseMutationOptions<any, unknown, any, unknown>,
+  "mutationFn" | "mutationKey"
+>;
 
 export const useCreateClassTypeMutation = () =>
   useMutation(["createClassType"], async (params: any) => {
@@ -108,13 +112,24 @@ export const useClassTypeQuery = () =>
     return await fetcher("/api/class/fetch");
   });
 
-export const useBookingTimeSlotQuery = ({ ids }: { ids: string[] }) =>
+export const useBookingTimeSlotQuery = ({ ids = [] }: { ids?: string[] }) =>
   useQuery<{ bookingTimeSlots: BookingTimeSlots[] }>(
     ["bookingTimeSlot", ids],
     async () => {
       return await fetcher("/api/booking-time-slot/fetch", {
         ids,
       });
+    }
+  );
+
+export const useBookingTimeSlotForStudentQuery = (variable?: unknown) =>
+  useQuery<{ bookingTimeSlots: BookingTimeSlots[] }>(
+    ["bookingTimeSlot", variable],
+    async () => {
+      return await fetcher(
+        "/api/booking-time-slot/fetch-for-student",
+        variable
+      );
     }
   );
 
@@ -134,7 +149,16 @@ export const useUsersQuery = (admin = false, variable?: unknown) =>
     );
   });
 
-export const useAddClassMutation = () =>
-  useMutation(["addClass"], async (params: any) => {
-    return await fetcher("/api/class/add", params);
+export const useAddLessonMutation = () =>
+  useMutation(["addLesson"], async (params: any) => {
+    return await fetcher("/api/lesson/add", params);
   });
+
+export const useRemoveLessonMutation = (options?: UseReactQueryOption) =>
+  useMutation(
+    ["removeLesson"],
+    async (params: any) => {
+      return await fetcher("/api/lesson/remove", params);
+    },
+    options
+  );
