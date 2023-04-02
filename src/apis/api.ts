@@ -122,7 +122,11 @@ export const useBookingTimeSlotQuery = ({ ids = [] }: { ids?: string[] }) =>
 export const useBookingTimeSlotForStudentQuery = (variable?: unknown) =>
   useQuery<{
     totalClassesCount: number;
-    regularBookingSlot: RegularBookingTimeSlots[];
+    regularBookingSlot: (RegularBookingTimeSlots & {
+      coach: {
+        username: string;
+      };
+    })[];
     bookingTimeSlots: BookingTimeSlots[];
   }>(["bookingTimeSlot", variable], async () => {
     return await fetcher("/api/booking-time-slot/fetch-for-student", variable);

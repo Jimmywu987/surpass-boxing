@@ -23,9 +23,7 @@ import { PageNumberDisplay } from "@/features/common/components/PageNumberDispla
 import { timeSlotSelector, updateTimeSlot } from "@/redux/timeSlot";
 import { useDispatch, useSelector } from "react-redux";
 import { AdminPeriodOptionsEnum } from "../enums/AdminOptionEnums";
-
-const SKIP_NUMBER = 10;
-const TAKE_NUMBER = 10;
+import { SKIP_NUMBER, TAKE_NUMBER } from "@/constants";
 
 export const AdminInPastClass = () => {
   const { t } = useTranslation("admin");
