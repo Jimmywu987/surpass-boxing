@@ -1,22 +1,19 @@
-import { req } from "./https";
-import {
-  useQuery,
-  useMutation,
-  UseMutationOptions,
-  UseQueryOptions,
-} from "react-query";
+import { UserType } from "@/types";
+import { SortedBookingTimeSlotsType } from "@/types/timeSlots";
 import {
   BookingTimeSlots,
   BookingTimeSlotStatusEnum,
   ClassesType,
-  Lessons,
   News,
   RegularBookingTimeSlots,
-  User,
-  UserOnBookingTimeSlots,
 } from "@prisma/client";
-import { SortedBookingTimeSlotsType } from "@/types/timeSlots";
-import { UserType } from "@/types";
+import {
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+  UseQueryOptions,
+} from "react-query";
+import { req } from "./https";
 
 const fetcher = async (url: string, params?: any) => {
   const res = await req("post", url, params);
@@ -123,15 +120,13 @@ export const useBookingTimeSlotQuery = ({ ids = [] }: { ids?: string[] }) =>
   );
 
 export const useBookingTimeSlotForStudentQuery = (variable?: unknown) =>
-  useQuery<{ bookingTimeSlots: BookingTimeSlots[] }>(
-    ["bookingTimeSlot", variable],
-    async () => {
-      return await fetcher(
-        "/api/booking-time-slot/fetch-for-student",
-        variable
-      );
-    }
-  );
+  useQuery<{
+    totalClassesCount: number;
+    regularBookingSlot: RegularBookingTimeSlots[];
+    bookingTimeSlots: BookingTimeSlots[];
+  }>(["bookingTimeSlot", variable], async () => {
+    return await fetcher("/api/booking-time-slot/fetch-for-student", variable);
+  });
 
 export const useNewsQuery = () =>
   useQuery<{ news: News[] }>(["news"], async () => {

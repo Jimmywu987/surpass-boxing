@@ -1,4 +1,4 @@
-import { Button, useDisclosure } from "@chakra-ui/react";
+import { Button, Skeleton, Stack, useDisclosure } from "@chakra-ui/react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { subDays, endOfDay, format } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
@@ -39,6 +39,13 @@ const ClassesPage = () => {
   });
   const minDate = endOfDay(subDays(new Date(), 1));
   const { data, isLoading } = useBookingTimeSlotForStudentQuery(query);
+  if (!data || isLoading) {
+    return (
+      <Stack>
+        <Skeleton height="30px" />
+      </Stack>
+    );
+  }
   return (
     <>
       <div>

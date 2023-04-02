@@ -1,19 +1,5 @@
-import { AdminPeriodOptionsEnum } from "@/features/admin/enums/AdminOptionEnums";
 import { prisma } from "@/services/prisma";
-import { SortedBookingTimeSlotsType } from "@/types/timeSlots";
-import { BookingTimeSlots, BookingTimeSlotStatusEnum } from "@prisma/client";
-import {
-  format,
-  startOfDay,
-  startOfWeek,
-  endOfWeek,
-  endOfDay,
-  startOfMonth,
-  endOfMonth,
-  startOfYear,
-  endOfYear,
-  subDays,
-} from "date-fns";
+import { format, startOfDay, endOfDay } from "date-fns";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const getDurationWhereQuery = ({ date }: { date: string }) => {
@@ -77,7 +63,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               .map((slot) => slot.regularBookingTimeSlotId)
               .filter((id) => id) as string[])
           : [];
+
       const regularBookingSlot = await txn.regularBookingTimeSlots.findMany({
+        take: TAKE_NUMBER,
+        skip,
         where: {
           [weekday]: true,
           id: { notIn: regularBookingSlotIds },
@@ -97,10 +86,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       };
     });
 
-    return res.status(201).json({
-      ...result,
-      bookingTimeSlots: sortedBookingTimeSlots,
-    });
+    return res.status(201).json(result);
   } catch (error) {
     return res.status(500).json({ errorMessage: "Something went wrong" });
   }
