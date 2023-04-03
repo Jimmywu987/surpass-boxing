@@ -3,8 +3,9 @@ import { BookingTimeSlotStatusEnum } from "@prisma/client";
 import { format, startOfDay, endOfDay } from "date-fns";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-const getDurationWhereQuery = ({ date }: { date: string }) => {
+const getDurationWhereQuery = (date: string) => {
   const dateTime = new Date(date);
+
   return {
     gte: startOfDay(dateTime),
     lte: endOfDay(dateTime),
@@ -18,24 +19,22 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   const { skip, date } = req.body;
+
   const weekday = format(new Date(date), "EEEE").toLowerCase();
+  console.log(weekday);
   try {
     const result = await prisma.$transaction(async (txn) => {
       const whereQuery = getDurationWhereQuery(date);
+
       const totalClasses = await txn.bookingTimeSlots.aggregate({
         where: {
           date: whereQuery,
+          status: { not: BookingTimeSlotStatusEnum.CANCELED },
         },
         _count: true,
       });
       const totalClassesCount = totalClasses._count;
-      if (totalClassesCount === 0) {
-        return {
-          totalClassesCount: 0,
-          bookingTimeSlots: [],
-          regularBookingSlot: [],
-        };
-      }
+
       const bookingTimeSlots = await txn.bookingTimeSlots.findMany({
         take: TAKE_NUMBER,
         skip,
@@ -71,7 +70,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         skip,
         where: {
           [weekday]: true,
-          id: { notIn: regularBookingSlotIds },
+          id: {
+            not: {
+              in: regularBookingSlotIds,
+            },
+          },
         },
         include: {
           coach: {
