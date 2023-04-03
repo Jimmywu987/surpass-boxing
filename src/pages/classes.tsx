@@ -54,12 +54,15 @@ const ClassesPage = () => {
     if (!data) {
       return [];
     }
-    const bookingTimeSlots: (BookingTimeSlots | RegularBookingTimeSlots)[] =
-      data.bookingTimeSlots;
-    bookingTimeSlots.concat(data.regularBookingSlot);
-    bookingTimeSlots.sort((a, b) => a.startTime - b.startTime);
-    return bookingTimeSlots;
+    const timeSlots: (BookingTimeSlots | RegularBookingTimeSlots)[] = [];
+    const { bookingTimeSlots, regularBookingSlot } = data;
+    timeSlots.push(...bookingTimeSlots);
+    timeSlots.push(...regularBookingSlot);
+    timeSlots.sort((a, b) => a.startTime - b.startTime);
+    return timeSlots;
   }, [data]);
+
+  console.log("classes", classes);
   if (!data || isLoading) {
     return (
       <Stack>
