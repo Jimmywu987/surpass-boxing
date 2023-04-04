@@ -252,8 +252,10 @@ const ClassesPage = () => {
                 <ChevronRightIcon className="text-xl" />
               </button>
             </div>
-          ) : (
+          ) : data.regularBookingSlot.length === 0 ? (
             <div>{t("admin:no_data")}</div>
+          ) : (
+            <></>
           )}
         </div>
       </div>
