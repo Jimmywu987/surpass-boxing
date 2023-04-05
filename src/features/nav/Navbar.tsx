@@ -29,6 +29,7 @@ import { useRouter } from "next/router";
 import { LanguageSvgIcon } from "@/features/common/components/buttons/svg/LanguageSvgIcon";
 import { MobileNavbar } from "@/features/nav/MobileNavbar";
 import OneSignal from "react-onesignal";
+import { useOneSignal } from "@/features/common/hooks/useOneSignal";
 
 export const Navbar = () => {
   const dispatch = useDispatch();
@@ -42,22 +43,8 @@ export const Navbar = () => {
   const session = useSession();
   const isAuthenticated = session.status === "authenticated";
   const user = session.data?.user as User;
-  const initializeOneSignal = async (uid: string) => {
-    if (oneSignalInitialized) {
-      return;
-    }
-    setOneSignalInitialized(true);
-    await OneSignal.init({
-      appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID as string,
-      notifyButton: {
-        enable: true,
-      },
+  useOneSignal();
 
-      allowLocalhostAsSecureOrigin: true,
-    });
-
-    await OneSignal.setExternalUserId(uid);
-  };
   useEffect(() => {
     const storeUserToRedux = async () => {
       const session = await getSession();
@@ -73,7 +60,6 @@ export const Navbar = () => {
             username,
           })
         );
-        initializeOneSignal(id as string);
       } else {
         dispatch(clearUserInfo());
       }

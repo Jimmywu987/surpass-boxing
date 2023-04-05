@@ -1,7 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextTranslate = require("next-translate");
 
-const nextConfig = {
+const withNextPwa = require("next-pwa")({
+  disable: process.env.NODE_ENV === "development",
+  dest: "public",
+  register: true,
+  skipWaiting: true,
+});
+
+const nextConfig = nextTranslate({
   reactStrictMode: true,
   swcMinify: true,
   images: {
@@ -18,6 +25,6 @@ const nextConfig = {
       JWT_SECRET: process.env.JWT_SECRET,
     },
   },
-};
+});
 
-module.exports = nextTranslate(nextConfig);
+module.exports = withNextPwa(nextConfig);
