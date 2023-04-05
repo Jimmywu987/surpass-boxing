@@ -11,7 +11,7 @@ import { User } from "@prisma/client";
 import Image from "next/image";
 import { useSession, getSession } from "next-auth/react";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useTranslation from "next-translate/useTranslation";
 import {
@@ -28,10 +28,12 @@ import { Menu, MenuButton, MenuList, MenuItem, Button } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { LanguageSvgIcon } from "@/features/common/components/buttons/svg/LanguageSvgIcon";
 import { MobileNavbar } from "@/features/nav/MobileNavbar";
+import OneSignal from "react-onesignal";
 
 export const Navbar = () => {
   const dispatch = useDispatch();
   const { t, lang } = useTranslation("common");
+  const [oneSignalInitialized, setOneSignalInitialized] = useState(false);
   const router = useRouter();
   const { pathname, asPath, query } = router;
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -40,12 +42,27 @@ export const Navbar = () => {
   const session = useSession();
   const isAuthenticated = session.status === "authenticated";
   const user = session.data?.user as User;
+  const initializeOneSignal = async (uid: string) => {
+    if (oneSignalInitialized) {
+      return;
+    }
+    setOneSignalInitialized(true);
+    await OneSignal.init({
+      appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID as string,
+      notifyButton: {
+        enable: true,
+      },
 
+      allowLocalhostAsSecureOrigin: true,
+    });
+
+    await OneSignal.setExternalUserId(uid);
+  };
   useEffect(() => {
     const storeUserToRedux = async () => {
       const session = await getSession();
       if (session) {
-        const { email, admin, phoneNumber, profileImg, username } =
+        const { email, admin, phoneNumber, profileImg, username, id } =
           session?.user as Partial<User>;
         dispatch(
           updateUser({
@@ -56,6 +73,7 @@ export const Navbar = () => {
             username,
           })
         );
+        initializeOneSignal(id as string);
       } else {
         dispatch(clearUserInfo());
       }
