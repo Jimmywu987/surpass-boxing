@@ -5,13 +5,9 @@ import useTranslation from "next-translate/useTranslation";
 import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
 import { SignUpForm } from "@/features/signUp/components/SignUpForm";
 import { LoginForm } from "@/features/login/components/LoginForm";
+import Image from "next/image";
+import DefaultProfileImg from "@/../public/default-profile-img.png";
 
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalCloseButton,
-} from "@chakra-ui/react";
 import { OpenModelType } from "@/features/common/enums/OpenModelType";
 import { useSession } from "next-auth/react";
 import {
@@ -38,9 +34,11 @@ const ClassesPage = () => {
   const [modelType, setModelType] = useState(OpenModelType.OPEN_CLASS);
   const modalDisclosure = useDisclosure();
   const { onOpen } = modalDisclosure;
-  const handleOpenModel = () => {
+  const handleOpenModel = (type: OpenModelType) => {
     if (!isAuthenticated) {
       setModelType(OpenModelType.SIGN_UP);
+    } else {
+      setModelType(type);
     }
     onOpen();
   };
@@ -117,7 +115,9 @@ const ClassesPage = () => {
             {t(format(query.date, "EEEE").toLowerCase())}
           </div>
           <div>
-            <Button onClick={handleOpenModel}>{t("open_a_class")}</Button>
+            <Button onClick={() => handleOpenModel(OpenModelType.OPEN_CLASS)}>
+              {t("open_a_class")}
+            </Button>
           </div>
         </div>
         <div>
@@ -131,6 +131,7 @@ const ClassesPage = () => {
                 };
               })[];
             };
+
             const regularBookingTimeSlot = slot as RegularBookingTimeSlots & {
               coach: {
                 username: string;
@@ -142,7 +143,7 @@ const ClassesPage = () => {
               <div
                 key={slot.id}
                 className="flex justify-between p-5 border border-gray-600 rounded-md shadow-lg hover:bg-gray-500 cursor-pointer text-white"
-                onClick={() => {}}
+                onClick={() => handleOpenModel(OpenModelType.VIEW_CLASS)}
               >
                 <div className="space-y-2">
                   <div className="text-2xl flex items-center space-x-2">
@@ -186,6 +187,26 @@ const ClassesPage = () => {
                           {": "}
                           {regularBookingTimeSlot.coach.username}
                         </div>
+                      )}
+                    {!isRegular &&
+                      bookingTimeSlot.userOnBookingTimeSlots.map(
+                        (slot, index) => {
+                          return (
+                            <div key={index}>
+                              <div>{slot.user.username}</div>
+                              <div className="w-10 h-10 relative">
+                                <Image
+                                  src={
+                                    slot.user.profileImg ?? DefaultProfileImg
+                                  }
+                                  alt={`${slot.user.username} profile image`}
+                                  className="w-full h-full rounded-full object-cover"
+                                  fill
+                                />
+                              </div>
+                            </div>
+                          );
+                        }
                       )}
                     {!isRegular && !!slot.numberOfParticipants && (
                       <div>
@@ -258,7 +279,11 @@ const ClassesPage = () => {
         modalDisclosure={modalDisclosure}
         content={
           isAuthenticated ? (
-            <CreateBookingTimeSlotForm />
+            modelType === OpenModelType.OPEN_CLASS ? (
+              <CreateBookingTimeSlotForm />
+            ) : (
+              <div></div>
+            )
           ) : (
             <>
               {modelType === OpenModelType.SIGN_UP && (
