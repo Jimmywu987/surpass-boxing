@@ -73,7 +73,7 @@ const ClassesPage = () => {
 
   return (
     <>
-      <div>
+      <div className="space-y-2">
         <h1 className="text-white text-3xl">{t("classes")}</h1>
         <div className="flex space-x-2 items-center">
           <div className="w-36">
@@ -121,7 +121,7 @@ const ClassesPage = () => {
           </div>
         </div>
         <div>
-          {classes.map((slot, indx) => {
+          {classes.map((slot) => {
             const { startTime, endTime } = slot;
             const bookingTimeSlot = slot as BookingTimeSlots & {
               userOnBookingTimeSlots: (UserOnBookingTimeSlots & {
@@ -136,25 +136,23 @@ const ClassesPage = () => {
                 username: string;
               };
             };
-            const isRegularBookingTimeSlot = bookingTimeSlot.status
-              ? false
-              : true;
+            const isRegular = !bookingTimeSlot.status;
+
             return (
               <div
                 key={slot.id}
-                className="flex justify-between p-5 border border-gray-600 rounded-md shadow-lg hover:bg-gray-400 cursor-pointer"
+                className="flex justify-between p-5 border border-gray-600 rounded-md shadow-lg hover:bg-gray-500 cursor-pointer text-white"
                 onClick={() => {}}
               >
                 <div className="space-y-2">
                   <div className="text-2xl flex items-center space-x-2">
-                    {!isRegularBookingTimeSlot &&
+                    {!isRegular &&
                       bookingTimeSlot.status ===
                         BookingTimeSlotStatusEnum.CONFIRM && (
                         <CheckIcon bg="green.600" rounded="full" p="1" />
                       )}
                     <span className="font-semibold">{slot.className}</span>
                   </div>
-
                   <div>
                     {getTimeDuration({
                       startTime,
@@ -173,15 +171,14 @@ const ClassesPage = () => {
                 </div>
                 <div className="flex flex-col justify-between">
                   <div>
-                    {!isRegularBookingTimeSlot &&
-                      !!bookingTimeSlot.coachName && (
-                        <div className="">
-                          {t("classes:coaches")}
-                          {": "}
-                          {bookingTimeSlot.coachName}
-                        </div>
-                      )}
-                    {isRegularBookingTimeSlot &&
+                    {!isRegular && !!bookingTimeSlot.coachName && (
+                      <div className="">
+                        {t("classes:coaches")}
+                        {": "}
+                        {bookingTimeSlot.coachName}
+                      </div>
+                    )}
+                    {isRegular &&
                       regularBookingTimeSlot.coach &&
                       !!regularBookingTimeSlot.coach.username && (
                         <div className="">
@@ -190,22 +187,20 @@ const ClassesPage = () => {
                           {regularBookingTimeSlot.coach.username}
                         </div>
                       )}
-                    {!isRegularBookingTimeSlot &&
-                      !!slot.numberOfParticipants && (
-                        <div>
-                          {t("classes:set_limit")}
-                          {": "}
-                          {`${bookingTimeSlot.userOnBookingTimeSlots.length} /${slot.numberOfParticipants}`}
-                        </div>
-                      )}
-                    {!isRegularBookingTimeSlot &&
-                      !slot.numberOfParticipants && (
-                        <div>
-                          {t("classes:number_of_participants")}
-                          {": "}
-                          {`${bookingTimeSlot.userOnBookingTimeSlots.length}`}
-                        </div>
-                      )}
+                    {!isRegular && !!slot.numberOfParticipants && (
+                      <div>
+                        {t("classes:set_limit")}
+                        {": "}
+                        {`${bookingTimeSlot.userOnBookingTimeSlots.length} /${slot.numberOfParticipants}`}
+                      </div>
+                    )}
+                    {!isRegular && !slot.numberOfParticipants && (
+                      <div>
+                        {t("classes:number_of_participants")}
+                        {": "}
+                        {`${bookingTimeSlot.userOnBookingTimeSlots.length}`}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
