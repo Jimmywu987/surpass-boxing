@@ -11,12 +11,12 @@ export default function Document() {
         <meta name="apple-mobile-web-app-title" content="PWA App" />
         <meta name="description" content="Surpass boxing gym" />
         <meta name="format-detection" content="telephone=no" />
+        <meta name="theme-color" content="#fff" />
+
         {/* <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-config" content="/icons/browserconfig.xml" />
         <meta name="msapplication-TileColor" content="#2B5797" />
         <meta name="msapplication-tap-highlight" content="no" />
-        <meta name="theme-color" content="#000000" />
-
         <link rel="apple-touch-icon" href="/icons/touch-icon-iphone.png" />
         <link
           rel="apple-touch-icon"
