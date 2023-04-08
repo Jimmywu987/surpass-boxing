@@ -24,6 +24,7 @@ import { timeSlotSelector, updateTimeSlot } from "@/redux/timeSlot";
 import { useDispatch, useSelector } from "react-redux";
 import { AdminPeriodOptionsEnum } from "../enums/AdminOptionEnums";
 import { SKIP_NUMBER, TAKE_NUMBER } from "@/constants";
+import { DatePicker } from "@/features/common/components/DatePicker";
 
 export const AdminInPastClass = () => {
   const { t } = useTranslation("admin");
@@ -73,44 +74,18 @@ export const AdminInPastClass = () => {
         }`}
       >
         <div className="w-36">
-          <SingleDatepicker
-            disabled={query.period === AdminPeriodOptionsEnum.ALL}
-            name="date-input"
-            date={query.date}
-            onDateChange={(value) => {
-              setQuery({
-                skip: 0,
-                date: value,
-                period: query.period,
-              });
-            }}
-            maxDate={yesterday}
-            propsConfigs={{
-              dayOfMonthBtnProps: {
-                defaultBtnProps: {
-                  borderColor: "gray.800",
-                  _hover: {
-                    background: "blue.400",
-                  },
-                },
-                selectedBtnProps: {
-                  background: "#EE72B6",
-                },
-                todayBtnProps: {
-                  background: "teal.600",
-                },
+          <DatePicker
+            datePickerProps={{
+              disabled: query.period === AdminPeriodOptionsEnum.ALL,
+              date: query.date,
+              onDateChange: (value) => {
+                setQuery({
+                  skip: 0,
+                  date: value,
+                  period: query.period,
+                });
               },
-              inputProps: {
-                color: "white",
-                size: "sm",
-                cursor: "pointer",
-              },
-              popoverCompProps: {
-                popoverContentProps: {
-                  background: "gray.700",
-                  color: "white",
-                },
-              },
+              maxDate: yesterday,
             }}
           />
         </div>
@@ -157,7 +132,6 @@ export const AdminInPastClass = () => {
                   </div>
                   {timeSlots.map((timeSlot) => {
                     const { startTime, endTime } = timeSlot;
-
                     return (
                       <div
                         key={timeSlot.id}
@@ -184,7 +158,6 @@ export const AdminInPastClass = () => {
                               </span>
                             )}
                           </div>
-
                           <div>
                             {getTimeDuration({ startTime, endTime })}
                             <div>
