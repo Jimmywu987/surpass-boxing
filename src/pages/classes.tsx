@@ -22,24 +22,28 @@ import { ModalComponent } from "@/features/common/components/Modal";
 import { CreateBookingTimeSlotForm } from "@/features/classes/components/CreateBookingTimeSlotForm";
 import { useBookingTimeSlotForStudentQuery } from "@/apis/api";
 import { SKIP_NUMBER, TAKE_NUMBER } from "@/constants";
-import { CheckIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import {
+  AddIcon,
+  CheckIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  MinusIcon,
+} from "@chakra-ui/icons";
 import { PageNumberDisplay } from "@/features/common/components/PageNumberDisplay";
 import { getTimeDuration } from "@/helpers/getTime";
 import { getDuration } from "@/helpers/getDuration";
+import { DatePicker } from "@/features/common/components/DatePicker";
 const ClassesPage = () => {
   const { t, lang } = useTranslation("classes");
   const session = useSession();
   const isAuthenticated = session.status === "authenticated";
   const user = session.data?.user as User;
   const [modelType, setModelType] = useState(OpenModelType.OPEN_CLASS);
+  const [pickedClass, setPickedClass] = useState(false);
   const modalDisclosure = useDisclosure();
   const { onOpen } = modalDisclosure;
   const handleOpenModel = (type: OpenModelType) => {
-    if (!isAuthenticated) {
-      setModelType(OpenModelType.SIGN_UP);
-    } else {
-      setModelType(type);
-    }
+    setModelType(type);
     onOpen();
   };
   const [query, setQuery] = useState({
@@ -59,7 +63,9 @@ const ClassesPage = () => {
     timeSlots.sort((a, b) => a.startTime - b.startTime);
     return timeSlots;
   }, [data]);
-
+  const joinClass = async (slot: BookingTimeSlots) => {};
+  const joinRegularClass = async (slot: RegularBookingTimeSlots) => {};
+  const leaveClass = async (slot: BookingTimeSlots) => {};
   console.log("classes", classes);
   if (!data || isLoading) {
     return (
@@ -75,39 +81,13 @@ const ClassesPage = () => {
         <h1 className="text-white text-3xl">{t("classes")}</h1>
         <div className="flex space-x-2 items-center">
           <div className="w-36">
-            <SingleDatepicker
-              name="date-input"
-              date={query.date}
-              onDateChange={(value) => {
-                setQuery(() => ({ skip: 0, date: value }));
-              }}
-              minDate={minDate}
-              propsConfigs={{
-                dayOfMonthBtnProps: {
-                  defaultBtnProps: {
-                    borderColor: "gray.800",
-                    _hover: {
-                      background: "blue.400",
-                    },
-                  },
-                  selectedBtnProps: {
-                    background: "#EE72B6",
-                  },
-                  todayBtnProps: {
-                    background: "teal.600",
-                  },
+            <DatePicker
+              datePickerProps={{
+                date: query.date,
+                onDateChange: (value) => {
+                  setQuery(() => ({ skip: 0, date: value }));
                 },
-                inputProps: {
-                  color: "white",
-                  size: "sm",
-                  cursor: "pointer",
-                },
-                popoverCompProps: {
-                  popoverContentProps: {
-                    background: "gray.700",
-                    color: "white",
-                  },
-                },
+                minDate: minDate,
               }}
             />
           </div>
@@ -115,7 +95,15 @@ const ClassesPage = () => {
             {t(format(query.date, "EEEE").toLowerCase())}
           </div>
           <div>
-            <Button onClick={() => handleOpenModel(OpenModelType.OPEN_CLASS)}>
+            <Button
+              onClick={() =>
+                handleOpenModel(
+                  isAuthenticated
+                    ? OpenModelType.OPEN_CLASS
+                    : OpenModelType.LOGIN
+                )
+              }
+            >
               {t("open_a_class")}
             </Button>
           </div>
@@ -131,7 +119,6 @@ const ClassesPage = () => {
                 };
               })[];
             };
-
             const regularBookingTimeSlot = slot as RegularBookingTimeSlots & {
               coach: {
                 username: string;
@@ -139,11 +126,16 @@ const ClassesPage = () => {
             };
             const isRegular = !bookingTimeSlot.status;
 
+            const isJoined =
+              isAuthenticated &&
+              bookingTimeSlot.userOnBookingTimeSlots.some((slot) => {
+                slot.userId === user.id;
+              });
             return (
               <div
                 key={slot.id}
-                className="flex justify-between p-5 border border-gray-600 rounded-md shadow-lg hover:bg-gray-500 cursor-pointer text-white"
-                onClick={() => handleOpenModel(OpenModelType.VIEW_CLASS)}
+                className="flex justify-between p-5 border border-gray-600 rounded-md shadow-lg text-white"
+                onClick={() => {}}
               >
                 <div className="space-y-2">
                   <div className="text-2xl flex items-center space-x-2">
@@ -169,6 +161,43 @@ const ClassesPage = () => {
                       )}
                     </div>
                   </div>
+                  {!isRegular && (
+                    <div>
+                      {bookingTimeSlot.userOnBookingTimeSlots.map(
+                        (slot, index) => {
+                          return (
+                            <div key={index}>
+                              <div>{slot.user.username}</div>
+                              <div className="w-10 h-10 relative">
+                                <Image
+                                  src={
+                                    slot.user.profileImg ?? DefaultProfileImg
+                                  }
+                                  alt={`${slot.user.username} profile image`}
+                                  className="w-full h-full rounded-full object-cover"
+                                  fill
+                                />
+                              </div>
+                            </div>
+                          );
+                        }
+                      )}
+                      {!!slot.numberOfParticipants && (
+                        <div>
+                          {t("classes:set_limit")}
+                          {": "}
+                          {`${bookingTimeSlot.userOnBookingTimeSlots.length} /${slot.numberOfParticipants}`}
+                        </div>
+                      )}
+                      {!slot.numberOfParticipants && (
+                        <div>
+                          {t("classes:number_of_participants")}
+                          {": "}
+                          {`${bookingTimeSlot.userOnBookingTimeSlots.length}`}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
                 <div className="flex flex-col justify-between">
                   <div>
@@ -188,39 +217,39 @@ const ClassesPage = () => {
                           {regularBookingTimeSlot.coach.username}
                         </div>
                       )}
-                    {!isRegular &&
-                      bookingTimeSlot.userOnBookingTimeSlots.map(
-                        (slot, index) => {
-                          return (
-                            <div key={index}>
-                              <div>{slot.user.username}</div>
-                              <div className="w-10 h-10 relative">
-                                <Image
-                                  src={
-                                    slot.user.profileImg ?? DefaultProfileImg
-                                  }
-                                  alt={`${slot.user.username} profile image`}
-                                  className="w-full h-full rounded-full object-cover"
-                                  fill
-                                />
-                              </div>
-                            </div>
-                          );
-                        }
-                      )}
-                    {!isRegular && !!slot.numberOfParticipants && (
-                      <div>
-                        {t("classes:set_limit")}
-                        {": "}
-                        {`${bookingTimeSlot.userOnBookingTimeSlots.length} /${slot.numberOfParticipants}`}
-                      </div>
-                    )}
-                    {!isRegular && !slot.numberOfParticipants && (
-                      <div>
-                        {t("classes:number_of_participants")}
-                        {": "}
-                        {`${bookingTimeSlot.userOnBookingTimeSlots.length}`}
-                      </div>
+                  </div>
+                  <div className="self-end">
+                    {isJoined ? (
+                      <MinusIcon
+                        bg="red.600"
+                        rounded="full"
+                        p="1.5"
+                        className="text-2xl cursor-pointer"
+                        onClick={async () => {
+                          await leaveClass(slot as BookingTimeSlots);
+                        }}
+                      />
+                    ) : (
+                      <AddIcon
+                        bg="green.600"
+                        rounded="full"
+                        p="1.5"
+                        className="text-2xl cursor-pointer"
+                        onClick={async () => {
+                          setPickedClass(true);
+                          if (!isAuthenticated) {
+                            handleOpenModel(OpenModelType.LOGIN);
+                            return;
+                          }
+                          if (isRegular) {
+                            await joinRegularClass(
+                              slot as RegularBookingTimeSlots
+                            );
+                            return;
+                          }
+                          await joinClass(slot as BookingTimeSlots);
+                        }}
+                      />
                     )}
                   </div>
                 </div>
@@ -279,11 +308,7 @@ const ClassesPage = () => {
         modalDisclosure={modalDisclosure}
         content={
           isAuthenticated ? (
-            modelType === OpenModelType.OPEN_CLASS ? (
-              <CreateBookingTimeSlotForm />
-            ) : (
-              <div></div>
-            )
+            <CreateBookingTimeSlotForm />
           ) : (
             <>
               {modelType === OpenModelType.SIGN_UP && (

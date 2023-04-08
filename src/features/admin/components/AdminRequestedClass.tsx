@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ViewRequestedClass } from "./ViewRequestedClass";
 import { SKIP_NUMBER, TAKE_NUMBER } from "@/constants";
 import { PageNumberDisplay } from "@/features/common/components/PageNumberDisplay";
+import { DatePicker } from "@/features/common/components/DatePicker";
 
 export const AdminRequestedClass = () => {
   const { t } = useTranslation("admin");
@@ -66,42 +67,16 @@ export const AdminRequestedClass = () => {
       </div>
       <div className="flex space-x-2 items-center">
         <div className="w-36">
-          <SingleDatepicker
-            name="date-input"
-            date={query.date}
-            onDateChange={(value) => {
-              setQuery({
-                skip: 0,
-                date: value,
-              });
-            }}
-            minDate={minDate}
-            propsConfigs={{
-              dayOfMonthBtnProps: {
-                defaultBtnProps: {
-                  borderColor: "gray.800",
-                  _hover: {
-                    background: "blue.400",
-                  },
-                },
-                selectedBtnProps: {
-                  background: "#EE72B6",
-                },
-                todayBtnProps: {
-                  background: "teal.600",
-                },
+          <DatePicker
+            datePickerProps={{
+              date: query.date,
+              onDateChange: (value) => {
+                setQuery({
+                  skip: 0,
+                  date: value,
+                });
               },
-              inputProps: {
-                color: "white",
-                size: "sm",
-                cursor: "pointer",
-              },
-              popoverCompProps: {
-                popoverContentProps: {
-                  background: "gray.700",
-                  color: "white",
-                },
-              },
+              minDate: minDate,
             }}
           />
         </div>
