@@ -162,17 +162,29 @@ export const useRemoveLessonMutation = (options?: UseReactQueryOption) =>
     options
   );
 
-export const useJoinClassMutation = () =>
-  useMutation(["joinClass"], async (params: any) => {
-    return await fetcher("/api/class/requested/join", params);
-  });
+export const useJoinClassMutation = (options?: UseReactQueryOption) =>
+  useMutation(
+    ["joinClass"],
+    async (params: any) => {
+      return await fetcher("/api/class/requested/join", params);
+    },
+    options
+  );
 
-export const useJoinRegularClassMutation = () =>
-  useMutation(["joinRegularClass"], async (params: any) => {
-    return await fetcher("/api/class/regular/join", params);
-  });
+export const useJoinRegularClassMutation = (options?: UseReactQueryOption) =>
+  useMutation(
+    ["joinRegularClass"],
+    async (params: any) => {
+      return await fetcher("/api/class/regular/join", params);
+    },
+    options
+  );
 
-export const useLeaveClassMutation = () =>
-  useMutation(["leaveClass"], async (params: any) => {
-    return await fetcher("/api/class/requested/leave", params);
-  });
+export const useLeaveClassMutation = (options?: UseReactQueryOption) =>
+  useMutation(
+    ["leaveClass"],
+    async (params: any) => {
+      return await fetcher("/api/class/requested/leave", params);
+    },
+    options
+  );

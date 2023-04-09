@@ -1,6 +1,6 @@
 import { Button, Skeleton, Stack, useDisclosure } from "@chakra-ui/react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
-import { subDays, endOfDay, format } from "date-fns";
+import { subDays, endOfDay, format, isAfter } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
 import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
 import { SignUpForm } from "@/features/signUp/components/SignUpForm";
@@ -21,7 +21,12 @@ import {
 
 import { ModalComponent } from "@/features/common/components/Modal";
 import { CreateBookingTimeSlotForm } from "@/features/classes/components/CreateBookingTimeSlotForm";
-import { useBookingTimeSlotForStudentQuery } from "@/apis/api";
+import {
+  useBookingTimeSlotForStudentQuery,
+  useJoinClassMutation,
+  useJoinRegularClassMutation,
+  useLeaveClassMutation,
+} from "@/apis/api";
 import { SKIP_NUMBER, TAKE_NUMBER } from "@/constants";
 import {
   AddIcon,
@@ -34,13 +39,33 @@ import { PageNumberDisplay } from "@/features/common/components/PageNumberDispla
 import { getTimeDuration } from "@/helpers/getTime";
 import { getDuration } from "@/helpers/getDuration";
 import { DatePicker } from "@/features/common/components/DatePicker";
+import { useQueryClient } from "react-query";
 const ClassesPage = () => {
   const { t, lang } = useTranslation("classes");
   const session = useSession();
+  const queryClient = useQueryClient();
+
   const isAuthenticated = session.status === "authenticated";
   const user = session.data?.user as User & { lessons: Lessons[] };
   const [modelType, setModelType] = useState(OpenModelType.OPEN_CLASS);
-  const [pickedClass, setPickedClass] = useState(false);
+
+  const { mutateAsync: joinClassMutateAsync } = useJoinClassMutation({
+    onSuccess: () => {
+      queryClient.invalidateQueries("bookingTimeSlot");
+    },
+  });
+  const { mutateAsync: joinRegularClassMutateAsync } =
+    useJoinRegularClassMutation({
+      onSuccess: () => {
+        queryClient.invalidateQueries("bookingTimeSlot");
+      },
+    });
+  const { mutateAsync: leaveClassMutateAsync } = useLeaveClassMutation({
+    onSuccess: () => {
+      queryClient.invalidateQueries("bookingTimeSlot");
+    },
+  });
+
   const modalDisclosure = useDisclosure();
   const { onOpen } = modalDisclosure;
   const handleOpenModel = (type: OpenModelType) => {
@@ -67,17 +92,27 @@ const ClassesPage = () => {
     return timeSlots;
   }, [data]);
 
-  const joinClass = async (slot: BookingTimeSlots) => {};
+  const joinClass = async (slot: BookingTimeSlots) => {
+    await joinClassMutateAsync({ id: slot.id });
+  };
 
-  const joinRegularClass = async (slot: RegularBookingTimeSlots) => {};
+  const joinRegularClass = async (slot: RegularBookingTimeSlots) => {
+    await joinRegularClassMutateAsync({ id: slot.id, date: query.date });
+  };
 
-  const leaveClass = async (slot: BookingTimeSlots) => {};
+  const leaveClass = async (slot: BookingTimeSlots) => {
+    await leaveClassMutateAsync({
+      id: slot.id,
+      isConfirm: slot.status === BookingTimeSlotStatusEnum.CONFIRM,
+    });
+  };
 
   const canJoinClass = useMemo(() => {
     if (!user) return false;
     const { lessons } = user;
     return lessons.some(
-      (lesson) => new Date(lesson.expiryDate) > new Date() && lesson.lesson > 0
+      (lesson) =>
+        isAfter(new Date(lesson.expiryDate), new Date()) && lesson.lesson > 0
     );
   }, [user]);
 
@@ -254,7 +289,6 @@ const ClassesPage = () => {
                         p="1.5"
                         className="text-2xl cursor-pointer"
                         onClick={async () => {
-                          setPickedClass(true);
                           if (!isAuthenticated) {
                             handleOpenModel(OpenModelType.LOGIN);
                             return;
