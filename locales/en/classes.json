@@ -43,5 +43,8 @@
     "number_of_people_can_join": "Number of people can join",
     "number_of_people_already_joined": "Number of joined people",
     "canceled": "Canceled",
-    "coaches": "Coaches"
+    "coaches": "Coaches",
+    "no_class": "No Class",
+    "request_class_message": "Before joining the class,",
+    "contact_coach": " please contact the coach to activate your account."
 }

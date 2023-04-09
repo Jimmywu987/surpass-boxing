@@ -24,7 +24,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         .json({ errorMessage: "no regular time slot is found." });
     }
 
-    const response = await prisma.bookingTimeSlots.create({
+    await prisma.bookingTimeSlots.create({
       data: {
         date: new Date(date),
         startTime: regularBookingSlot.startTime,
@@ -40,7 +40,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       },
     });
-    return res.status(201).json({ type: response });
+    return res.status(201).json({ message: "join successfully" });
   }
   return res.status(401).json({ errorMessage: "Unauthorized" });
 };

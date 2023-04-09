@@ -48,10 +48,6 @@ export const ViewAccount = ({
         .reduce((pre, cur) => pre + cur.lesson, 0) ?? 0,
     [account.lessons]
   );
-  const totalLessonNum = useMemo(
-    () => account.lessons?.reduce((pre, cur) => pre + cur.lesson, 0),
-    [account.lessons]
-  );
 
   const AddClass = handleSubmit(async (data) => {
     const result = await mutateAsync(data);
@@ -96,7 +92,7 @@ export const ViewAccount = ({
 
       <div className="flex justify-between">
         <p>
-          {t("admin:total_lessons")}: {totalLessonNum}
+          {t("admin:total_lessons")}: {account.userOnBookingTimeSlots.length}
         </p>
         <button
           className="hover:bg-gray-400 bg-gray-500 px-3 py-1 rounded-md text-white"

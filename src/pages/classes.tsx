@@ -16,6 +16,7 @@ import {
   RegularBookingTimeSlots,
   BookingTimeSlotStatusEnum,
   UserOnBookingTimeSlots,
+  Lessons,
 } from "@prisma/client";
 
 import { ModalComponent } from "@/features/common/components/Modal";
@@ -37,7 +38,7 @@ const ClassesPage = () => {
   const { t, lang } = useTranslation("classes");
   const session = useSession();
   const isAuthenticated = session.status === "authenticated";
-  const user = session.data?.user as User;
+  const user = session.data?.user as User & { lessons: Lessons[] };
   const [modelType, setModelType] = useState(OpenModelType.OPEN_CLASS);
   const [pickedClass, setPickedClass] = useState(false);
   const modalDisclosure = useDisclosure();
@@ -50,8 +51,10 @@ const ClassesPage = () => {
     skip: 0,
     date: new Date(),
   });
+
   const minDate = endOfDay(subDays(new Date(), 1));
   const { data, isLoading } = useBookingTimeSlotForStudentQuery(query);
+
   const classes = useMemo(() => {
     if (!data) {
       return [];
@@ -63,10 +66,21 @@ const ClassesPage = () => {
     timeSlots.sort((a, b) => a.startTime - b.startTime);
     return timeSlots;
   }, [data]);
+
   const joinClass = async (slot: BookingTimeSlots) => {};
+
   const joinRegularClass = async (slot: RegularBookingTimeSlots) => {};
+
   const leaveClass = async (slot: BookingTimeSlots) => {};
-  console.log("classes", classes);
+
+  const canJoinClass = useMemo(() => {
+    if (!user) return false;
+    const { lessons } = user;
+    return lessons.some(
+      (lesson) => new Date(lesson.expiryDate) > new Date() && lesson.lesson > 0
+    );
+  }, [user]);
+
   if (!data || isLoading) {
     return (
       <Stack>
@@ -108,7 +122,7 @@ const ClassesPage = () => {
             </Button>
           </div>
         </div>
-        <div>
+        <div className="space-y-2">
           {classes.map((slot) => {
             const { startTime, endTime } = slot;
             const bookingTimeSlot = slot as BookingTimeSlots & {
@@ -128,14 +142,14 @@ const ClassesPage = () => {
 
             const isJoined =
               isAuthenticated &&
-              bookingTimeSlot.userOnBookingTimeSlots.some((slot) => {
-                slot.userId === user.id;
-              });
+              bookingTimeSlot.userOnBookingTimeSlots.some(
+                (slot) => slot.userId === user.id
+              );
+
             return (
               <div
                 key={slot.id}
                 className="flex justify-between p-5 border border-gray-600 rounded-md shadow-lg text-white"
-                onClick={() => {}}
               >
                 <div className="space-y-2">
                   <div className="text-2xl flex items-center space-x-2">
@@ -162,38 +176,42 @@ const ClassesPage = () => {
                     </div>
                   </div>
                   {!isRegular && (
-                    <div>
-                      {bookingTimeSlot.userOnBookingTimeSlots.map(
-                        (slot, index) => {
-                          return (
-                            <div key={index}>
-                              <div>{slot.user.username}</div>
-                              <div className="w-10 h-10 relative">
-                                <Image
-                                  src={
-                                    slot.user.profileImg ?? DefaultProfileImg
-                                  }
-                                  alt={`${slot.user.username} profile image`}
-                                  className="w-full h-full rounded-full object-cover"
-                                  fill
-                                />
-                              </div>
-                            </div>
-                          );
-                        }
-                      )}
-                      {!!slot.numberOfParticipants && (
+                    <div className="space-y-2">
+                      {!!slot.numberOfParticipants ? (
                         <div>
                           {t("classes:set_limit")}
                           {": "}
                           {`${bookingTimeSlot.userOnBookingTimeSlots.length} /${slot.numberOfParticipants}`}
                         </div>
-                      )}
-                      {!slot.numberOfParticipants && (
+                      ) : (
                         <div>
                           {t("classes:number_of_participants")}
                           {": "}
                           {`${bookingTimeSlot.userOnBookingTimeSlots.length}`}
+                        </div>
+                      )}
+                      {isAuthenticated && (
+                        <div className="flex gap-1 flex-wrap ">
+                          {bookingTimeSlot.userOnBookingTimeSlots.map(
+                            (slot, index) => {
+                              return (
+                                <div key={index}>
+                                  <div className="w-10 h-10 relative">
+                                    <Image
+                                      src={
+                                        slot.user.profileImg ??
+                                        DefaultProfileImg
+                                      }
+                                      alt={`${slot.user.username} profile image`}
+                                      className="w-full h-full rounded-full object-cover"
+                                      fill
+                                    />
+                                  </div>
+                                  <div>{slot.user.username}</div>
+                                </div>
+                              );
+                            }
+                          )}
                         </div>
                       )}
                     </div>
@@ -239,6 +257,12 @@ const ClassesPage = () => {
                           setPickedClass(true);
                           if (!isAuthenticated) {
                             handleOpenModel(OpenModelType.LOGIN);
+                            return;
+                          }
+                          if (!canJoinClass) {
+                            handleOpenModel(
+                              OpenModelType.REQUEST_LESSON_MESSAGE
+                            );
                             return;
                           }
                           if (isRegular) {
@@ -308,7 +332,18 @@ const ClassesPage = () => {
         modalDisclosure={modalDisclosure}
         content={
           isAuthenticated ? (
-            <CreateBookingTimeSlotForm />
+            modelType === OpenModelType.OPEN_CLASS ? (
+              <CreateBookingTimeSlotForm />
+            ) : (
+              <div>
+                <p className="text-center">
+                  {t("request_class_message")}
+                  <span className="font-medium hover:font-semibold cursor-pointer">
+                    {t("contact_coach")}
+                  </span>
+                </p>
+              </div>
+            )
           ) : (
             <>
               {modelType === OpenModelType.SIGN_UP && (
