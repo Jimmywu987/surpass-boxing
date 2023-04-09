@@ -39,6 +39,9 @@ export const createOptions: (req: NextApiRequest) => NextAuthOptions = (
           where: {
             email,
           },
+          include: {
+            lessons: true,
+          },
         });
         if (!user) {
           return null;
@@ -69,6 +72,9 @@ export const createOptions: (req: NextApiRequest) => NextAuthOptions = (
           where: {
             email,
           },
+          include: {
+            lessons: true,
+          },
         });
 
         if (hasUser) {
@@ -87,6 +93,9 @@ export const createOptions: (req: NextApiRequest) => NextAuthOptions = (
         };
         const user = await prisma.user.create({
           data: createUserData,
+          include: {
+            lessons: true,
+          },
         });
         const { password, ...userInfo } = user as User;
 

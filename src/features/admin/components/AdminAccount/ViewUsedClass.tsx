@@ -42,26 +42,32 @@ export const ViewUsedClass = ({
         }}
       />
       <div>
-        {data.bookingTimeSlots.map((bookingTimeSlot, index) => {
-          const { startTime, endTime, className, coachName, date } =
-            bookingTimeSlot;
-          return (
-            <div key={index}>
-              <p>{className}</p>
-              <p>{coachName}</p>
-              <div>
-                <p>{format(new Date(date!), "yyyy-MM-dd")}</p>
+        {bookingTimeSlotIds.length > 0 ? (
+          data.bookingTimeSlots.map((bookingTimeSlot, index) => {
+            const { startTime, endTime, className, coachName, date } =
+              bookingTimeSlot;
+            return (
+              <div key={index}>
+                <p>{className}</p>
+                <p>{coachName}</p>
                 <div>
-                  {getTimeDuration({ startTime, endTime })}
+                  <p>{format(new Date(date!), "yyyy-MM-dd")}</p>
                   <div>
-                    {t("classes:duration")}:{" "}
-                    {t(...(getDuration({ startTime, endTime }) as [string]))}
+                    {getTimeDuration({ startTime, endTime })}
+                    <div>
+                      {t("classes:duration")}:{" "}
+                      {t(...(getDuration({ startTime, endTime }) as [string]))}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        ) : (
+          <div className="text-center text-blueGray-700">
+            <p>{t("classes:no_class")}</p>
+          </div>
+        )}
       </div>
     </div>
   );

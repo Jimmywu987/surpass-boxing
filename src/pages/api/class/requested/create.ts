@@ -9,7 +9,22 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (session && req.method === "POST") {
     const { setLimit, people, ...data } = req.body;
     const user = session?.user as User;
-
+    if (!user.admin) {
+      const lessons = await prisma.lessons.findFirst({
+        where: {
+          userId: user.id,
+          expiryDate: { gte: new Date() },
+          lesson: {
+            gt: 0,
+          },
+        },
+      });
+      if (!lessons) {
+        return res
+          .status(401)
+          .json({ errorMessage: "You don't have any lessons left" });
+      }
+    }
     let regularBookingTimeSlotId = data.regularBookingTimeSlotId ?? null;
 
     const weekday = format(new Date(data.date), "EEEE").toLowerCase();

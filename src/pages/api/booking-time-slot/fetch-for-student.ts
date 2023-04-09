@@ -21,7 +21,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { skip, date } = req.body;
 
   const weekday = format(new Date(date), "EEEE").toLowerCase();
-  console.log(weekday);
+
   try {
     const result = await prisma.$transaction(async (txn) => {
       const whereQuery = getDurationWhereQuery(date);
@@ -52,7 +52,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
         where: {
           date: whereQuery,
-          status: { not: BookingTimeSlotStatusEnum.CANCELED },
         },
         orderBy: {
           date: "desc",
