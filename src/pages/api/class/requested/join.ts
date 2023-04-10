@@ -22,17 +22,33 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           gt: 0,
         },
       },
+      orderBy: {
+        expiryDate: "asc",
+      },
     });
 
     if (lessons.length === 0) {
       return res.status(401).json({ errorMessage: "Unauthorized" });
     }
-    await prisma.userOnBookingTimeSlots.create({
-      data: {
-        userId: user.id,
-        bookingTimeSlotId: id,
-      },
+    await prisma.$transaction(async (txn) => {
+      await txn.lessons.update({
+        data: {
+          lesson: {
+            decrement: 1,
+          },
+        },
+        where: {
+          id: lessons[0].id,
+        },
+      });
+      await txn.userOnBookingTimeSlots.create({
+        data: {
+          userId: user.id,
+          bookingTimeSlotId: id,
+        },
+      });
     });
+
     return res.status(201).json({ message: "join successfully" });
   }
   return res.status(401).json({ errorMessage: "Unauthorized" });

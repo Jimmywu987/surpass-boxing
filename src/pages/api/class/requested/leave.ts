@@ -11,6 +11,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (session && req.method === "POST") {
     const { id, status } = req.body;
     const user = session?.user as User;
+
+    let shouldAddBackLesson = true;
+
     if (status === BookingTimeSlotStatusEnum.CONFIRM) {
       const bookingTimeSlot = await prisma.userOnBookingTimeSlots.findUnique({
         where: {
@@ -26,37 +29,46 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const joiningTime = new Date(bookingTimeSlot.createdAt);
       const now = new Date();
 
-      if (isAfter(add(joiningTime, { hours: 1 }), now)) {
-        const lessons = await prisma.lessons.findFirst({
+      if (isAfter(now, add(joiningTime, { hours: 1 }))) {
+        shouldAddBackLesson = false;
+      }
+    }
+    await prisma.$transaction(async (txn) => {
+      if (shouldAddBackLesson) {
+        const lessons = await txn.lessons.findMany({
           where: {
             userId: user.id,
             expiryDate: {
               gte: new Date(),
             },
           },
+          orderBy: {
+            expiryDate: "asc",
+          },
         });
 
-        if (lessons) {
-          await prisma.lessons.update({
+        if (lessons.length !== 0) {
+          await txn.lessons.update({
             data: {
               lesson: {
                 increment: 1,
               },
             },
             where: {
-              id: lessons.id,
+              id: lessons[0].id,
             },
           });
         }
       }
-    }
-    await prisma.userOnBookingTimeSlots.delete({
-      where: {
-        userId_bookingTimeSlotId: {
-          userId: user.id,
-          bookingTimeSlotId: id,
+
+      await txn.userOnBookingTimeSlots.delete({
+        where: {
+          userId_bookingTimeSlotId: {
+            userId: user.id,
+            bookingTimeSlotId: id,
+          },
         },
-      },
+      });
     });
 
     return res.status(201).json({ message: "leave class successfully" });
