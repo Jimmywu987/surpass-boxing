@@ -1,9 +1,12 @@
 import { prisma } from "@/services/prisma";
-import { getSession } from "next-auth/react";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+
 import type { NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from "next-auth";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
+
   if (session && req.method === "POST") {
     const { id } = req.body;
     await prisma.classesType.delete({
