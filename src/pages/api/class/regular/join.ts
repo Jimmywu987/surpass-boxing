@@ -35,28 +35,46 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           gt: 0,
         },
       },
+      orderBy: {
+        expiryDate: "asc",
+      },
     });
 
     if (lessons.length === 0) {
       return res.status(401).json({ errorMessage: "Unauthorized" });
     }
-
-    await prisma.bookingTimeSlots.create({
-      data: {
-        date: new Date(date),
-        startTime: regularBookingSlot.startTime,
-        endTime: regularBookingSlot.endTime,
-        className: regularBookingSlot.className,
-        coachName: regularBookingSlot.coach?.username ?? null,
-        numberOfParticipants: regularBookingSlot.numberOfParticipants,
-        regularBookingTimeSlotId: regularBookingSlot.id,
-        userOnBookingTimeSlots: {
-          create: {
-            userId: user.id,
+    await prisma.$transaction(async (txn) => {
+      await txn.lessons.update({
+        data: {
+          lesson: {
+            decrement: 1,
           },
         },
-      },
+        where: {
+          id: lessons[0].id,
+        },
+      });
+      const { startTime, endTime, className, numberOfParticipants, id, coach } =
+        regularBookingSlot;
+
+      await txn.bookingTimeSlots.create({
+        data: {
+          date: new Date(date),
+          startTime,
+          endTime,
+          className,
+          coachName: coach?.username ?? null,
+          numberOfParticipants,
+          regularBookingTimeSlotId: id,
+          userOnBookingTimeSlots: {
+            create: {
+              userId: user.id,
+            },
+          },
+        },
+      });
     });
+
     return res.status(201).json({ message: "join successfully" });
   }
   return res.status(401).json({ errorMessage: "Unauthorized" });
