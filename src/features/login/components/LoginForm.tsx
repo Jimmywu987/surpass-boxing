@@ -41,7 +41,6 @@ export const LoginForm = ({
       redirect: false,
     });
     if (res && res.ok) {
-      router.push("/");
     } else {
       // toast.error("Incorrect email or password, please try again.");
     }

@@ -1,5 +1,5 @@
 import { Button, Skeleton, Stack, useDisclosure } from "@chakra-ui/react";
-import { SingleDatepicker } from "chakra-dayzed-datepicker";
+
 import { subDays, endOfDay, format, isAfter } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
 import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
@@ -16,7 +16,6 @@ import {
   RegularBookingTimeSlots,
   BookingTimeSlotStatusEnum,
   UserOnBookingTimeSlots,
-  Lessons,
 } from "@prisma/client";
 
 import { ModalComponent } from "@/features/common/components/Modal";
@@ -25,6 +24,7 @@ import {
   useBookingTimeSlotForStudentQuery,
   useJoinClassMutation,
   useJoinRegularClassMutation,
+  useLessonsQuery,
   useLeaveClassMutation,
 } from "@/apis/api";
 import { SKIP_NUMBER, TAKE_NUMBER } from "@/constants";
@@ -40,30 +40,36 @@ import { getTimeDuration } from "@/helpers/getTime";
 import { getDuration } from "@/helpers/getDuration";
 import { DatePicker } from "@/features/common/components/DatePicker";
 import { useQueryClient } from "react-query";
+
 const ClassesPage = () => {
-  const { t, lang } = useTranslation("classes");
+  const { t } = useTranslation("classes");
   const session = useSession();
   const queryClient = useQueryClient();
-
   const isAuthenticated = session.status === "authenticated";
-  const user = session.data?.user as User & { lessons: Lessons[] };
+  const user = session.data?.user as User;
   const [modelType, setModelType] = useState(OpenModelType.OPEN_CLASS);
 
   const { mutateAsync: joinClassMutateAsync } = useJoinClassMutation({
     onSuccess: () => {
       queryClient.invalidateQueries("bookingTimeSlot");
+      queryClient.invalidateQueries("lessons");
     },
   });
   const { mutateAsync: joinRegularClassMutateAsync } =
     useJoinRegularClassMutation({
       onSuccess: () => {
         queryClient.invalidateQueries("bookingTimeSlot");
+        queryClient.invalidateQueries("lessons");
       },
     });
   const { mutateAsync: leaveClassMutateAsync } = useLeaveClassMutation({
     onSuccess: () => {
       queryClient.invalidateQueries("bookingTimeSlot");
+      queryClient.invalidateQueries("lessons");
     },
+  });
+  const { data: lessonsData } = useLessonsQuery({
+    enabled: isAuthenticated,
   });
 
   const modalDisclosure = useDisclosure();
@@ -103,18 +109,9 @@ const ClassesPage = () => {
   const leaveClass = async (slot: BookingTimeSlots) => {
     await leaveClassMutateAsync({
       id: slot.id,
-      isConfirm: slot.status === BookingTimeSlotStatusEnum.CONFIRM,
+      status: slot.status,
     });
   };
-
-  const canJoinClass = useMemo(() => {
-    if (!user) return false;
-    const { lessons } = user;
-    return lessons.some(
-      (lesson) =>
-        isAfter(new Date(lesson.expiryDate), new Date()) && lesson.lesson > 0
-    );
-  }, [user]);
 
   if (!data || isLoading) {
     return (
@@ -177,6 +174,7 @@ const ClassesPage = () => {
 
             const isJoined =
               isAuthenticated &&
+              !isRegular &&
               bookingTimeSlot.userOnBookingTimeSlots.some(
                 (slot) => slot.userId === user.id
               );
@@ -293,7 +291,10 @@ const ClassesPage = () => {
                             handleOpenModel(OpenModelType.LOGIN);
                             return;
                           }
-                          if (!canJoinClass) {
+                          if (
+                            !lessonsData ||
+                            lessonsData.lessons.length === 0
+                          ) {
                             handleOpenModel(
                               OpenModelType.REQUEST_LESSON_MESSAGE
                             );
@@ -366,9 +367,7 @@ const ClassesPage = () => {
         modalDisclosure={modalDisclosure}
         content={
           isAuthenticated ? (
-            modelType === OpenModelType.OPEN_CLASS ? (
-              <CreateBookingTimeSlotForm />
-            ) : (
+            modelType === OpenModelType.REQUEST_LESSON_MESSAGE ? (
               <div>
                 <p className="text-center">
                   {t("request_class_message")}
@@ -377,6 +376,8 @@ const ClassesPage = () => {
                   </span>
                 </p>
               </div>
+            ) : (
+              <CreateBookingTimeSlotForm />
             )
           ) : (
             <>

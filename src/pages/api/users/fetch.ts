@@ -1,13 +1,15 @@
 import { prisma } from "@/services/prisma";
-import { getSession } from "next-auth/react";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { AdminAccountFilterOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
 import { BookingTimeSlotStatusEnum } from "@prisma/client";
+import { getServerSession } from "next-auth";
 
 const TAKE_NUMBER = 10;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
+
   if (session && req.method === "POST") {
     const { admin } = req.query;
     const { skip, accountFilter, searchInput } = req.body;

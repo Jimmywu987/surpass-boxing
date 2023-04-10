@@ -1,11 +1,13 @@
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { prisma } from "@/services/prisma";
-import { getSession } from "next-auth/react";
-import type { NextApiRequest, NextApiResponse } from "next";
-import { format } from "date-fns";
+
 import { User } from "@prisma/client";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from "next-auth";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
+
   if (session && req.method === "POST") {
     const { id, date } = req.body;
     const user = session?.user as User;
@@ -22,6 +24,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res
         .status(401)
         .json({ errorMessage: "no regular time slot is found." });
+    }
+    const lessons = await prisma.lessons.findMany({
+      where: {
+        userId: user.id,
+        expiryDate: {
+          gte: new Date(),
+        },
+        lesson: {
+          gt: 0,
+        },
+      },
+    });
+
+    if (lessons.length === 0) {
+      return res.status(401).json({ errorMessage: "Unauthorized" });
     }
 
     await prisma.bookingTimeSlots.create({

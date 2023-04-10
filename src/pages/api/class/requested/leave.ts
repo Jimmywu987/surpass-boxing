@@ -1,15 +1,17 @@
 import { prisma } from "@/services/prisma";
-import { Lessons, User } from "@prisma/client";
+import { BookingTimeSlotStatusEnum, User } from "@prisma/client";
 import { add, isAfter } from "date-fns";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
+
   if (session && req.method === "POST") {
-    const { id, isConfirm } = req.body;
-    const user = session?.user as User & { lessons: Lessons[] };
-    if (isConfirm) {
+    const { id, status } = req.body;
+    const user = session?.user as User;
+    if (status === BookingTimeSlotStatusEnum.CONFIRM) {
       const bookingTimeSlot = await prisma.userOnBookingTimeSlots.findUnique({
         where: {
           userId_bookingTimeSlotId: {
@@ -25,10 +27,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const now = new Date();
 
       if (isAfter(add(joiningTime, { hours: 1 }), now)) {
-        const lesson = await user.lessons.find((lesson) =>
-          isAfter(new Date(lesson.expiryDate), new Date())
-        );
-        if (lesson) {
+        const lessons = await prisma.lessons.findFirst({
+          where: {
+            userId: user.id,
+            expiryDate: {
+              gte: new Date(),
+            },
+          },
+        });
+
+        if (lessons) {
           await prisma.lessons.update({
             data: {
               lesson: {
@@ -36,7 +44,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               },
             },
             where: {
-              id: lesson.id,
+              id: lessons.id,
             },
           });
         }

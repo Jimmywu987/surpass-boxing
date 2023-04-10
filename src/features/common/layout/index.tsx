@@ -2,7 +2,7 @@ import { Navbar } from "@/features/nav/Navbar";
 import { Footer } from "@/features/footer";
 import { HeadHtml } from "@/features/head";
 
-const Layout = ({ children, initData }: any) => {
+const Layout = ({ children }: any) => {
   return (
     <div className="bg-gray-800 ">
       <HeadHtml />

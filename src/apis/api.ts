@@ -4,6 +4,7 @@ import {
   BookingTimeSlots,
   BookingTimeSlotStatusEnum,
   ClassesType,
+  Lessons,
   News,
   RegularBookingTimeSlots,
 } from "@prisma/client";
@@ -22,9 +23,14 @@ const fetcher = async (url: string, params?: any) => {
   }
   throw Error(res?.data.errorMessage);
 };
-type UseReactQueryOption = Omit<
+type UseMutationReactQueryOption = Omit<
   UseMutationOptions<any, unknown, any, unknown>,
   "mutationFn" | "mutationKey"
+>;
+
+type UseReactQueryOption = Omit<
+  UseQueryOptions<any, unknown, any>,
+  "queryKey" | "queryFn"
 >;
 
 export const useCreateClassTypeMutation = () =>
@@ -153,7 +159,9 @@ export const useAddLessonMutation = () =>
     return await fetcher("/api/lesson/add", params);
   });
 
-export const useRemoveLessonMutation = (options?: UseReactQueryOption) =>
+export const useRemoveLessonMutation = (
+  options?: UseMutationReactQueryOption
+) =>
   useMutation(
     ["removeLesson"],
     async (params: any) => {
@@ -162,7 +170,7 @@ export const useRemoveLessonMutation = (options?: UseReactQueryOption) =>
     options
   );
 
-export const useJoinClassMutation = (options?: UseReactQueryOption) =>
+export const useJoinClassMutation = (options?: UseMutationReactQueryOption) =>
   useMutation(
     ["joinClass"],
     async (params: any) => {
@@ -171,7 +179,9 @@ export const useJoinClassMutation = (options?: UseReactQueryOption) =>
     options
   );
 
-export const useJoinRegularClassMutation = (options?: UseReactQueryOption) =>
+export const useJoinRegularClassMutation = (
+  options?: UseMutationReactQueryOption
+) =>
   useMutation(
     ["joinRegularClass"],
     async (params: any) => {
@@ -180,11 +190,22 @@ export const useJoinRegularClassMutation = (options?: UseReactQueryOption) =>
     options
   );
 
-export const useLeaveClassMutation = (options?: UseReactQueryOption) =>
+export const useLeaveClassMutation = (options?: UseMutationReactQueryOption) =>
   useMutation(
     ["leaveClass"],
     async (params: any) => {
       return await fetcher("/api/class/requested/leave", params);
+    },
+    options
+  );
+
+export const useLessonsQuery = (options?: UseReactQueryOption) =>
+  useQuery<{
+    lessons: Lessons[];
+  }>(
+    ["lessons"],
+    async () => {
+      return await fetcher("/api/lesson/fetch");
     },
     options
   );

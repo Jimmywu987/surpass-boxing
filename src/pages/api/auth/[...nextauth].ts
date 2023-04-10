@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import NextAuth, { AuthOptions, NextAuthOptions } from "next-auth";
 import { User, UserAuthOptionsEnum } from "@prisma/client";
 import GoogleProvider from "next-auth/providers/google";
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -14,10 +14,7 @@ const config = getServerConfig();
 const {
   env: { REACT_APP_GOOGLE_ID, REACT_APP_GOOGLE_SECRET, JWT_SECRET },
 } = config;
-
-export const createOptions: (req: NextApiRequest) => NextAuthOptions = (
-  req
-) => ({
+export const authOptions: AuthOptions = {
   secret: JWT_SECRET,
   providers: [
     CredentialsProvider({
@@ -38,9 +35,6 @@ export const createOptions: (req: NextApiRequest) => NextAuthOptions = (
         const user = await prisma.user.findUnique({
           where: {
             email,
-          },
-          include: {
-            lessons: true,
           },
         });
         if (!user) {
@@ -72,9 +66,6 @@ export const createOptions: (req: NextApiRequest) => NextAuthOptions = (
           where: {
             email,
           },
-          include: {
-            lessons: true,
-          },
         });
 
         if (hasUser) {
@@ -93,9 +84,6 @@ export const createOptions: (req: NextApiRequest) => NextAuthOptions = (
         };
         const user = await prisma.user.create({
           data: createUserData,
-          include: {
-            lessons: true,
-          },
         });
         const { password, ...userInfo } = user as User;
 
@@ -118,9 +106,14 @@ export const createOptions: (req: NextApiRequest) => NextAuthOptions = (
       return session;
     },
   },
-});
+};
+const createOptions: (req: NextApiRequest) => NextAuthOptions = () =>
+  authOptions;
 
-const NextAuthOption = async (req: NextApiRequest, res: NextApiResponse) => {
+export const NextAuthOption = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+) => {
   return NextAuth(req, res, createOptions(req));
 };
 

@@ -1,38 +1,33 @@
 import "@/styles/globals.css";
 
-import type { AppProps } from "next/app";
-import { Provider } from "react-redux";
-import { AppContextType } from "next/dist/shared/lib/utils";
-import { SessionProvider } from "next-auth/react";
-import { store } from "@/redux/configureStore";
 import Layout from "@/features/common/layout";
+import { store } from "@/redux/configureStore";
 import { ChakraProvider } from "@chakra-ui/react";
+import { Session } from "next-auth";
+import { SessionProvider } from "next-auth/react";
+import type { AppProps } from "next/app";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { Provider } from "react-redux";
 const queryClient = new QueryClient();
 
-const App = ({ Component, session, pageProps, data }: AppProps & any) => {
+const App = ({
+  Component,
+  session,
+  pageProps,
+}: AppProps & { session: Session }) => {
   return (
     <SessionProvider session={session}>
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
           <ChakraProvider>
-            <Layout initData={data}>
-              <Component {...pageProps} initData={data} />
+            <Layout>
+              <Component {...pageProps} />
             </Layout>
           </ChakraProvider>
         </Provider>
       </QueryClientProvider>
     </SessionProvider>
   );
-};
-
-App.getInitialProps = async ({ Component, ctx }: AppContextType) => {
-  const data: [] = [];
-  let pageProps = {};
-  if (Component.getInitialProps) {
-    pageProps = await Component.getInitialProps(ctx);
-  }
-  return { pageProps, data };
 };
 
 export default App;

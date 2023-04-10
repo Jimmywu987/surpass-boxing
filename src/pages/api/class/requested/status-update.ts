@@ -1,10 +1,13 @@
 import { prisma } from "@/services/prisma";
-import { getSession } from "next-auth/react";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+
 import type { NextApiRequest, NextApiResponse } from "next";
 import { User } from "@prisma/client";
+import { getServerSession } from "next-auth";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
+
   if (session && req.method === "POST") {
     const { status, id } = req.body;
     const user = session?.user as User;
