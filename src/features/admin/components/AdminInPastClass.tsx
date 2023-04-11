@@ -11,7 +11,12 @@ import { useRequestedClassQuery } from "@/apis/api";
 import { ModalComponent } from "@/features/common/components/Modal";
 import { getDuration } from "@/helpers/getDuration";
 import { getTimeDuration } from "@/helpers/getTime";
-import { CheckIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import {
+  ArrowRightIcon,
+  CheckIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "@chakra-ui/icons";
 import { BookingTimeSlotStatusEnum } from "@prisma/client";
 import { endOfDay, format, subDays } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
@@ -50,6 +55,9 @@ export const AdminInPastClass = () => {
 
   return (
     <div className="space-y-2">
+      <div>
+        <ArrowRightIcon className="p-1 text-3xl border-2 rounded-full cursor-pointer" />
+      </div>
       <ButtonGroup gap="2" mb="1">
         {Object.values(AdminPeriodOptionsEnum).map((period, index) => (
           <Button

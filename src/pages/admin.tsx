@@ -15,6 +15,7 @@ import { GetServerSideProps } from "next";
 import useTranslation from "next-translate/useTranslation";
 import { AppProps } from "next/app";
 import { useState } from "react";
+import { getSession } from "next-auth/react";
 
 export type AdminPageProps = AppProps & {
   users: User[];
@@ -67,6 +68,27 @@ const AdminPage = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getSession(context);
+
+  if (!session) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+      props: {},
+    };
+  }
+  const { admin } = session.user as User;
+  if (!admin) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+      props: {},
+    };
+  }
   const classTypes = await prisma.classesType.findMany();
   const users = await prisma.user.findMany();
   const news = await prisma.news.findMany();

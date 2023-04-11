@@ -27,7 +27,7 @@
     "chakra-dayzed-datepicker": "^0.2.5",
     "date-fns": "^2.29.3",
     "dayzed": "^3.2.3",
-    "framer-motion": "^7.6.18",
+    "framer-motion": "^10.11.5",
     "i18n": "^0.15.1",
     "next": "^13.1.4",
     "next-auth": "^4.22.0",
