@@ -19,7 +19,7 @@ import {
 } from "@prisma/client";
 
 import { ModalComponent } from "@/features/common/components/Modal";
-import { CreateBookingTimeSlotForm } from "@/features/classes/components/CreateBookingTimeSlotForm";
+
 import {
   useBookingTimeSlotForStudentQuery,
   useJoinClassMutation,
@@ -40,6 +40,7 @@ import { getTimeDuration } from "@/helpers/getTime";
 import { getDuration } from "@/helpers/getDuration";
 import { DatePicker } from "@/features/common/components/DatePicker";
 import { useQueryClient } from "react-query";
+import { CreateRequestedClassForm } from "@/features/common/components/form/CreateRequestedClassForm";
 
 const ClassesPage = () => {
   const { t } = useTranslation("classes");
@@ -74,9 +75,17 @@ const ClassesPage = () => {
 
   const modalDisclosure = useDisclosure();
   const { onOpen } = modalDisclosure;
-  const handleOpenModel = (type: OpenModelType) => {
-    setModelType(type);
+  const handleOpenModel = () => {
     onOpen();
+    if (!isAuthenticated) {
+      setModelType(OpenModelType.LOGIN);
+      return;
+    }
+    if (!lessonsData || lessonsData.lessons.length === 0) {
+      setModelType(OpenModelType.REQUEST_LESSON_MESSAGE);
+      return;
+    }
+    setModelType(OpenModelType.OPEN_CLASS);
   };
   const [query, setQuery] = useState({
     skip: 0,
@@ -133,7 +142,7 @@ const ClassesPage = () => {
                 onDateChange: (value) => {
                   setQuery(() => ({ skip: 0, date: value }));
                 },
-                minDate: minDate,
+                minDate,
               }}
             />
           </div>
@@ -141,17 +150,7 @@ const ClassesPage = () => {
             {t(format(query.date, "EEEE").toLowerCase())}
           </div>
           <div>
-            <Button
-              onClick={() =>
-                handleOpenModel(
-                  isAuthenticated
-                    ? OpenModelType.OPEN_CLASS
-                    : OpenModelType.LOGIN
-                )
-              }
-            >
-              {t("open_a_class")}
-            </Button>
+            <Button onClick={handleOpenModel}>{t("open_a_class")}</Button>
           </div>
         </div>
         <div className="space-y-2">
@@ -287,17 +286,11 @@ const ClassesPage = () => {
                         p="1.5"
                         className="text-2xl cursor-pointer"
                         onClick={async () => {
-                          if (!isAuthenticated) {
-                            handleOpenModel(OpenModelType.LOGIN);
-                            return;
-                          }
                           if (
                             !lessonsData ||
                             lessonsData.lessons.length === 0
                           ) {
-                            handleOpenModel(
-                              OpenModelType.REQUEST_LESSON_MESSAGE
-                            );
+                            handleOpenModel();
                             return;
                           }
                           if (isRegular) {
@@ -377,7 +370,10 @@ const ClassesPage = () => {
                 </p>
               </div>
             ) : (
-              <CreateBookingTimeSlotForm />
+              <CreateRequestedClassForm
+                modalDisclosure={modalDisclosure}
+                date={query.date}
+              />
             )
           ) : (
             <>

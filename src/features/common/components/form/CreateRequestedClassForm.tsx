@@ -20,10 +20,9 @@ import { FormProvider, useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { useRequestedClassInputResolver } from "@/features/admin/schemas/useRequestedClassInputResolver";
 import { format } from "date-fns";
-import { WeekSelectionCheckBox } from "./WeekSelectionCheckBox";
+import { WeekSelectionCheckBox } from "../../../admin/components/form/WeekSelectionCheckBox";
 
 type CreateRequestedClassInputType = {
-  regularBookingTimeSlotId: string;
   date: Date;
   startTime: number;
   endTime: number;
@@ -36,11 +35,9 @@ type CreateRequestedClassInputType = {
 export const CreateRequestedClassForm = ({
   modalDisclosure,
   date,
-  regularBookingTimeSlotId = "",
 }: {
   modalDisclosure: UseDisclosureReturn;
   date: Date;
-  regularBookingTimeSlotId?: string;
 }) => {
   const { t } = useTranslation("classes");
   const { data } = useClassTypeQuery();
@@ -57,7 +54,6 @@ export const CreateRequestedClassForm = ({
       resolver: useRequestedClassInputResolver(),
       mode: "onChange",
       defaultValues: {
-        regularBookingTimeSlotId,
         date,
         startTime: 0,
         endTime: 0,

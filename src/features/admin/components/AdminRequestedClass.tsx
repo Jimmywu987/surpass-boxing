@@ -2,7 +2,7 @@ import { Button, Skeleton, Stack, useDisclosure } from "@chakra-ui/react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 
 import { useRequestedClassQuery } from "@/apis/api";
-import { CreateRequestedClassForm } from "@/features/admin/components/form/CreateRequestedClassForm";
+import { CreateRequestedClassForm } from "@/features/common/components/form/CreateRequestedClassForm";
 import { ModalComponent } from "@/features/common/components/Modal";
 import { getDuration } from "@/helpers/getDuration";
 import { getTimeDuration } from "@/helpers/getTime";

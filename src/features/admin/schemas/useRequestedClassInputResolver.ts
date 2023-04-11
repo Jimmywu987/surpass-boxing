@@ -17,7 +17,6 @@ export const useRequestedClassInputResolver = (joinedPeopleNum?: number) => {
           .min(1, { message: t("please_select_class_type") }),
         setLimit: z.boolean().optional(),
         people: z.number().optional(),
-        regularBookingTimeSlotId: z.string().optional(),
         coachName: z.string().optional(),
       })
       .refine(
