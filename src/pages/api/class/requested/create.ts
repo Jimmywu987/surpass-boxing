@@ -27,34 +27,31 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           .json({ errorMessage: "You don't have any lessons left" });
       }
     }
-    let regularBookingTimeSlotId = data.regularBookingTimeSlotId ?? null;
+    let regularBookingTimeSlotId = null;
 
     const weekday = format(new Date(data.date), "EEEE").toLowerCase();
 
-    if (!regularBookingTimeSlotId) {
-      let hasCoachName = {};
-      if (data.coachName) {
-        hasCoachName = {
-          coach: {
-            username: data.coachName,
-          },
-        };
-      }
-      const regularBookingSlot = await prisma.regularBookingTimeSlots.findFirst(
-        {
-          where: {
-            [weekday]: true,
-            startTime: data.startTime,
-            endTime: data.endTime,
-            className: data.className,
-            ...hasCoachName,
-          },
-        }
-      );
-      if (regularBookingSlot) {
-        regularBookingTimeSlotId = regularBookingSlot.id;
-      }
+    let hasCoachName = {};
+    if (data.coachName) {
+      hasCoachName = {
+        coach: {
+          username: data.coachName,
+        },
+      };
     }
+    const regularBookingSlot = await prisma.regularBookingTimeSlots.findFirst({
+      where: {
+        [weekday]: true,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        className: data.className,
+        ...hasCoachName,
+      },
+    });
+    if (regularBookingSlot) {
+      regularBookingTimeSlotId = regularBookingSlot.id;
+    }
+
     let addOneUserToClass = {};
     if (!user.admin) {
       addOneUserToClass = {
