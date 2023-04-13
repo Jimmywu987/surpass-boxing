@@ -8,7 +8,7 @@ import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider } from "react-redux";
-import { trpc } from "@/lib/trpc";
+import { trpc } from "@/utils/trpc";
 const queryClient = new QueryClient();
 
 const App = ({

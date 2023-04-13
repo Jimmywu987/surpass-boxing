@@ -2,10 +2,10 @@ import NextAuth, { AuthOptions, NextAuthOptions } from "next-auth";
 import { User, UserAuthOptionsEnum } from "@prisma/client";
 import GoogleProvider from "next-auth/providers/google";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getServerConfig } from "@/lib/getServerConfig";
+import { getServerConfig } from "@/utils/getServerConfig";
 import { prisma } from "@/services/prisma";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { checkPassword, hashPassword } from "@/lib/hash";
+import { checkPassword, hashPassword } from "@/utils/hash";
 import { UserStatusEnum } from "@prisma/client";
 import { generateRandomString } from "@/helpers/generateRandomString";
 

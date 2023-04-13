@@ -1,5 +1,5 @@
 import { validateSignUpInput } from "@/helpers/validateSignUpInput";
-import { hashPassword } from "@/lib/hash";
+import { hashPassword } from "@/utils/hash";
 import { prisma } from "@/services/prisma";
 import { UserAuthOptionsEnum, UserStatusEnum } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
