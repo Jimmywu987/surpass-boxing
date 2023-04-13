@@ -8,6 +8,7 @@ import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider } from "react-redux";
+import { trpc } from "@/lib/trpc";
 const queryClient = new QueryClient();
 
 const App = ({
@@ -30,4 +31,4 @@ const App = ({
   );
 };
 
-export default App;
+export default trpc.withTRPC(App);
