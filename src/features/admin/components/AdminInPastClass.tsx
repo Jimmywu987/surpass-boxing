@@ -7,7 +7,6 @@ import {
 } from "@chakra-ui/react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 
-import { useRequestedClassQuery } from "@/apis/api";
 import { ModalComponent } from "@/features/common/components/Modal";
 import { getDuration } from "@/helpers/getDuration";
 import { getTimeDuration } from "@/helpers/getTime";
@@ -30,25 +29,28 @@ import { useDispatch, useSelector } from "react-redux";
 import { AdminPeriodOptionsEnum } from "../enums/AdminOptionEnums";
 import { SKIP_NUMBER, TAKE_NUMBER } from "@/constants";
 import { DatePicker } from "@/features/common/components/DatePicker";
+import { trpc } from "@/utils/trpc";
 
 export const AdminInPastClass = () => {
   const { t } = useTranslation("admin");
   const modalDisclosure = useDisclosure();
   const dispatch = useDispatch();
-  const yesterday = endOfDay(subDays(new Date(), 1));
+  const yesterday = endOfDay(subDays(new Date(), 1)).toString();
 
   const [query, setQuery] = useState({
     skip: 0,
     date: yesterday,
     period: AdminPeriodOptionsEnum.ALL,
   });
+  const dateTime = new Date(query.date);
   const { timeSlot } = useSelector(timeSlotSelector);
 
   const { onOpen } = modalDisclosure;
-  const { data, isLoading } = useRequestedClassQuery({
-    ...query,
-    isPast: true,
-  });
+  const { data, isLoading } =
+    trpc.classRouter.requestedClassRouter.fetch.useQuery({
+      ...query,
+      isPast: true,
+    });
   const handleOpenModel = () => {
     onOpen();
   };
@@ -85,20 +87,20 @@ export const AdminInPastClass = () => {
           <DatePicker
             datePickerProps={{
               disabled: query.period === AdminPeriodOptionsEnum.ALL,
-              date: query.date,
+              date: dateTime,
               onDateChange: (value) => {
                 setQuery({
                   skip: 0,
-                  date: value,
+                  date: value.toString(),
                   period: query.period,
                 });
               },
-              maxDate: yesterday,
+              maxDate: new Date(yesterday),
             }}
           />
         </div>
         <div className="text-white">
-          {t(`classes:${format(query.date, "EEEE").toLowerCase()}`)}
+          {t(`classes:${format(dateTime, "EEEE").toLowerCase()}`)}
         </div>
       </div>
       {!data || isLoading ? (

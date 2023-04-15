@@ -14,12 +14,7 @@ import { User, BookingTimeSlotStatusEnum } from "@prisma/client";
 
 import { ModalComponent } from "@/features/common/components/Modal";
 
-import {
-  useJoinClassMutation,
-  useJoinRegularClassMutation,
-  useLessonsQuery,
-  useLeaveClassMutation,
-} from "@/apis/api";
+import { useJoinRegularClassMutation, useLessonsQuery } from "@/apis/api";
 import { SKIP_NUMBER, TAKE_NUMBER } from "@/constants";
 import {
   AddIcon,
@@ -50,12 +45,13 @@ const ClassesPage = () => {
   const user = session.data?.user as User;
   const [modelType, setModelType] = useState(OpenModelType.OPEN_CLASS);
 
-  const { mutateAsync: joinClassMutateAsync } = useJoinClassMutation({
-    onSuccess: () => {
-      bookingTimeSlotRouter.fetchForStudent.invalidate();
-      queryClient.invalidateQueries("lessons");
-    },
-  });
+  const { mutateAsync: joinClassMutateAsync } =
+    trpc.classRouter.requestedClassRouter.join.useMutation({
+      onSuccess: () => {
+        bookingTimeSlotRouter.fetchForStudent.invalidate();
+        queryClient.invalidateQueries("lessons");
+      },
+    });
 
   const { mutateAsync: joinRegularClassMutateAsync } =
     useJoinRegularClassMutation({
@@ -64,12 +60,14 @@ const ClassesPage = () => {
         queryClient.invalidateQueries("lessons");
       },
     });
-  const { mutateAsync: leaveClassMutateAsync } = useLeaveClassMutation({
-    onSuccess: () => {
-      bookingTimeSlotRouter.fetchForStudent.invalidate();
-      queryClient.invalidateQueries("lessons");
-    },
-  });
+  const { mutateAsync: leaveClassMutateAsync } =
+    trpc.classRouter.requestedClassRouter.leave.useMutation({
+      onSuccess: () => {
+        bookingTimeSlotRouter.fetchForStudent.invalidate();
+        queryClient.invalidateQueries("lessons");
+      },
+    });
+
   const { data: lessonsData } = useLessonsQuery({
     enabled: isAuthenticated,
   });
@@ -124,9 +122,10 @@ const ClassesPage = () => {
   };
 
   const leaveClass = async (slot: BookingTimeSlots) => {
+    const { id, status } = slot;
     await leaveClassMutateAsync({
-      id: slot.id,
-      status: slot.status,
+      id,
+      status,
     });
   };
 

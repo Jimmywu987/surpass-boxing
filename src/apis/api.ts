@@ -38,28 +38,6 @@ export const useCreateRegularClassMutation = () =>
     return await fetcher("/api/class/regular/create", params);
   });
 
-export const useRequestedClassQuery = (
-  variable?: unknown,
-  options?: UseQueryOptions<{
-    totalClassesCount: number;
-    totalConfirmedClasses: number;
-    totalCanceledClasses: number;
-    bookingTimeSlots: SortedBookingTimeSlotsType;
-  }>
-) =>
-  useQuery<{
-    totalClassesCount: number;
-    totalConfirmedClasses: number;
-    totalCanceledClasses: number;
-    bookingTimeSlots: SortedBookingTimeSlotsType;
-  }>(
-    ["requestedClass", variable],
-    async () => {
-      return await fetcher("/api/class/requested/fetch", variable);
-    },
-    options
-  );
-
 export const useRegularClassQuery = () =>
   useQuery<{
     regularBookingTimeSlots: (RegularBookingTimeSlots & {
@@ -108,15 +86,6 @@ export const useRemoveLessonMutation = (
     options
   );
 
-export const useJoinClassMutation = (options?: UseMutationReactQueryOption) =>
-  useMutation(
-    ["joinClass"],
-    async (params: any) => {
-      return await fetcher("/api/class/requested/join", params);
-    },
-    options
-  );
-
 export const useJoinRegularClassMutation = (
   options?: UseMutationReactQueryOption
 ) =>
@@ -124,15 +93,6 @@ export const useJoinRegularClassMutation = (
     ["joinRegularClass"],
     async (params: any) => {
       return await fetcher("/api/class/regular/join", params);
-    },
-    options
-  );
-
-export const useLeaveClassMutation = (options?: UseMutationReactQueryOption) =>
-  useMutation(
-    ["leaveClass"],
-    async (params: any) => {
-      return await fetcher("/api/class/requested/leave", params);
     },
     options
   );

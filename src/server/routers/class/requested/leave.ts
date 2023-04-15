@@ -1,16 +1,25 @@
 import { prisma } from "@/services/prisma";
 import { BookingTimeSlotStatusEnum, User } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import { add, isAfter } from "date-fns";
-import type { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getServerSession(req, res, authOptions);
+import { protectedProcedure } from "@/server/trpc";
+import { z } from "zod";
 
-  if (session && req.method === "POST") {
-    const { id, status } = req.body;
-    const user = session?.user as User;
+export const leave = protectedProcedure
+  .input(
+    z.object({
+      status: z.enum([
+        BookingTimeSlotStatusEnum.CANCELED,
+        BookingTimeSlotStatusEnum.CONFIRM,
+        BookingTimeSlotStatusEnum.PENDING,
+      ]),
+      id: z.string(),
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+    const { id, status } = input;
+    const user = ctx.session?.user as User;
 
     let shouldAddBackLesson = true;
 
@@ -24,7 +33,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
       if (!bookingTimeSlot) {
-        return res.status(401).json({ errorMessage: "Unauthorized" });
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+        });
       }
       const joiningTime = new Date(bookingTimeSlot.createdAt);
       const now = new Date();
@@ -70,10 +81,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
     });
-
-    return res.status(201).json({ message: "leave class successfully" });
-  }
-  return res.status(401).json({ errorMessage: "Unauthorized" });
-};
-
-export default handler;
+  });

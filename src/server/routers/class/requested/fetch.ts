@@ -2,21 +2,24 @@ import { TAKE_NUMBER } from "@/constants";
 import { AdminPeriodOptionsEnum } from "@/features/admin/enums/AdminOptionEnums";
 import { prisma } from "@/services/prisma";
 import { SortedBookingTimeSlotsType } from "@/types/timeSlots";
-import { BookingTimeSlots, BookingTimeSlotStatusEnum } from "@prisma/client";
+import { BookingTimeSlotStatusEnum } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import {
-  format,
-  startOfDay,
-  startOfWeek,
-  endOfWeek,
   endOfDay,
-  startOfMonth,
   endOfMonth,
-  startOfYear,
+  endOfWeek,
   endOfYear,
+  format,
+  isAfter,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+  startOfYear,
   subDays,
 } from "date-fns";
-import type { NextApiRequest, NextApiResponse } from "next";
 
+import { publicProcedure } from "@/server/trpc";
+import { z } from "zod";
 const getStartDuration = (period: AdminPeriodOptionsEnum) => {
   switch (period) {
     case AdminPeriodOptionsEnum.ONE_DAY:
@@ -50,10 +53,10 @@ const getDurationWhereQuery = ({
 }: {
   date: string;
   isPast: boolean;
-  period: AdminPeriodOptionsEnum;
+  period: AdminPeriodOptionsEnum | null;
 }) => {
   const dateTime = new Date(date);
-  if (!isPast) {
+  if (!isPast || !period) {
     return {
       gte: startOfDay(dateTime),
     };
@@ -67,101 +70,122 @@ const getDurationWhereQuery = ({
   const endDateTime = getEndDuration(period)(dateTime);
   return {
     gte: getStartDuration(period)(dateTime),
-    lte: yesterday.getTime() < endDateTime.getTime() ? yesterday : endDateTime,
+    lte: isAfter(endDateTime.getTime(), yesterday.getTime())
+      ? yesterday
+      : endDateTime,
   };
 };
+const fetchInput = z.object({
+  skip: z.number(),
+  date: z.string(),
+  isPast: z.boolean(),
+  period: z
+    .enum([
+      AdminPeriodOptionsEnum.ALL,
+      AdminPeriodOptionsEnum.ONE_DAY,
+      AdminPeriodOptionsEnum.ONE_WEEK,
+      AdminPeriodOptionsEnum.ONE_MONTH,
+      AdminPeriodOptionsEnum.ONE_YEAR,
+    ])
+    .nullable(),
+});
+export const fetch = publicProcedure
+  .input(fetchInput)
+  .query(async ({ input }) => {
+    const { skip, ...dateTimeProps } = input;
+    const { period } = dateTimeProps;
+    try {
+      const result = await prisma.$transaction(async (txn) => {
+        const whereQuery = getDurationWhereQuery(
+          dateTimeProps as Omit<z.infer<typeof fetchInput>, "skip"> & {
+            period: AdminPeriodOptionsEnum;
+          }
+        );
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method !== "POST") {
-    return res.status(401).json({ errorMessage: "Unauthorized" });
-  }
-  const { skip, ...dateTimeProps } = req.body;
-  try {
-    const result = await prisma.$transaction(async (txn) => {
-      const whereQuery = getDurationWhereQuery(dateTimeProps);
-      const totalClasses = await txn.bookingTimeSlots.aggregate({
-        where: {
-          date: whereQuery,
-        },
-        _count: true,
-      });
-      const totalClassesCount = totalClasses._count;
-      if (totalClassesCount === 0) {
-        return {
-          totalClassesCount: 0,
-          totalConfirmedClasses: 0,
-          totalCanceledClasses: 0,
-          bookingTimeSlots: [],
-        };
-      }
-      const bookingTimeSlots = await txn.bookingTimeSlots.findMany({
-        take: TAKE_NUMBER,
-        skip,
-        include: {
-          userOnBookingTimeSlots: {
-            include: {
-              user: {
-                select: {
-                  username: true,
-                  profileImg: true,
+        const totalClasses = await txn.bookingTimeSlots.aggregate({
+          where: {
+            date: whereQuery,
+          },
+          _count: true,
+        });
+        const totalClassesCount = totalClasses._count;
+        if (totalClassesCount === 0) {
+          return {
+            totalClassesCount: 0,
+            totalConfirmedClasses: 0,
+            totalCanceledClasses: 0,
+            bookingTimeSlots: [],
+          };
+        }
+        const bookingTimeSlots = await txn.bookingTimeSlots.findMany({
+          take: TAKE_NUMBER,
+          skip,
+          include: {
+            userOnBookingTimeSlots: {
+              include: {
+                user: {
+                  select: {
+                    username: true,
+                    profileImg: true,
+                  },
                 },
               },
             },
           },
-        },
-        where: {
-          date: whereQuery,
-        },
-        orderBy: {
-          date: "desc",
-        },
+          where: {
+            date: whereQuery,
+          },
+          orderBy: {
+            date: "desc",
+          },
+        });
+        const totalConfirmedClasses = await txn.bookingTimeSlots.aggregate({
+          where: {
+            date: whereQuery,
+            status: BookingTimeSlotStatusEnum.CONFIRM,
+          },
+          _count: true,
+        });
+        const totalCanceledClasses = await txn.bookingTimeSlots.aggregate({
+          where: {
+            date: whereQuery,
+            status: BookingTimeSlotStatusEnum.CANCELED,
+          },
+          _count: true,
+        });
+        return {
+          bookingTimeSlots,
+          totalClassesCount,
+          totalConfirmedClasses: totalConfirmedClasses._count,
+          totalCanceledClasses: totalCanceledClasses._count,
+        };
       });
-      const totalConfirmedClasses = await txn.bookingTimeSlots.aggregate({
-        where: {
-          date: whereQuery,
-          status: BookingTimeSlotStatusEnum.CONFIRM,
-        },
-        _count: true,
+
+      const sortedBookingTimeSlots: SortedBookingTimeSlotsType = [];
+
+      result.bookingTimeSlots.map((timeSlot) => {
+        const date = format(timeSlot.date, "yyyy-MM-dd");
+        const checkIfExist = sortedBookingTimeSlots.findIndex(
+          (slot) => slot.date === date
+        );
+        if (checkIfExist !== -1) {
+          sortedBookingTimeSlots[checkIfExist].timeSlots.push(timeSlot);
+          return;
+        }
+        sortedBookingTimeSlots.push({
+          date,
+          timeSlots: [timeSlot],
+        });
       });
-      const totalCanceledClasses = await txn.bookingTimeSlots.aggregate({
-        where: {
-          date: whereQuery,
-          status: BookingTimeSlotStatusEnum.CANCELED,
-        },
-        _count: true,
-      });
+
       return {
-        bookingTimeSlots,
-        totalClassesCount,
-        totalConfirmedClasses: totalConfirmedClasses._count,
-        totalCanceledClasses: totalCanceledClasses._count,
+        ...result,
+        bookingTimeSlots: sortedBookingTimeSlots,
       };
-    });
-
-    const sortedBookingTimeSlots: SortedBookingTimeSlotsType = [];
-
-    result.bookingTimeSlots.map((timeSlot) => {
-      const date = format(timeSlot.date, "yyyy-MM-dd");
-      const checkIfExist = sortedBookingTimeSlots.findIndex(
-        (slot) => slot.date === date
-      );
-      if (checkIfExist !== -1) {
-        sortedBookingTimeSlots[checkIfExist].timeSlots.push(timeSlot);
-        return;
-      }
-      sortedBookingTimeSlots.push({
-        date,
-        timeSlots: [timeSlot],
+    } catch (error) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Something went wrong",
       });
-    });
-
-    return res.status(201).json({
-      ...result,
-      bookingTimeSlots: sortedBookingTimeSlots,
-    });
-  } catch (error) {
-    return res.status(500).json({ errorMessage: "Something went wrong" });
-  }
-};
-
-export default handler;
+    }
+  });

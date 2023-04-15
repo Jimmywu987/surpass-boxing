@@ -1,16 +1,19 @@
 import { prisma } from "@/services/prisma";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { TRPCError } from "@trpc/server";
 
-import type { NextApiRequest, NextApiResponse } from "next";
 import { User } from "@prisma/client";
-import { getServerSession } from "next-auth";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getServerSession(req, res, authOptions);
-
-  if (session && req.method === "POST") {
-    const { id } = req.body;
-    const user = session?.user as User;
+import { protectedProcedure } from "@/server/trpc";
+import { z } from "zod";
+export const join = protectedProcedure
+  .input(
+    z.object({
+      id: z.string(),
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+    const { id } = input;
+    const user = ctx.session?.user as User;
 
     const lessons = await prisma.lessons.findMany({
       where: {
@@ -28,7 +31,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     if (lessons.length === 0) {
-      return res.status(401).json({ errorMessage: "Unauthorized" });
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+      });
     }
     await prisma.$transaction(async (txn) => {
       await txn.lessons.update({
@@ -48,10 +53,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
     });
-
-    return res.status(201).json({ message: "join successfully" });
-  }
-  return res.status(401).json({ errorMessage: "Unauthorized" });
-};
-
-export default handler;
+  });
