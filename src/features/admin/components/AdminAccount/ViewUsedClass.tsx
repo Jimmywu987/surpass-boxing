@@ -1,19 +1,15 @@
-import { UserType } from "@/types";
-import { UseDisclosureReturn } from "@chakra-ui/react";
 import useTranslation from "next-translate/useTranslation";
-import Image from "next/image";
-import DefaultProfileImg from "@/../public/default-profile-img.png";
 
-import Link from "next/link";
+import { AdminViewAccountOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
+import { format } from "date-fns";
+import { Dispatch, SetStateAction } from "react";
 import { useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
-import { format } from "date-fns";
-import { AdminViewAccountOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
-import { Dispatch, SetStateAction, useState } from "react";
-import { useBookingTimeSlotQuery } from "@/apis/api";
-import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { getTimeDuration } from "@/helpers/getTime";
+
 import { getDuration } from "@/helpers/getDuration";
+import { getTimeDuration } from "@/helpers/getTime";
+import { trpc } from "@/utils/trpc";
+import { ChevronLeftIcon } from "@chakra-ui/icons";
 
 export const ViewUsedClass = ({
   bookingTimeSlotIds,
@@ -25,7 +21,7 @@ export const ViewUsedClass = ({
   const { t } = useTranslation("classes");
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
-  const { data, isLoading } = useBookingTimeSlotQuery({
+  const { data, isLoading } = trpc.bookingTimeSlotRouter.fetch.useQuery({
     ids: bookingTimeSlotIds,
   });
 
@@ -36,14 +32,14 @@ export const ViewUsedClass = ({
     <div>
       <ChevronLeftIcon
         fontSize="3xl"
-        cursor={"pointer"}
+        cursor="pointer"
         onClick={() => {
           setView(AdminViewAccountOptionEnums.VIEW_ACCOUNT);
         }}
       />
       <div>
         {bookingTimeSlotIds.length > 0 ? (
-          data.bookingTimeSlots.map((bookingTimeSlot, index) => {
+          data.map((bookingTimeSlot, index) => {
             const { startTime, endTime, className, coachName, date } =
               bookingTimeSlot;
             return (

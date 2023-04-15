@@ -1,8 +1,4 @@
-import {
-  useClassTypeQuery,
-  useCreateClassTypeMutation,
-  useRemoveClassTypeMutation,
-} from "@/apis/api";
+import { trpc } from "@/utils/trpc";
 import { SmallCloseIcon } from "@chakra-ui/icons";
 import {
   Button,
@@ -19,32 +15,36 @@ import { useRef } from "react";
 import { useQueryClient } from "react-query";
 
 export const AdminClassTypesSection = () => {
-  const { data, isLoading } = useClassTypeQuery();
+  const { classRouter } = trpc;
+
+  const { data, isLoading } = classRouter.fetch.useQuery();
+  const utils = trpc.useContext();
+
   const queryClient = useQueryClient();
 
   const { t } = useTranslation("admin");
   const {
     mutateAsync: createClassTypeMutateAsync,
     isLoading: createClassTypeIsLoading,
-  } = useCreateClassTypeMutation();
+  } = classRouter.create.useMutation();
   const {
     mutateAsync: removeClassTypeMutateAsync,
     isLoading: removeClassTypeIsLoading,
-  } = useRemoveClassTypeMutation();
+  } = classRouter.remove.useMutation();
 
   const classTypeRef = useRef<HTMLInputElement>(null);
   const handleClassTypeAdd = async () => {
     if (classTypeRef && classTypeRef.current && classTypeRef.current.value) {
       const name = classTypeRef.current.value;
       await createClassTypeMutateAsync({ name });
-      await queryClient.invalidateQueries("classTypes");
+      await utils.classRouter.fetch.invalidate();
       classTypeRef.current.value = "";
     }
   };
   const handleClassTypeRemove = async (id: string) => {
     if (!createClassTypeIsLoading || !removeClassTypeIsLoading) {
       await removeClassTypeMutateAsync({ id });
-      await queryClient.invalidateQueries("classTypes");
+      await utils.classRouter.fetch.invalidate();
     }
   };
   if (!data || isLoading) {
@@ -82,7 +82,7 @@ export const AdminClassTypesSection = () => {
         </InputRightElement>
       </InputGroup>
       <div className="mx-2">
-        {data.classTypes.map((type) => (
+        {data.map((type) => (
           <div
             key={type.id}
             className="flex justify-between items-center p-3 border border-gray-700 rounded"

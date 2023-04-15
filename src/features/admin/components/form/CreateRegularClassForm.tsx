@@ -1,11 +1,8 @@
-import {
-  useClassTypeQuery,
-  useCreateRegularClassMutation,
-  useUsersQuery,
-} from "@/apis/api";
+import { useCreateRegularClassMutation, useUsersQuery } from "@/apis/api";
 import { useRegularClassInputResolver } from "@/features/admin/schemas/useRegularClassInputResolver";
 import { SubmitButton } from "@/features/common/components/buttons/SubmitButton";
 import { getDuration } from "@/helpers/getDuration";
+import { trpc } from "@/utils/trpc";
 import {
   CheckboxGroup,
   Input,
@@ -42,7 +39,9 @@ export const CreateRegularClassForm = ({
   modalDisclosure: UseDisclosureReturn;
 }) => {
   const { t } = useTranslation("classes");
-  const { data } = useClassTypeQuery();
+
+  const { data } = trpc.classRouter.fetch.useQuery();
+
   const { data: userData } = useUsersQuery(true, {});
   const queryClient = useQueryClient();
 
@@ -107,7 +106,7 @@ export const CreateRegularClassForm = ({
         </CheckboxGroup>
         <div>
           <Select placeholder={t("class_type")} {...register("className")}>
-            {data.classTypes.map((type) => (
+            {data.map((type) => (
               <option key={type.id} value={type.name}>
                 {type.name}
               </option>

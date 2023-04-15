@@ -33,32 +33,9 @@ type UseReactQueryOption = Omit<
   "queryKey" | "queryFn"
 >;
 
-export const useCreateClassTypeMutation = () =>
-  useMutation(["createClassType"], async (params: any) => {
-    return await fetcher("/api/class/create", params);
-  });
-export const useRemoveClassTypeMutation = () =>
-  useMutation(["removeClassType"], async (params: any) => {
-    return await fetcher("/api/class/remove", params);
-  });
 export const useCreateRegularClassMutation = () =>
   useMutation(["createRegularClass"], async (params: any) => {
     return await fetcher("/api/class/regular/create", params);
-  });
-
-export const useCreateRequestedClassMutation = () =>
-  useMutation(["createRequestedClass"], async (params: any) => {
-    return await fetcher("/api/class/requested/create", params);
-  });
-
-export const useUpdateRequestedClassMutation = () =>
-  useMutation(["updateRequestedClass"], async (params: any) => {
-    return await fetcher("/api/class/requested/update", params);
-  });
-
-export const useCreateUserMutation = () =>
-  useMutation(["createUser"], async (params: any) => {
-    return await fetcher("/api/auth/sign-up", params);
   });
 
 export const useRequestedClassQuery = (
@@ -108,34 +85,6 @@ export const useRegularClassQuery = () =>
 export const useRemoveRegularClassMutation = () =>
   useMutation(["removeRegularClass"], async (params: any) => {
     return await fetcher("/api/class/regular/remove", params);
-  });
-
-export const useClassTypeQuery = () =>
-  useQuery<{ classTypes: ClassesType[] }>(["classTypes"], async () => {
-    return await fetcher("/api/class/fetch");
-  });
-
-export const useBookingTimeSlotQuery = ({ ids = [] }: { ids?: string[] }) =>
-  useQuery<{ bookingTimeSlots: BookingTimeSlots[] }>(
-    ["bookingTimeSlot", ids],
-    async () => {
-      return await fetcher("/api/booking-time-slot/fetch", {
-        ids,
-      });
-    }
-  );
-
-export const useBookingTimeSlotForStudentQuery = (variable?: unknown) =>
-  useQuery<{
-    totalClassesCount: number;
-    regularBookingSlot: (RegularBookingTimeSlots & {
-      coach: {
-        username: string;
-      };
-    })[];
-    bookingTimeSlots: BookingTimeSlots[];
-  }>(["bookingTimeSlot", variable], async () => {
-    return await fetcher("/api/booking-time-slot/fetch-for-student", variable);
   });
 
 export const useNewsQuery = () =>

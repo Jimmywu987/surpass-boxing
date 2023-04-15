@@ -1,8 +1,4 @@
-import {
-  useClassTypeQuery,
-  useUpdateRequestedClassMutation,
-  useUsersQuery,
-} from "@/apis/api";
+import { useUsersQuery } from "@/apis/api";
 import { SubmitButton } from "@/features/common/components/buttons/SubmitButton";
 import { getDuration } from "@/helpers/getDuration";
 import {
@@ -23,18 +19,9 @@ import { format, intervalToDuration } from "date-fns";
 import { WeekSelectionCheckBox } from "./WeekSelectionCheckBox";
 import { TimeSlotsType } from "@/types/timeSlots";
 import { getTimeDisplay } from "@/helpers/getTime";
-
-type EditRequestedClassInputType = {
-  id: string;
-  regularBookingTimeSlotId: string;
-  date: Date;
-  startTime: number;
-  endTime: number;
-  className: string;
-  people: number;
-  setLimit: boolean;
-  coachName: string;
-};
+import { requestedClassCreateSchema } from "@/schemas/class/requested/create";
+import { z } from "zod";
+import { trpc } from "@/utils/trpc";
 
 export const EditRequestedClassForm = ({
   modalDisclosure,
@@ -44,24 +31,28 @@ export const EditRequestedClassForm = ({
   timeSlot: TimeSlotsType;
 }) => {
   const { t } = useTranslation("classes");
-  const { data } = useClassTypeQuery();
+  const { classRouter } = trpc;
+  const { data } = classRouter.fetch.useQuery();
+
   const queryClient = useQueryClient();
   const { data: userData } = useUsersQuery(true, {});
   const session = useSession();
   const user = session.data?.user as User;
-  const { mutateAsync, isLoading } = useUpdateRequestedClassMutation();
+  const { mutateAsync, isLoading } =
+    classRouter.requestedClassRouter.update.useMutation();
 
   const { onClose } = modalDisclosure;
 
-  const requestedClassInputFormMethods = useForm<EditRequestedClassInputType>({
+  const requestedClassInputFormMethods = useForm<
+    z.infer<ReturnType<typeof requestedClassCreateSchema>>
+  >({
     resolver: useRequestedClassInputResolver(
       timeSlot.userOnBookingTimeSlots.length
     ),
     mode: "onSubmit",
     defaultValues: {
       id: timeSlot.id,
-      regularBookingTimeSlotId: timeSlot.regularBookingTimeSlotId ?? "",
-      date: new Date(timeSlot.date),
+      date: timeSlot.date.toString(),
       startTime: timeSlot.startTime,
       endTime: timeSlot.endTime,
       className: timeSlot.className,
@@ -79,7 +70,7 @@ export const EditRequestedClassForm = ({
     queryClient.invalidateQueries("requestedClass");
     onClose();
   });
-  const { errors, isValid } = formState;
+  const { errors } = formState;
   if (!data || isLoading || !userData) {
     return (
       <Stack mt="12">
@@ -87,6 +78,7 @@ export const EditRequestedClassForm = ({
       </Stack>
     );
   }
+  console.log("fesufgesuyihfueysgfuygysegh", errors);
   const defaultFromTime = intervalToDuration({
     start: timeSlot.startTime,
     end: 0,
@@ -111,7 +103,7 @@ export const EditRequestedClassForm = ({
           </div>
           <div>
             <Select placeholder={t("class_type")} {...register("className")}>
-              {data.classTypes.map((type) => (
+              {data.map((type) => (
                 <option key={type.id} value={type.name}>
                   {type.name}
                 </option>
@@ -214,9 +206,9 @@ export const EditRequestedClassForm = ({
                       type="number"
                       name="people"
                       onChange={(e) =>
-                        !Number.isNaN(e.target.valueAsNumber)
-                          ? e.target.valueAsNumber
-                          : 0
+                        setValue("people", e.target.valueAsNumber, {
+                          shouldValidate: true,
+                        })
                       }
                       w="full"
                       defaultValue={

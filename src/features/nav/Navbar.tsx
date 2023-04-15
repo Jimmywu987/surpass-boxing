@@ -68,7 +68,7 @@ export const Navbar = () => {
     storeUserToRedux();
   }, [isAuthenticated]);
 
-  const onClickLanguageHandler = (language: string) => {
+  const onClickLanguageHandler = (language: "zh-HK" | "en") => {
     router.push({ pathname, query }, asPath, { locale: language });
   };
   const langIsHk = lang === "zh-HK";
