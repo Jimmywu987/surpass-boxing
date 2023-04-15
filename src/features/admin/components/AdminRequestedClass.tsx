@@ -1,7 +1,5 @@
 import { Button, Skeleton, Stack, useDisclosure } from "@chakra-ui/react";
-import { SingleDatepicker } from "chakra-dayzed-datepicker";
 
-import { useRequestedClassQuery } from "@/apis/api";
 import { CreateRequestedClassForm } from "@/features/common/components/form/CreateRequestedClassForm";
 import { ModalComponent } from "@/features/common/components/Modal";
 import { getDuration } from "@/helpers/getDuration";
@@ -18,6 +16,7 @@ import { ViewRequestedClass } from "./ViewRequestedClass";
 import { SKIP_NUMBER, TAKE_NUMBER } from "@/constants";
 import { PageNumberDisplay } from "@/features/common/components/PageNumberDisplay";
 import { DatePicker } from "@/features/common/components/DatePicker";
+import { trpc } from "@/utils/trpc";
 
 export const AdminRequestedClass = () => {
   const { t } = useTranslation("admin");
@@ -27,17 +26,19 @@ export const AdminRequestedClass = () => {
 
   const [query, setQuery] = useState({
     skip: 0,
-    date: new Date(),
+    date: new Date().toString(),
   });
+  const dateTime = new Date(query.date);
   const minDate = endOfDay(subDays(new Date(), 1));
   const { timeSlot } = useSelector(timeSlotSelector);
 
   const { onOpen } = modalDisclosure;
-  const { data, isLoading } = useRequestedClassQuery({
-    ...query,
-    isPast: false,
-    period: null,
-  });
+  const { data, isLoading } =
+    trpc.classRouter.requestedClassRouter.fetch.useQuery({
+      ...query,
+      isPast: false,
+      period: null,
+    });
 
   const handleOpenModel = () => {
     onOpen();
@@ -69,11 +70,11 @@ export const AdminRequestedClass = () => {
         <div className="w-36">
           <DatePicker
             datePickerProps={{
-              date: query.date,
+              date: dateTime,
               onDateChange: (value) => {
                 setQuery({
                   skip: 0,
-                  date: value,
+                  date: value.toString(),
                 });
               },
               minDate: minDate,
@@ -81,7 +82,7 @@ export const AdminRequestedClass = () => {
           />
         </div>
         <div className="text-white">
-          {t(`classes:${format(query.date, "EEEE").toLowerCase()}`)}
+          {t(`classes:${format(dateTime, "EEEE").toLowerCase()}`)}
         </div>
       </div>
       <div className="space-y-2">
@@ -218,7 +219,7 @@ export const AdminRequestedClass = () => {
           !timeSlot ? (
             <CreateRequestedClassForm
               modalDisclosure={modalDisclosure}
-              date={query.date}
+              date={dateTime}
             />
           ) : (
             <ViewRequestedClass
