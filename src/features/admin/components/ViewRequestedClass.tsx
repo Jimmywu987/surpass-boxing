@@ -1,4 +1,3 @@
-import { useUpdateClassStatus } from "@/apis/api";
 import { getDuration } from "@/helpers/getDuration";
 import { UseDisclosureReturn } from "@chakra-ui/react";
 import { BookingTimeSlotStatusEnum, User } from "@prisma/client";
@@ -16,6 +15,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { EditRequestedClassForm } from "@/features/admin/components/form/EditRequestedClassForm";
 import { useQueryClient } from "react-query";
+import { trpc } from "@/utils/trpc";
 
 export const ViewRequestedClass = ({
   modalDisclosure,
@@ -31,7 +31,8 @@ export const ViewRequestedClass = ({
   const [isEdit, setIsEdit] = useState(false);
   const { timeSlot } = useSelector(timeSlotSelector);
 
-  const { mutateAsync, isLoading } = useUpdateClassStatus();
+  const { mutateAsync, isLoading } =
+    trpc.classRouter.requestedClassRouter.statusUpdate.useMutation();
   if (!timeSlot) {
     return <></>;
   }

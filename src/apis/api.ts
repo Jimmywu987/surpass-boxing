@@ -60,17 +60,6 @@ export const useRequestedClassQuery = (
     options
   );
 
-export const useUpdateClassStatus = () =>
-  useMutation<
-    {
-      status: BookingTimeSlotStatusEnum;
-    },
-    unknown,
-    { status: BookingTimeSlotStatusEnum; id: string }
-  >(["updateClassStatus"], async (params: unknown) => {
-    return await fetcher("/api/class/requested/status-update", params);
-  });
-
 export const useRegularClassQuery = () =>
   useQuery<{
     regularBookingTimeSlots: (RegularBookingTimeSlots & {

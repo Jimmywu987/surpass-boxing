@@ -1,18 +1,27 @@
 import { prisma } from "@/services/prisma";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { TRPCError } from "@trpc/server";
 
-import type { NextApiRequest, NextApiResponse } from "next";
+import { protectedProcedure } from "@/server/trpc";
 import { BookingTimeSlotStatusEnum, Lessons, User } from "@prisma/client";
-import { getServerSession } from "next-auth";
-
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getServerSession(req, res, authOptions);
-
-  if (session && req.method === "POST") {
-    const { status, id } = req.body;
-    const user = session?.user as User;
+import { z } from "zod";
+export const statusUpdate = protectedProcedure
+  .input(
+    z.object({
+      status: z.enum([
+        BookingTimeSlotStatusEnum.CANCELED,
+        BookingTimeSlotStatusEnum.CONFIRM,
+        BookingTimeSlotStatusEnum.PENDING,
+      ]),
+      id: z.string(),
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+    const { status, id } = input;
+    const user = ctx.session?.user as User;
     if (!user.admin) {
-      return res.status(401).json({ errorMessage: "Unauthorized" });
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+      });
     }
     const lessonIds: string[] = [];
 
@@ -46,7 +55,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
     //@TODO: send messages to users
-    const response = await prisma.$transaction(async (txn) => {
+    return prisma.$transaction(async (txn) => {
       if (lessonIds.length > 0) {
         await txn.lessons.updateMany({
           data: {
@@ -69,10 +78,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
     });
-
-    return res.status(201).json({ type: response });
-  }
-  return res.status(401).json({ errorMessage: "Unauthorized" });
-};
-
-export default handler;
+  });
