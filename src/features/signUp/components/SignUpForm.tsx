@@ -1,24 +1,18 @@
-import { useCreateUserMutation } from "@/apis/api";
 import { FormTextInput } from "@/features/common/components/input/FormTextInput";
 import { ShowPassword } from "@/features/common/components/ShowPassword";
-import { useSignUpResolver } from "@/features/signUp/schemas/useSignUpResolver";
-import { SignUpInputTypes } from "@/features/signUp/types/signUpInputTypes";
-
 import { useS3Upload } from "next-s3-upload";
-import { useRouter } from "next/router";
 import { useState } from "react";
-
-import { FormProvider, useForm } from "react-hook-form";
-import { CameraSvgIcon } from "@/features/signUp/components/svg/CameraSvgIcon";
 import { GoogleButton } from "@/features/common/components/buttons/GoogleButton";
-import { useDispatch, useSelector } from "react-redux";
-import { isLoading, loadingSelector } from "@/redux/loading";
-
+import { CameraSvgIcon } from "@/features/signUp/components/svg/CameraSvgIcon";
+import { FormProvider, useForm } from "react-hook-form";
 import { SubmitButton } from "@/features/common/components/buttons/SubmitButton";
 import { createStandaloneToast } from "@chakra-ui/toast";
 import useTranslation from "next-translate/useTranslation";
-
+import { signUpSchema } from "@/schemas/auth/signUp";
+import { trpc } from "@/utils/trpc";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
+import { z } from "zod";
 
 export const SignUpForm = ({
   LoginButton,
@@ -26,18 +20,16 @@ export const SignUpForm = ({
   LoginButton: React.ReactNode;
 }) => {
   const { t } = useTranslation("auth");
-  const { mutateAsync, isLoading } = useCreateUserMutation();
+  const { mutateAsync, isLoading } = trpc.authRouter.signUp.useMutation();
+
   const { register, watch } = useForm();
   const { toast } = createStandaloneToast();
-
-  const dispatch = useDispatch();
-  const { loading } = useSelector(loadingSelector);
 
   const [showPassword, setShowPassword] = useState(false);
   const { uploadToS3 } = useS3Upload();
 
-  const signUpFormMethods = useForm<SignUpInputTypes>({
-    resolver: useSignUpResolver(),
+  const signUpFormMethods = useForm<z.infer<ReturnType<typeof signUpSchema>>>({
+    resolver: zodResolver(signUpSchema()),
     defaultValues: {
       username: "",
       email: "",

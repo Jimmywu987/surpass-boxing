@@ -8,11 +8,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getServerSession(req, res, authOptions);
 
   if (session && req.method === "POST") {
-    const { id } = req.body;
-    await prisma.classesType.delete({
-      where: { id },
+    const { setLimit, people, ...data } = req.body;
+    const response = await prisma.regularBookingTimeSlots.create({
+      data: { ...data, numberOfParticipants: setLimit ? people : null },
     });
-    return res.status(201).json({ message: "remove successfully" });
+    return res.status(201).json({ type: response });
   }
   return res.status(401).json({ errorMessage: "Unauthorized" });
 };

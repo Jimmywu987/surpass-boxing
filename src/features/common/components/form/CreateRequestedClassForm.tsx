@@ -1,8 +1,5 @@
-import {
-  useClassTypeQuery,
-  useCreateRequestedClassMutation,
-  useUsersQuery,
-} from "@/apis/api";
+import { useUsersQuery } from "@/apis/api";
+import { requestedClassCreateSchema } from "@/schemas/class/requested/create";
 import { SubmitButton } from "@/features/common/components/buttons/SubmitButton";
 import { getDuration } from "@/helpers/getDuration";
 import {
@@ -21,16 +18,8 @@ import { useQueryClient } from "react-query";
 import { useRequestedClassInputResolver } from "@/features/admin/schemas/useRequestedClassInputResolver";
 import { format } from "date-fns";
 import { WeekSelectionCheckBox } from "../../../admin/components/form/WeekSelectionCheckBox";
-
-type CreateRequestedClassInputType = {
-  date: Date;
-  startTime: number;
-  endTime: number;
-  className: string;
-  people: number;
-  setLimit: boolean;
-  coachName: string;
-};
+import { trpc } from "@/utils/trpc";
+import { z } from "zod";
 
 export const CreateRequestedClassForm = ({
   modalDisclosure,
@@ -40,30 +29,34 @@ export const CreateRequestedClassForm = ({
   date: Date;
 }) => {
   const { t } = useTranslation("classes");
-  const { data } = useClassTypeQuery();
+  const { classRouter } = trpc;
+  const utils = trpc.useContext();
+  const { data } = classRouter.fetch.useQuery();
+
   const queryClient = useQueryClient();
   const { data: userData } = useUsersQuery(true, {});
   const session = useSession();
   const user = session.data?.user as User;
-  const { mutateAsync, isLoading } = useCreateRequestedClassMutation();
+  const { mutateAsync, isLoading } =
+    classRouter.requestedClassRouter.create.useMutation();
 
   const { onClose } = modalDisclosure;
 
-  const requestedClassInputFormMethods = useForm<CreateRequestedClassInputType>(
-    {
-      resolver: useRequestedClassInputResolver(),
-      mode: "onChange",
-      defaultValues: {
-        date,
-        startTime: 0,
-        endTime: 0,
-        className: "",
-        setLimit: false,
-        people: 0,
-        coachName: "",
-      },
-    }
-  );
+  const requestedClassInputFormMethods = useForm<
+    z.infer<ReturnType<typeof requestedClassCreateSchema>>
+  >({
+    resolver: useRequestedClassInputResolver(),
+    mode: "onChange",
+    defaultValues: {
+      date: date.toString(),
+      startTime: 0,
+      endTime: 0,
+      className: "",
+      setLimit: false,
+      people: 0,
+      coachName: "",
+    },
+  });
   const { setValue, watch, formState, register } =
     requestedClassInputFormMethods;
   const onSubmit = requestedClassInputFormMethods.handleSubmit(async (data) => {
@@ -97,7 +90,7 @@ export const CreateRequestedClassForm = ({
           </div>
           <div>
             <Select placeholder={t("class_type")} {...register("className")}>
-              {data.classTypes.map((type) => (
+              {data.map((type) => (
                 <option key={type.id} value={type.name}>
                   {type.name}
                 </option>

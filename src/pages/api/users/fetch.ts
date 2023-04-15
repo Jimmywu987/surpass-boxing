@@ -4,8 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { AdminAccountFilterOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
 import { BookingTimeSlotStatusEnum } from "@prisma/client";
 import { getServerSession } from "next-auth";
-
-const TAKE_NUMBER = 10;
+import { TAKE_NUMBER } from "@/constants";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getServerSession(req, res, authOptions);

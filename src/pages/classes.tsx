@@ -1,8 +1,8 @@
 import { Button, Skeleton, Stack, useDisclosure } from "@chakra-ui/react";
 
-import { subDays, endOfDay, format, isAfter } from "date-fns";
+import { subDays, endOfDay, format } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
-import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { SignUpForm } from "@/features/signUp/components/SignUpForm";
 import { LoginForm } from "@/features/login/components/LoginForm";
 import Image from "next/image";
@@ -10,18 +10,11 @@ import DefaultProfileImg from "@/../public/default-profile-img.png";
 
 import { OpenModelType } from "@/features/common/enums/OpenModelType";
 import { useSession } from "next-auth/react";
-import {
-  User,
-  BookingTimeSlots,
-  RegularBookingTimeSlots,
-  BookingTimeSlotStatusEnum,
-  UserOnBookingTimeSlots,
-} from "@prisma/client";
+import { User, BookingTimeSlotStatusEnum } from "@prisma/client";
 
 import { ModalComponent } from "@/features/common/components/Modal";
 
 import {
-  useBookingTimeSlotForStudentQuery,
   useJoinClassMutation,
   useJoinRegularClassMutation,
   useLessonsQuery,
@@ -41,31 +34,39 @@ import { getDuration } from "@/helpers/getDuration";
 import { DatePicker } from "@/features/common/components/DatePicker";
 import { useQueryClient } from "react-query";
 import { CreateRequestedClassForm } from "@/features/common/components/form/CreateRequestedClassForm";
+import { trpc, RouterOutput } from "@/utils/trpc";
+
+type inferType = RouterOutput["bookingTimeSlotRouter"]["fetchForStudent"];
+type BookingTimeSlots = inferType["bookingTimeSlots"][0];
+type RegularBookingTimeSlots = inferType["regularBookingSlot"][0];
 
 const ClassesPage = () => {
   const { t } = useTranslation("classes");
   const session = useSession();
   const queryClient = useQueryClient();
+  const utils = trpc.useContext();
+  const { bookingTimeSlotRouter } = utils;
   const isAuthenticated = session.status === "authenticated";
   const user = session.data?.user as User;
   const [modelType, setModelType] = useState(OpenModelType.OPEN_CLASS);
 
   const { mutateAsync: joinClassMutateAsync } = useJoinClassMutation({
     onSuccess: () => {
-      queryClient.invalidateQueries("bookingTimeSlot");
+      bookingTimeSlotRouter.fetchForStudent.invalidate();
       queryClient.invalidateQueries("lessons");
     },
   });
+
   const { mutateAsync: joinRegularClassMutateAsync } =
     useJoinRegularClassMutation({
       onSuccess: () => {
-        queryClient.invalidateQueries("bookingTimeSlot");
+        bookingTimeSlotRouter.fetchForStudent.invalidate();
         queryClient.invalidateQueries("lessons");
       },
     });
   const { mutateAsync: leaveClassMutateAsync } = useLeaveClassMutation({
     onSuccess: () => {
-      queryClient.invalidateQueries("bookingTimeSlot");
+      bookingTimeSlotRouter.fetchForStudent.invalidate();
       queryClient.invalidateQueries("lessons");
     },
   });
@@ -75,6 +76,7 @@ const ClassesPage = () => {
 
   const modalDisclosure = useDisclosure();
   const { onOpen } = modalDisclosure;
+
   const handleOpenModel = () => {
     onOpen();
     if (!isAuthenticated) {
@@ -87,13 +89,14 @@ const ClassesPage = () => {
     }
     setModelType(OpenModelType.OPEN_CLASS);
   };
+
   const [query, setQuery] = useState({
     skip: 0,
-    date: new Date(),
+    date: new Date().toString(),
   });
 
-  const minDate = endOfDay(subDays(new Date(), 1));
-  const { data, isLoading } = useBookingTimeSlotForStudentQuery(query);
+  const { data, isLoading } =
+    trpc.bookingTimeSlotRouter.fetchForStudent.useQuery(query);
 
   const classes = useMemo(() => {
     if (!data) {
@@ -110,9 +113,14 @@ const ClassesPage = () => {
   const joinClass = async (slot: BookingTimeSlots) => {
     await joinClassMutateAsync({ id: slot.id });
   };
+  const date = new Date(query.date);
+  const minDate = endOfDay(subDays(new Date(), 1));
 
   const joinRegularClass = async (slot: RegularBookingTimeSlots) => {
-    await joinRegularClassMutateAsync({ id: slot.id, date: query.date });
+    await joinRegularClassMutateAsync({
+      id: slot.id,
+      date,
+    });
   };
 
   const leaveClass = async (slot: BookingTimeSlots) => {
@@ -138,16 +146,19 @@ const ClassesPage = () => {
           <div className="w-36">
             <DatePicker
               datePickerProps={{
-                date: query.date,
+                date,
                 onDateChange: (value) => {
-                  setQuery(() => ({ skip: 0, date: value }));
+                  setQuery(() => ({
+                    skip: 0,
+                    date: value.toString(),
+                  }));
                 },
                 minDate,
               }}
             />
           </div>
           <div className="text-white">
-            {t(format(query.date, "EEEE").toLowerCase())}
+            {t(format(date, "EEEE").toLowerCase())}
           </div>
           <div>
             <Button onClick={handleOpenModel}>{t("open_a_class")}</Button>
@@ -156,19 +167,8 @@ const ClassesPage = () => {
         <div className="space-y-2">
           {classes.map((slot) => {
             const { startTime, endTime } = slot;
-            const bookingTimeSlot = slot as BookingTimeSlots & {
-              userOnBookingTimeSlots: (UserOnBookingTimeSlots & {
-                user: {
-                  username: string;
-                  profileImg: string;
-                };
-              })[];
-            };
-            const regularBookingTimeSlot = slot as RegularBookingTimeSlots & {
-              coach: {
-                username: string;
-              };
-            };
+            const bookingTimeSlot = slot as BookingTimeSlots;
+            const regularBookingTimeSlot = slot as RegularBookingTimeSlots;
             const isRegular = !bookingTimeSlot.status;
 
             const isJoined =
@@ -372,7 +372,7 @@ const ClassesPage = () => {
             ) : (
               <CreateRequestedClassForm
                 modalDisclosure={modalDisclosure}
-                date={query.date}
+                date={date}
               />
             )
           ) : (
