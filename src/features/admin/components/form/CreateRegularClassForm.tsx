@@ -1,4 +1,4 @@
-import { useCreateRegularClassMutation, useUsersQuery } from "@/apis/api";
+import { useUsersQuery } from "@/apis/api";
 import { useRegularClassInputResolver } from "@/features/admin/schemas/useRegularClassInputResolver";
 import { SubmitButton } from "@/features/common/components/buttons/SubmitButton";
 import { getDuration } from "@/helpers/getDuration";
@@ -45,7 +45,8 @@ export const CreateRegularClassForm = ({
   const { data: userData } = useUsersQuery(true, {});
   const queryClient = useQueryClient();
 
-  const { mutateAsync, isLoading } = useCreateRegularClassMutation();
+  const { mutateAsync, isLoading } =
+    trpc.classRouter.regularClassRouter.create.useMutation();
   const session = useSession();
   const user = session.data?.user as User;
 
