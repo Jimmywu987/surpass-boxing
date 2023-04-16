@@ -1,26 +1,22 @@
 import { SmallCloseIcon } from "@chakra-ui/icons";
 import { Button, Skeleton, Stack, useDisclosure } from "@chakra-ui/react";
 import useTranslation from "next-translate/useTranslation";
-import { useState } from "react";
 
-import {
-  useRegularClassQuery,
-  useRemoveRegularClassMutation,
-} from "@/apis/api";
+import { useRegularClassQuery } from "@/apis/api";
+import { CreateRegularClassForm } from "@/features/admin/components/form/CreateRegularClassForm";
 import { ModalComponent } from "@/features/common/components/Modal";
 import { WEEK_NAMES } from "@/features/common/constants/weekNames";
 import { getDuration } from "@/helpers/getDuration";
 import { getTimeDuration } from "@/helpers/getTime";
-import { intervalToDuration } from "date-fns";
+import { trpc } from "@/utils/trpc";
 import { useQueryClient } from "react-query";
-import { CreateRegularClassForm } from "@/features/admin/components/form/CreateRegularClassForm";
 
 export const AdminRegularClass = () => {
   const { t } = useTranslation("admin");
   const modalDisclosure = useDisclosure();
   const queryClient = useQueryClient();
   const { mutateAsync, isLoading: removeRegularClassIsLoading } =
-    useRemoveRegularClassMutation();
+    trpc.classRouter.regularClassRouter.remove.useMutation();
   const { data, isLoading } = useRegularClassQuery();
 
   const { onOpen } = modalDisclosure;

@@ -1,16 +1,20 @@
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { protectedProcedure } from "@/server/trpc";
 import { prisma } from "@/services/prisma";
+import { TRPCError } from "@trpc/server";
 
 import { User } from "@prisma/client";
-import type { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
+import { z } from "zod";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getServerSession(req, res, authOptions);
-
-  if (session && req.method === "POST") {
-    const { id, date } = req.body;
-    const user = session?.user as User;
+export const join = protectedProcedure
+  .input(
+    z.object({
+      id: z.string(),
+      date: z.string(),
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+    const { id, date } = input;
+    const user = ctx.session?.user as User;
 
     const regularBookingSlot = await prisma.regularBookingTimeSlots.findFirst({
       where: {
@@ -21,9 +25,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
     if (!regularBookingSlot) {
-      return res
-        .status(401)
-        .json({ errorMessage: "no regular time slot is found." });
+      throw new TRPCError({
+        code: "NOT_FOUND",
+      });
     }
     const lessons = await prisma.lessons.findMany({
       where: {
@@ -41,7 +45,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     if (lessons.length === 0) {
-      return res.status(401).json({ errorMessage: "Unauthorized" });
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+      });
     }
     await prisma.$transaction(async (txn) => {
       await txn.lessons.update({
@@ -74,10 +80,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
     });
-
-    return res.status(201).json({ message: "join successfully" });
-  }
-  return res.status(401).json({ errorMessage: "Unauthorized" });
-};
-
-export default handler;
+  });

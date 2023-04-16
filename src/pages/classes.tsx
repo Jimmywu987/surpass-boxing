@@ -14,7 +14,7 @@ import { User, BookingTimeSlotStatusEnum } from "@prisma/client";
 
 import { ModalComponent } from "@/features/common/components/Modal";
 
-import { useJoinRegularClassMutation, useLessonsQuery } from "@/apis/api";
+import { useLessonsQuery } from "@/apis/api";
 import { SKIP_NUMBER, TAKE_NUMBER } from "@/constants";
 import {
   AddIcon,
@@ -54,7 +54,7 @@ const ClassesPage = () => {
     });
 
   const { mutateAsync: joinRegularClassMutateAsync } =
-    useJoinRegularClassMutation({
+    trpc.classRouter.regularClassRouter.join.useMutation({
       onSuccess: () => {
         bookingTimeSlotRouter.fetchForStudent.invalidate();
         queryClient.invalidateQueries("lessons");
@@ -117,7 +117,7 @@ const ClassesPage = () => {
   const joinRegularClass = async (slot: RegularBookingTimeSlots) => {
     await joinRegularClassMutateAsync({
       id: slot.id,
-      date,
+      date: query.date,
     });
   };
 

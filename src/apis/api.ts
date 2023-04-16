@@ -49,11 +49,6 @@ export const useRegularClassQuery = () =>
     return await fetcher("/api/class/regular/fetch");
   });
 
-export const useRemoveRegularClassMutation = () =>
-  useMutation(["removeRegularClass"], async (params: any) => {
-    return await fetcher("/api/class/regular/remove", params);
-  });
-
 export const useNewsQuery = () =>
   useQuery<{ news: News[] }>(["news"], async () => {
     return await fetcher("/api/news/fetch");
@@ -82,17 +77,6 @@ export const useRemoveLessonMutation = (
     ["removeLesson"],
     async (params: any) => {
       return await fetcher("/api/lesson/remove", params);
-    },
-    options
-  );
-
-export const useJoinRegularClassMutation = (
-  options?: UseMutationReactQueryOption
-) =>
-  useMutation(
-    ["joinRegularClass"],
-    async (params: any) => {
-      return await fetcher("/api/class/regular/join", params);
     },
     options
   );
