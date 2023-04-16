@@ -4,6 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { prisma } from "@/services/prisma";
 import { z } from "zod";
 import { requestedClassRouter } from "@/server/routers/class/requested/requestedClassRouter";
+import { regularClassRouter } from "@/server/routers/class/regular/regularClassRouter";
 
 export const classRouter = router({
   create: protectedProcedure
@@ -47,4 +48,5 @@ export const classRouter = router({
       }
     }),
   requestedClassRouter,
+  regularClassRouter,
 });

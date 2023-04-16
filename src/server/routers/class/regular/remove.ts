@@ -1,20 +1,17 @@
 import { prisma } from "@/services/prisma";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
-import type { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
+import { protectedProcedure } from "@/server/trpc";
+import { z } from "zod";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getServerSession(req, res, authOptions);
-
-  if (session && req.method === "POST") {
-    const { id } = req.body;
+export const remove = protectedProcedure
+  .input(
+    z.object({
+      id: z.string(),
+    })
+  )
+  .mutation(async ({ input }) => {
+    const { id } = input;
     await prisma.regularBookingTimeSlots.delete({
       where: { id },
     });
-    return res.status(201).json({ message: "remove successfully" });
-  }
-  return res.status(401).json({ errorMessage: "Unauthorized" });
-};
-
-export default handler;
+  });
