@@ -1,4 +1,3 @@
-import { useUsersQuery } from "@/apis/api";
 import { requestedClassCreateSchema } from "@/schemas/class/requested/create";
 import { SubmitButton } from "@/features/common/components/buttons/SubmitButton";
 import { getDuration } from "@/helpers/getDuration";
@@ -14,7 +13,7 @@ import { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import useTranslation from "next-translate/useTranslation";
 import { FormProvider, useForm } from "react-hook-form";
-import { useQueryClient } from "react-query";
+
 import { useRequestedClassInputResolver } from "@/features/admin/schemas/useRequestedClassInputResolver";
 import { format } from "date-fns";
 import { WeekSelectionCheckBox } from "../../../admin/components/form/WeekSelectionCheckBox";
@@ -33,8 +32,7 @@ export const CreateRequestedClassForm = ({
   const utils = trpc.useContext();
   const { data } = classRouter.fetch.useQuery();
 
-  const queryClient = useQueryClient();
-  const { data: userData } = useUsersQuery(true, {});
+  const { data: userData } = trpc.userRouter.fetchForAdmin.useQuery();
   const session = useSession();
   const user = session.data?.user as User;
   const { mutateAsync, isLoading } =
@@ -61,7 +59,8 @@ export const CreateRequestedClassForm = ({
     requestedClassInputFormMethods;
   const onSubmit = requestedClassInputFormMethods.handleSubmit(async (data) => {
     await mutateAsync(data);
-    queryClient.invalidateQueries("requestedClass");
+    utils.classRouter.requestedClassRouter.fetch.invalidate();
+
     onClose();
   });
   const { errors, isValid } = formState;
