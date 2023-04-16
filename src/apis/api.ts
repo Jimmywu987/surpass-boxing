@@ -33,11 +33,6 @@ type UseReactQueryOption = Omit<
   "queryKey" | "queryFn"
 >;
 
-export const useCreateRegularClassMutation = () =>
-  useMutation(["createRegularClass"], async (params: any) => {
-    return await fetcher("/api/class/regular/create", params);
-  });
-
 export const useRegularClassQuery = () =>
   useQuery<{
     regularBookingTimeSlots: (RegularBookingTimeSlots & {

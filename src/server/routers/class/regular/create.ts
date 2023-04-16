@@ -1,14 +1,10 @@
 import { prisma } from "@/services/prisma";
 
 import { protectedProcedure } from "@/server/trpc";
-import { z } from "zod";
+import { regularClassCreateSchema } from "@/schemas/class/regular/create";
 
-export const remove = protectedProcedure
-  .input(
-    z.object({
-      id: z.string(),
-    })
-  )
+export const create = protectedProcedure
+  .input(regularClassCreateSchema())
   .mutation(async ({ input }) => {
     const { setLimit, people, ...data } = input;
     return prisma.regularBookingTimeSlots.create({
