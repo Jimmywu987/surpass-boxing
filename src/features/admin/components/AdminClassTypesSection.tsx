@@ -12,15 +12,12 @@ import {
 
 import useTranslation from "next-translate/useTranslation";
 import { useRef } from "react";
-import { useQueryClient } from "react-query";
 
 export const AdminClassTypesSection = () => {
   const { classRouter } = trpc;
 
   const { data, isLoading } = classRouter.fetch.useQuery();
   const utils = trpc.useContext();
-
-  const queryClient = useQueryClient();
 
   const { t } = useTranslation("admin");
   const {

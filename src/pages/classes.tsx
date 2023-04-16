@@ -14,7 +14,6 @@ import { User, BookingTimeSlotStatusEnum } from "@prisma/client";
 
 import { ModalComponent } from "@/features/common/components/Modal";
 
-import { useLessonsQuery } from "@/apis/api";
 import { SKIP_NUMBER, TAKE_NUMBER } from "@/constants";
 import {
   AddIcon,
@@ -27,7 +26,7 @@ import { PageNumberDisplay } from "@/features/common/components/PageNumberDispla
 import { getTimeDuration } from "@/helpers/getTime";
 import { getDuration } from "@/helpers/getDuration";
 import { DatePicker } from "@/features/common/components/DatePicker";
-import { useQueryClient } from "react-query";
+
 import { CreateRequestedClassForm } from "@/features/common/components/form/CreateRequestedClassForm";
 import { trpc, RouterOutput } from "@/utils/trpc";
 
@@ -38,9 +37,9 @@ type RegularBookingTimeSlots = inferType["regularBookingSlot"][0];
 const ClassesPage = () => {
   const { t } = useTranslation("classes");
   const session = useSession();
-  const queryClient = useQueryClient();
+
   const utils = trpc.useContext();
-  const { bookingTimeSlotRouter } = utils;
+  const { bookingTimeSlotRouter, lessonClassRouter } = utils;
   const isAuthenticated = session.status === "authenticated";
   const user = session.data?.user as User;
   const [modelType, setModelType] = useState(OpenModelType.OPEN_CLASS);
@@ -49,7 +48,7 @@ const ClassesPage = () => {
     trpc.classRouter.requestedClassRouter.join.useMutation({
       onSuccess: () => {
         bookingTimeSlotRouter.fetchForStudent.invalidate();
-        queryClient.invalidateQueries("lessons");
+        lessonClassRouter.fetch.invalidate();
       },
     });
 
@@ -57,20 +56,23 @@ const ClassesPage = () => {
     trpc.classRouter.regularClassRouter.join.useMutation({
       onSuccess: () => {
         bookingTimeSlotRouter.fetchForStudent.invalidate();
-        queryClient.invalidateQueries("lessons");
+        lessonClassRouter.fetch.invalidate();
       },
     });
   const { mutateAsync: leaveClassMutateAsync } =
     trpc.classRouter.requestedClassRouter.leave.useMutation({
       onSuccess: () => {
         bookingTimeSlotRouter.fetchForStudent.invalidate();
-        queryClient.invalidateQueries("lessons");
+        lessonClassRouter.fetch.invalidate();
       },
     });
 
-  const { data: lessonsData } = useLessonsQuery({
-    enabled: isAuthenticated,
-  });
+  const { data: lessonsData } = trpc.lessonClassRouter.fetch.useQuery(
+    undefined,
+    {
+      enabled: isAuthenticated,
+    }
+  );
 
   const modalDisclosure = useDisclosure();
   const { onOpen } = modalDisclosure;
@@ -81,7 +83,7 @@ const ClassesPage = () => {
       setModelType(OpenModelType.LOGIN);
       return;
     }
-    if (!lessonsData || lessonsData.lessons.length === 0) {
+    if (!lessonsData || lessonsData.length === 0) {
       setModelType(OpenModelType.REQUEST_LESSON_MESSAGE);
       return;
     }
@@ -285,10 +287,7 @@ const ClassesPage = () => {
                         p="1.5"
                         className="text-2xl cursor-pointer"
                         onClick={async () => {
-                          if (
-                            !lessonsData ||
-                            lessonsData.lessons.length === 0
-                          ) {
+                          if (!lessonsData || lessonsData.length === 0) {
                             handleOpenModel();
                             return;
                           }

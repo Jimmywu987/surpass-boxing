@@ -10,7 +10,7 @@ import { BookingTimeSlotStatusEnum } from "@prisma/client";
 import { endOfDay, format, intervalToDuration, subDays } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
 import { Dispatch, SetStateAction, useState } from "react";
-import { useQueryClient } from "react-query";
+
 import { useDispatch, useSelector } from "react-redux";
 import { ViewRequestedClass } from "./ViewRequestedClass";
 import { SKIP_NUMBER, TAKE_NUMBER } from "@/constants";
@@ -22,7 +22,6 @@ export const AdminRequestedClass = () => {
   const { t } = useTranslation("admin");
   const modalDisclosure = useDisclosure();
   const dispatch = useDispatch();
-  const queryClient = useQueryClient();
 
   const [query, setQuery] = useState({
     skip: 0,

@@ -5,7 +5,7 @@ import Image from "next/image";
 import DefaultProfileImg from "@/../public/default-profile-img.png";
 
 import Link from "next/link";
-import { useQueryClient } from "react-query";
+
 import { useDispatch } from "react-redux";
 import { isAfter } from "date-fns";
 import { AdminViewAccountOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
@@ -23,7 +23,7 @@ export const AccountContent = ({
 }) => {
   const { t } = useTranslation("classes");
   const dispatch = useDispatch();
-  const queryClient = useQueryClient();
+
   if (!account) {
     return <></>;
   }

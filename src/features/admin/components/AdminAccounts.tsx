@@ -1,4 +1,3 @@
-import { useUsersQuery } from "@/apis/api";
 import {
   Button,
   Input,
@@ -30,6 +29,7 @@ import { AccountContent } from "@/features/admin/components/AdminAccount/Account
 import { AdminAccountFilterOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
 import { OptionButton } from "@/features/common/components/buttons/OptionButton";
 import { SKIP_NUMBER, TAKE_NUMBER } from "@/constants";
+import { trpc } from "@/utils/trpc";
 
 export const AdminAccounts = () => {
   const searchAccountInputValue = useRef<HTMLInputElement>(null);
@@ -40,7 +40,8 @@ export const AdminAccounts = () => {
     searchInput: "",
   });
 
-  const { data, isLoading } = useUsersQuery(false, query);
+  const { data, isLoading } = trpc.userRouter.fetch.useQuery(query);
+
   const [account, setAccount] = useState<UserType | null>(null);
 
   const { t } = useTranslation("admin");

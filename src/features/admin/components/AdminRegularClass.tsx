@@ -2,22 +2,21 @@ import { SmallCloseIcon } from "@chakra-ui/icons";
 import { Button, Skeleton, Stack, useDisclosure } from "@chakra-ui/react";
 import useTranslation from "next-translate/useTranslation";
 
-import { useRegularClassQuery } from "@/apis/api";
 import { CreateRegularClassForm } from "@/features/admin/components/form/CreateRegularClassForm";
 import { ModalComponent } from "@/features/common/components/Modal";
 import { WEEK_NAMES } from "@/features/common/constants/weekNames";
 import { getDuration } from "@/helpers/getDuration";
 import { getTimeDuration } from "@/helpers/getTime";
 import { trpc } from "@/utils/trpc";
-import { useQueryClient } from "react-query";
 
 export const AdminRegularClass = () => {
   const { t } = useTranslation("admin");
   const modalDisclosure = useDisclosure();
-  const queryClient = useQueryClient();
+  const utils = trpc.useContext();
   const { mutateAsync, isLoading: removeRegularClassIsLoading } =
     trpc.classRouter.regularClassRouter.remove.useMutation();
-  const { data, isLoading } = useRegularClassQuery();
+  const { data, isLoading } =
+    trpc.classRouter.regularClassRouter.fetch.useQuery();
 
   const { onOpen } = modalDisclosure;
 
@@ -34,7 +33,7 @@ export const AdminRegularClass = () => {
   const handleRegularClassRemove = async (id: string) => {
     if (!removeRegularClassIsLoading) {
       await mutateAsync({ id });
-      queryClient.invalidateQueries("regularClass");
+      utils.classRouter.regularClassRouter.fetch.invalidate();
     }
   };
   return (
@@ -48,7 +47,7 @@ export const AdminRegularClass = () => {
           {t("add_regular_class")}
         </Button>
         <div className="space-y-1">
-          {data.regularBookingTimeSlots.map((timeSlot) => {
+          {data.map((timeSlot) => {
             const { startTime, endTime } = timeSlot;
 
             return (

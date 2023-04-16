@@ -1,7 +1,7 @@
-import { useUsersQuery } from "@/apis/api";
 import { useRegularClassInputResolver } from "@/features/admin/schemas/useRegularClassInputResolver";
 import { SubmitButton } from "@/features/common/components/buttons/SubmitButton";
 import { getDuration } from "@/helpers/getDuration";
+import { regularClassCreateSchema } from "@/schemas/class/regular/create";
 import { trpc } from "@/utils/trpc";
 import {
   CheckboxGroup,
@@ -16,34 +16,20 @@ import { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import useTranslation from "next-translate/useTranslation";
 import { FormProvider, useForm } from "react-hook-form";
-import { useQueryClient } from "react-query";
+import { z } from "zod";
+
 import { WeekSelectionCheckBox } from "./WeekSelectionCheckBox";
-type CreateRegularClassInputType = {
-  monday: boolean;
-  tuesday: boolean;
-  wednesday: boolean;
-  thursday: boolean;
-  friday: boolean;
-  saturday: boolean;
-  sunday: boolean;
-  startTime: number;
-  endTime: number;
-  coachId: string;
-  className: string;
-  people: number;
-  setLimit: boolean;
-};
+
 export const CreateRegularClassForm = ({
   modalDisclosure,
 }: {
   modalDisclosure: UseDisclosureReturn;
 }) => {
   const { t } = useTranslation("classes");
-
+  const utils = trpc.useContext();
   const { data } = trpc.classRouter.fetch.useQuery();
 
-  const { data: userData } = useUsersQuery(true, {});
-  const queryClient = useQueryClient();
+  const { data: userData } = trpc.userRouter.fetchForAdmin.useQuery();
 
   const { mutateAsync, isLoading } =
     trpc.classRouter.regularClassRouter.create.useMutation();
@@ -52,7 +38,9 @@ export const CreateRegularClassForm = ({
 
   const { onClose } = modalDisclosure;
 
-  const regularClassInputFormMethods = useForm<CreateRegularClassInputType>({
+  const regularClassInputFormMethods = useForm<
+    z.infer<ReturnType<typeof regularClassCreateSchema>>
+  >({
     resolver: useRegularClassInputResolver(),
     mode: "onChange",
     defaultValues: {
@@ -74,7 +62,8 @@ export const CreateRegularClassForm = ({
   const { setValue, watch, formState, register } = regularClassInputFormMethods;
   const onSubmit = regularClassInputFormMethods.handleSubmit(async (data) => {
     await mutateAsync(data);
-    await queryClient.invalidateQueries("regularClass");
+    utils.classRouter.regularClassRouter.fetch.invalidate();
+
     onClose();
   });
   const { errors, isValid } = formState;

@@ -14,7 +14,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { EditRequestedClassForm } from "@/features/admin/components/form/EditRequestedClassForm";
-import { useQueryClient } from "react-query";
+
 import { trpc } from "@/utils/trpc";
 
 export const ViewRequestedClass = ({
@@ -26,8 +26,7 @@ export const ViewRequestedClass = ({
 }) => {
   const { t } = useTranslation("classes");
   const dispatch = useDispatch();
-  const queryClient = useQueryClient();
-
+  const utils = trpc.useContext();
   const [isEdit, setIsEdit] = useState(false);
   const { timeSlot } = useSelector(timeSlotSelector);
 
@@ -46,7 +45,7 @@ export const ViewRequestedClass = ({
       id: timeSlot.id,
     });
     dispatch(updateTimeSlot({ timeSlot: { ...timeSlot, status } }));
-    queryClient.invalidateQueries("requestedClass");
+    utils.classRouter.requestedClassRouter.fetch.invalidate();
   };
   const dateTime = new Date(timeSlot.date);
   return (

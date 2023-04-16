@@ -1,18 +1,14 @@
 import { UserType } from "@/types";
-import { UseDisclosureReturn } from "@chakra-ui/react";
 import useTranslation from "next-translate/useTranslation";
-import Image from "next/image";
-import DefaultProfileImg from "@/../public/default-profile-img.png";
 
-import Link from "next/link";
-import { useQueryClient } from "react-query";
-import { useDispatch } from "react-redux";
-import { format } from "date-fns";
 import { AdminViewAccountOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
-import { Dispatch, SetStateAction, useState } from "react";
-import { Lessons } from "@prisma/client";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { useRemoveLessonMutation } from "@/apis/api";
+import { Lessons } from "@prisma/client";
+import { format } from "date-fns";
+import { Dispatch, SetStateAction } from "react";
+import { useDispatch } from "react-redux";
+
+import { trpc } from "@/utils/trpc";
 
 export const ViewUnusedClass = ({
   lessons,
@@ -25,10 +21,12 @@ export const ViewUnusedClass = ({
 }) => {
   const { t } = useTranslation("classes");
   const dispatch = useDispatch();
-  const queryClient = useQueryClient();
-  const { mutateAsync, isLoading } = useRemoveLessonMutation({
+
+  const utils = trpc.useContext();
+  const { mutateAsync, isLoading } = trpc.lessonClassRouter.remove.useMutation({
     onSuccess: () => {
-      queryClient.invalidateQueries("users");
+      utils.userRouter.fetch.invalidate();
+      utils.userRouter.fetchForAdmin.invalidate();
     },
   });
   const removeLesson = async (id: string) => {

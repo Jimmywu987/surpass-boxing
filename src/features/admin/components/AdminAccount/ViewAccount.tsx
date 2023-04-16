@@ -4,14 +4,15 @@ import Image from "next/image";
 import DefaultProfileImg from "@/../public/default-profile-img.png";
 
 import Link from "next/link";
-import { useQueryClient } from "react-query";
+
 import { useDispatch } from "react-redux";
 import { format, isAfter } from "date-fns";
 import { AdminViewAccountOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useAddClassInputResolver } from "@/features/admin/schemas/useAddClassInputResolver";
-import { useAddLessonMutation } from "@/apis/api";
+
+import { trpc } from "@/utils/trpc";
 
 const REG_NUM_CHECK = /^\d+$/;
 
@@ -26,8 +27,8 @@ export const ViewAccount = ({
 }) => {
   const { t } = useTranslation("classes");
   const dispatch = useDispatch();
-  const queryClient = useQueryClient();
-  const { mutateAsync } = useAddLessonMutation();
+  const utils = trpc.useContext();
+  const { mutateAsync } = trpc.lessonClassRouter.addLesson.useMutation();
   const addClassInputFormMethods = useForm({
     resolver: useAddClassInputResolver(),
     mode: "onChange",
@@ -57,7 +58,8 @@ export const ViewAccount = ({
         lessons: [...prev.lessons, result],
       };
     });
-    queryClient.invalidateQueries("users");
+    utils.userRouter.fetch.invalidate();
+    utils.userRouter.fetchForAdmin.invalidate();
   });
   return (
     <div className="flex flex-col space-y-2">

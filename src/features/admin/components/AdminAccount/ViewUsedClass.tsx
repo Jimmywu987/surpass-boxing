@@ -3,7 +3,7 @@ import useTranslation from "next-translate/useTranslation";
 import { AdminViewAccountOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
 import { format } from "date-fns";
 import { Dispatch, SetStateAction } from "react";
-import { useQueryClient } from "react-query";
+
 import { useDispatch } from "react-redux";
 
 import { getDuration } from "@/helpers/getDuration";
@@ -20,7 +20,7 @@ export const ViewUsedClass = ({
 }) => {
   const { t } = useTranslation("classes");
   const dispatch = useDispatch();
-  const queryClient = useQueryClient();
+
   const { data, isLoading } = trpc.bookingTimeSlotRouter.fetch.useQuery({
     ids: bookingTimeSlotIds,
   });

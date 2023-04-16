@@ -1,4 +1,3 @@
-import { useUsersQuery } from "@/apis/api";
 import { SubmitButton } from "@/features/common/components/buttons/SubmitButton";
 import { getDuration } from "@/helpers/getDuration";
 import {
@@ -13,7 +12,7 @@ import { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import useTranslation from "next-translate/useTranslation";
 import { FormProvider, useForm } from "react-hook-form";
-import { useQueryClient } from "react-query";
+
 import { useRequestedClassInputResolver } from "@/features/admin/schemas/useRequestedClassInputResolver";
 import { format, intervalToDuration } from "date-fns";
 import { WeekSelectionCheckBox } from "./WeekSelectionCheckBox";
@@ -31,11 +30,12 @@ export const EditRequestedClassForm = ({
   timeSlot: TimeSlotsType;
 }) => {
   const { t } = useTranslation("classes");
+  const utils = trpc.useContext();
   const { classRouter } = trpc;
   const { data } = classRouter.fetch.useQuery();
 
-  const queryClient = useQueryClient();
-  const { data: userData } = useUsersQuery(true, {});
+  const { data: userData } = trpc.userRouter.fetchForAdmin.useQuery();
+
   const session = useSession();
   const user = session.data?.user as User;
   const { mutateAsync, isLoading } =
@@ -67,7 +67,7 @@ export const EditRequestedClassForm = ({
 
   const onSubmit = requestedClassInputFormMethods.handleSubmit(async (data) => {
     await mutateAsync(data);
-    queryClient.invalidateQueries("requestedClass");
+    utils.classRouter.requestedClassRouter.fetch.invalidate();
     onClose();
   });
   const { errors } = formState;
@@ -78,7 +78,7 @@ export const EditRequestedClassForm = ({
       </Stack>
     );
   }
-  console.log("fesufgesuyihfueysgfuygysegh", errors);
+
   const defaultFromTime = intervalToDuration({
     start: timeSlot.startTime,
     end: 0,
