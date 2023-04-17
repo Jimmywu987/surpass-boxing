@@ -30,13 +30,14 @@ export const CreateRequestedClassForm = ({
   const { t } = useTranslation("classes");
   const { classRouter } = trpc;
   const utils = trpc.useContext();
+
   const { data } = classRouter.fetch.useQuery();
 
   const { data: userData } = trpc.userRouter.fetchForAdmin.useQuery();
   const session = useSession();
   const user = session.data?.user as User;
   const { mutateAsync, isLoading } =
-    classRouter.requestedClassRouter.create.useMutation();
+    trpc.classRouter.requestedClassRouter.create.useMutation();
 
   const { onClose } = modalDisclosure;
 
