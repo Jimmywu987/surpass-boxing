@@ -93,7 +93,6 @@ export const fetch = publicProcedure
   .input(fetchInput)
   .query(async ({ input }) => {
     const { skip, ...dateTimeProps } = input;
-    const { period } = dateTimeProps;
     try {
       const result = await prisma.$transaction(async (txn) => {
         const whereQuery = getDurationWhereQuery(

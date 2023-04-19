@@ -7,7 +7,7 @@ import { getTimeDuration } from "@/helpers/getTime";
 import { timeSlotSelector, updateTimeSlot } from "@/redux/timeSlot";
 import { CheckIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { BookingTimeSlotStatusEnum } from "@prisma/client";
-import { endOfDay, format, intervalToDuration, subDays } from "date-fns";
+import { endOfDay, format, subDays } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
 import { Dispatch, SetStateAction, useState } from "react";
 
@@ -32,12 +32,13 @@ export const AdminRequestedClass = () => {
   const { timeSlot } = useSelector(timeSlotSelector);
 
   const { onOpen } = modalDisclosure;
+  const queryDate = {
+    ...query,
+    isPast: false,
+    period: null,
+  };
   const { data, isLoading } =
-    trpc.classRouter.requestedClassRouter.fetch.useQuery({
-      ...query,
-      isPast: false,
-      period: null,
-    });
+    trpc.classRouter.requestedClassRouter.fetch.useQuery(queryDate);
 
   const handleOpenModel = () => {
     onOpen();
