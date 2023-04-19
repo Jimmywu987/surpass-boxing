@@ -58,7 +58,7 @@ export const AdminClasses = () => {
           )}
         </div>
       </div>
-      <div className="w-3/12">
+      <div className="w-3/12 z-20">
         <AdminClassTypesSection />
       </div>
     </div>

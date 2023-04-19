@@ -5,8 +5,7 @@ import {
   Stack,
   useDisclosure,
 } from "@chakra-ui/react";
-import { SingleDatepicker } from "chakra-dayzed-datepicker";
-
+import { motion } from "framer-motion";
 import { ModalComponent } from "@/features/common/components/Modal";
 import { getDuration } from "@/helpers/getDuration";
 import { getTimeDuration } from "@/helpers/getTime";
@@ -32,7 +31,8 @@ import { DatePicker } from "@/features/common/components/DatePicker";
 import { trpc } from "@/utils/trpc";
 
 export const AdminInPastClass = () => {
-  const { t } = useTranslation("admin");
+  const { t, lang } = useTranslation("admin");
+  const [isOpen, setIsOpen] = useState(false);
   const modalDisclosure = useDisclosure();
   const dispatch = useDispatch();
   const yesterday = endOfDay(subDays(new Date(), 1)).toString();
@@ -54,30 +54,51 @@ export const AdminInPastClass = () => {
   const handleOpenModel = () => {
     onOpen();
   };
-
+  const variants = {
+    open: { x: "90%" },
+    closed: { x: 0 },
+  };
   return (
     <div className="space-y-2">
-      <div>
-        <ArrowRightIcon className="p-1 text-3xl border-2 rounded-full cursor-pointer" />
-      </div>
-      <ButtonGroup gap="2" mb="1">
-        {Object.values(AdminPeriodOptionsEnum).map((period, index) => (
-          <Button
-            key={index}
-            colorScheme="whiteAlpha"
-            variant={period === query.period ? "solid" : "outline"}
-            onClick={() => {
-              setQuery({
-                skip: 0,
-                date: query.date,
-                period,
-              });
-            }}
+      <div className="relative w-full">
+        <motion.div
+          className={`absolute z-10 w-full  h-full bg-gray-800 pt-1 flex space-x-2`}
+          animate={isOpen ? "open" : "closed"}
+          variants={variants}
+          transition={{ duration: 0.4 }}
+        >
+          <ArrowRightIcon
+            className={`p-1 text-3xl border-2 rounded-full cursor-pointer transition duration-100 transform ${
+              isOpen && "rotate-180"
+            }`}
+            onClick={() => setIsOpen((isOpen) => !isOpen)}
+          />
+          <div
+            className="py-1 cursor-pointer"
+            onClick={() => setIsOpen((isOpen) => !isOpen)}
           >
-            {t(period.toLowerCase())}
-          </Button>
-        ))}
-      </ButtonGroup>
+            <p> {isOpen ? "CLOSE" : "OPEN"}</p>
+          </div>
+        </motion.div>
+        <ButtonGroup gap="2">
+          {Object.values(AdminPeriodOptionsEnum).map((period, index) => (
+            <Button
+              key={index}
+              colorScheme="whiteAlpha"
+              variant={period === query.period ? "solid" : "outline"}
+              onClick={() => {
+                setQuery({
+                  skip: 0,
+                  date: query.date,
+                  period,
+                });
+              }}
+            >
+              {t(period.toLowerCase())}
+            </Button>
+          ))}
+        </ButtonGroup>
+      </div>
       <div
         className={`flex space-x-2 pt-2 border-t border-t-gray-600 items-center ${
           query.period === AdminPeriodOptionsEnum.ALL && "opacity-30"
