@@ -7,6 +7,7 @@ import { SignUpForm } from "@/features/signUp/components/SignUpForm";
 import { LoginForm } from "@/features/login/components/LoginForm";
 import Image from "next/image";
 import DefaultProfileImg from "@/../public/default-profile-img.png";
+import { isPast, startOfDay } from "date-fns";
 
 import { OpenModelType } from "@/features/common/enums/OpenModelType";
 import { useSession } from "next-auth/react";
@@ -178,7 +179,9 @@ const ClassesPage = () => {
               bookingTimeSlot.userOnBookingTimeSlots.some(
                 (slot) => slot.userId === user.id
               );
-
+            const isInPast = isPast(
+              startOfDay(new Date()).getTime() + startTime
+            );
             return (
               <div
                 key={slot.id}
@@ -272,21 +275,27 @@ const ClassesPage = () => {
                   <div className="self-end">
                     {isJoined ? (
                       <MinusIcon
-                        bg="red.600"
+                        bg={!isInPast ? "red.600" : "gray.500"}
                         rounded="full"
                         p="1.5"
-                        className="text-2xl cursor-pointer"
+                        className={`text-2xl ${!isInPast && "cursor-pointer"}`}
                         onClick={async () => {
+                          if (isInPast) {
+                            return;
+                          }
                           await leaveClass(slot as BookingTimeSlots);
                         }}
                       />
                     ) : (
                       <AddIcon
-                        bg="green.600"
+                        bg={!isInPast ? "green.600" : "gray.500"}
                         rounded="full"
                         p="1.5"
-                        className="text-2xl cursor-pointer"
+                        className={`text-2xl ${!isInPast && "cursor-pointer"}`}
                         onClick={async () => {
+                          if (isInPast) {
+                            return;
+                          }
                           if (!lessonsData || lessonsData.length === 0) {
                             handleOpenModel();
                             return;

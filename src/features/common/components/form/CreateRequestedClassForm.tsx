@@ -60,7 +60,7 @@ export const CreateRequestedClassForm = ({
     requestedClassInputFormMethods;
   const onSubmit = requestedClassInputFormMethods.handleSubmit(async (data) => {
     await mutateAsync(data);
-    utils.classRouter.requestedClassRouter.fetch.invalidate();
+    utils.bookingTimeSlotRouter.fetchForStudent.invalidate();
 
     onClose();
   });

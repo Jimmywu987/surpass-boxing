@@ -86,7 +86,12 @@ export const trpc = createTRPCNext<AppRouter, SSRContext>({
       /**
        * @link https://tanstack.com/query/v4/docs/react/reference/QueryClient
        */
-      queryClientConfig: { defaultOptions: { queries: {} } },
+      queryClientConfig: {
+        defaultOptions: {
+          queries: {},
+          mutations: {},
+        },
+      },
     };
   },
   /**
