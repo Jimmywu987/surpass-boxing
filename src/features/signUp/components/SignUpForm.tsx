@@ -13,13 +13,14 @@ import { trpc } from "@/utils/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { z } from "zod";
+import { LanguageEnum } from "@prisma/client";
 
 export const SignUpForm = ({
   LoginButton,
 }: {
   LoginButton: React.ReactNode;
 }) => {
-  const { t } = useTranslation("auth");
+  const { t, lang } = useTranslation("auth");
   const { mutateAsync, isLoading } = trpc.authRouter.signUp.useMutation();
 
   const { register, watch } = useForm();
@@ -49,6 +50,7 @@ export const SignUpForm = ({
       }
       await mutateAsync({
         ...data,
+        lang: lang === "en" ? LanguageEnum.EN : LanguageEnum.ZH,
         profileImg: imgUrl,
       });
       toast({

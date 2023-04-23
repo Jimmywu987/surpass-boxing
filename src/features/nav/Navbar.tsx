@@ -28,7 +28,6 @@ import { Menu, MenuButton, MenuList, MenuItem, Button } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { LanguageSvgIcon } from "@/features/common/components/buttons/svg/LanguageSvgIcon";
 import { MobileNavbar } from "@/features/nav/MobileNavbar";
-import OneSignal from "react-onesignal";
 import { useOneSignal } from "@/features/common/hooks/useOneSignal";
 
 export const Navbar = () => {
@@ -43,7 +42,7 @@ export const Navbar = () => {
   const session = useSession();
   const isAuthenticated = session.status === "authenticated";
   const user = session.data?.user as User;
-  useOneSignal();
+  const { storeUserExternalId } = useOneSignal();
 
   useEffect(() => {
     const storeUserToRedux = async () => {
@@ -51,6 +50,9 @@ export const Navbar = () => {
       if (session) {
         const { email, admin, phoneNumber, profileImg, username, id } =
           session?.user as Partial<User>;
+        if (!!id) {
+          await storeUserExternalId(id);
+        }
         dispatch(
           updateUser({
             admin,
@@ -155,7 +157,11 @@ export const Navbar = () => {
                   >
                     <div className="w-10 h-10 relative">
                       <Image
-                        src={reduxUser.profileImg ?? DefaultProfileImg}
+                        src={
+                          !!reduxUser.profileImg
+                            ? reduxUser.profileImg
+                            : DefaultProfileImg
+                        }
                         alt={`${reduxUser.username} profile image`}
                         className="w-full h-full rounded-full object-cover"
                         fill

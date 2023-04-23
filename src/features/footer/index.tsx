@@ -23,7 +23,7 @@ export const Footer = () => {
         />
       </div>
       <p className="text-white">
-        © Copyright 2022 | Surpass Boxing Gyms | All rights reserved
+        © Copyright 2023 | Surpass Boxing Gyms | All rights reserved
       </p>
     </footer>
   );

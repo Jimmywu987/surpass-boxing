@@ -188,7 +188,7 @@ export const AdminRequestedClass = () => {
               <span>{t("common:action.previous")}</span>
             </button>
             <PageNumberDisplay
-              currentPage={SKIP_NUMBER / TAKE_NUMBER + 1}
+              currentPage={query.skip / TAKE_NUMBER + 1}
               totalPages={Math.ceil(data.totalClassesCount / TAKE_NUMBER)}
               setQuery={setQuery as Dispatch<SetStateAction<{ skip: number }>>}
             />
