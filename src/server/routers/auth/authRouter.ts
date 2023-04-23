@@ -9,7 +9,8 @@ import { signUpSchema } from "@/schemas/auth/signUp";
 
 export const authRouter = router({
   signUp: publicProcedure.input(signUpSchema()).mutation(async ({ input }) => {
-    const { confirmPassword, password, profileImg, email, username } = input;
+    const { confirmPassword, password, profileImg, email, username, lang } =
+      input;
 
     if (confirmPassword !== password) {
       throw new TRPCError({
@@ -44,6 +45,7 @@ export const authRouter = router({
       password: hashedPassword,
       authOption: UserAuthOptionsEnum.CREDENTIAL,
       phoneNumber: "",
+      lang,
       status: UserStatusEnum.ACTIVE,
     };
     return await prisma.user.create({

@@ -1,4 +1,3 @@
-import { AdminPeriodOptionsEnum } from "@/features/admin/enums/AdminOptionEnums";
 import { Dispatch, SetStateAction } from "react";
 
 export const PageNumberDisplay = ({
@@ -11,6 +10,9 @@ export const PageNumberDisplay = ({
   totalPages: number;
 }) => {
   if (totalPages <= 5) {
+    console.log("currentPage", currentPage);
+    console.log("totalPages", totalPages);
+
     return (
       <div className="flex space-x-1">
         {[...Array(totalPages)].map((_, index) => (
@@ -19,7 +21,7 @@ export const PageNumberDisplay = ({
             className={
               currentPage === index + 1
                 ? "opacity-40"
-                : "text-white cursor-default"
+                : "text-white cursor-pointer"
             }
             disabled={currentPage === index + 1}
             onClick={() => {
@@ -132,7 +134,6 @@ export const PageNumberDisplay = ({
             </div>
           );
         }
-
         return (
           <div key={index} className="space-x-1">
             {page === currentPage && <span className="opacity-40">,</span>}

@@ -229,24 +229,21 @@ const ClassesPage = () => {
                       {isAuthenticated && (
                         <div className="flex gap-1 flex-wrap ">
                           {bookingTimeSlot.userOnBookingTimeSlots.map(
-                            (slot, index) => {
-                              return (
-                                <div key={index}>
-                                  <div className="w-10 h-10 relative">
-                                    <Image
-                                      src={
-                                        slot.user.profileImg ??
-                                        DefaultProfileImg
-                                      }
-                                      alt={`${slot.user.username} profile image`}
-                                      className="w-full h-full rounded-full object-cover"
-                                      fill
-                                    />
-                                  </div>
-                                  <div>{slot.user.username}</div>
+                            (slot, index) => (
+                              <div key={index}>
+                                <div className="w-10 h-10 relative">
+                                  <Image
+                                    src={
+                                      slot.user.profileImg ?? DefaultProfileImg
+                                    }
+                                    alt={`${slot.user.username} profile image`}
+                                    className="w-full h-full rounded-full object-cover"
+                                    fill
+                                  />
                                 </div>
-                              );
-                            }
+                                <div>{slot.user.username}</div>
+                              </div>
+                            )
                           )}
                         </div>
                       )}
@@ -333,7 +330,7 @@ const ClassesPage = () => {
                 <span>{t("common:action.previous")}</span>
               </button>
               <PageNumberDisplay
-                currentPage={SKIP_NUMBER / TAKE_NUMBER + 1}
+                currentPage={query.skip / TAKE_NUMBER + 1}
                 totalPages={Math.ceil(data.totalClassesCount / TAKE_NUMBER)}
                 setQuery={
                   setQuery as Dispatch<SetStateAction<{ skip: number }>>

@@ -15,7 +15,6 @@ export const useOneSignal = () => {
             allowLocalhostAsSecureOrigin: true,
             notifyButton: {
               enable: true,
-              size: "large",
             },
           });
 
@@ -28,12 +27,20 @@ export const useOneSignal = () => {
           );
         }
       } catch (e) {
-        console.error("OneSignal Initilization", e);
+        console.error("OneSignal init error", e);
       } finally {
         onesignalInitializingRef.current = false;
       }
     };
 
     init();
+    return () => {};
   }, []);
+
+  const storeUserExternalId = async (userId: string) => {
+    await OneSignal.setExternalUserId(userId);
+  };
+  return {
+    storeUserExternalId,
+  };
 };

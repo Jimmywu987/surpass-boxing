@@ -25,6 +25,11 @@ enum BookingTimeSlotStatusEnum {
   CANCELED
 }
 
+enum LanguageEnum {
+  EN
+  ZH
+}
+
 model User {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -39,6 +44,8 @@ model User {
 
   authOption UserAuthOptionsEnum
   status     UserStatusEnum      @default(ACTIVE)
+
+  lang LanguageEnum
 
   lessons                 Lessons[]
   userOnBookingTimeSlots  UserOnBookingTimeSlots[]

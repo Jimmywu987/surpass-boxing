@@ -2,8 +2,11 @@ import { protectedProcedure } from "@/server/trpc";
 import { prisma } from "@/services/prisma";
 import { TRPCError } from "@trpc/server";
 
-import { User } from "@prisma/client";
+import { LanguageEnum, User } from "@prisma/client";
 import { z } from "zod";
+import { format } from "date-fns";
+import { getTimeDuration } from "@/helpers/getTime";
+import { sendNotification } from "@/services/onesignal";
 
 export const join = protectedProcedure
   .input(
@@ -49,6 +52,8 @@ export const join = protectedProcedure
         code: "UNAUTHORIZED",
       });
     }
+    const { startTime, endTime, className, numberOfParticipants, coach } =
+      regularBookingSlot;
     await prisma.$transaction(async (txn) => {
       await txn.lessons.update({
         data: {
@@ -60,9 +65,8 @@ export const join = protectedProcedure
           id: lessons[0].id,
         },
       });
-      const { startTime, endTime, className, numberOfParticipants, id, coach } =
-        regularBookingSlot;
 
+      const { id } = regularBookingSlot;
       await txn.bookingTimeSlots.create({
         data: {
           date: new Date(date),
@@ -80,4 +84,25 @@ export const join = protectedProcedure
         },
       });
     });
+    const admins = await prisma.user.findMany({
+      where: {
+        admin: true,
+      },
+    });
+    await Promise.all(
+      admins.map(async (admin) => {
+        const dateTime = format(new Date(date), "dd/MM/yyyy");
+        const time = getTimeDuration({ startTime, endTime });
+        const message =
+          admin.lang === LanguageEnum.EN
+            ? `${user.username} has joined a ${className} on ${dateTime}: ${time}`
+            : `${user.username}已加入${dateTime}: ${time}的${className}課堂`;
+
+        await sendNotification({
+          message,
+          lang: admin.lang,
+          externalId: admin.id,
+        });
+      })
+    );
   });

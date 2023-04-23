@@ -1,5 +1,5 @@
 import NextAuth, { AuthOptions, NextAuthOptions } from "next-auth";
-import { User, UserAuthOptionsEnum } from "@prisma/client";
+import { LanguageEnum, User, UserAuthOptionsEnum } from "@prisma/client";
 import GoogleProvider from "next-auth/providers/google";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerConfig } from "@/utils/getServerConfig";
@@ -61,7 +61,7 @@ export const authOptions: AuthOptions = {
         },
       },
       profile: async (info) => {
-        const { email, name, picture } = info;
+        const { email, name, picture, locale } = info;
         const hasUser = await prisma.user.findUnique({
           where: {
             email,
@@ -80,6 +80,7 @@ export const authOptions: AuthOptions = {
           password: hashedPassword,
           authOption: UserAuthOptionsEnum.GOOGLE,
           phoneNumber: "",
+          lang: locale === "en" ? LanguageEnum.EN : LanguageEnum.ZH,
           status: UserStatusEnum.ACTIVE,
         };
         const user = await prisma.user.create({
