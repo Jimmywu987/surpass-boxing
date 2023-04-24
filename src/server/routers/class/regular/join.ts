@@ -100,7 +100,6 @@ export const join = protectedProcedure
 
         await sendNotification({
           message,
-          lang: admin.lang,
           externalId: admin.id,
         });
       })

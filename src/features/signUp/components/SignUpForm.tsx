@@ -36,6 +36,7 @@ export const SignUpForm = ({
       email: "",
       password: "",
       confirmPassword: "",
+      lang: LanguageEnum.ZH,
     },
   });
   const profileImg = watch("profileImg");
