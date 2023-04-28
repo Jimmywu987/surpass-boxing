@@ -11,6 +11,11 @@ const withNextPwa = require("next-pwa")({
 const nextConfig = nextTranslate({
   reactStrictMode: true,
   swcMinify: true,
+  webpack: (config) => {
+    config.resolve.fallback = { fs: false };
+
+    return config;
+  },
   images: {
     domains: [
       "surpass-boxing.s3.ap-southeast-1.amazonaws.com",

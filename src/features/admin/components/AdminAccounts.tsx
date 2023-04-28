@@ -24,12 +24,13 @@ import {
   Dispatch,
 } from "react";
 import { PageNumberDisplay } from "@/features/common/components/PageNumberDisplay";
-import { UserType } from "@/types";
+// import { UserType } from "@/types";
 import { AccountContent } from "@/features/admin/components/AdminAccount/AccountContent";
 import { AdminAccountFilterOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
 import { OptionButton } from "@/features/common/components/buttons/OptionButton";
 import { SKIP_NUMBER, TAKE_NUMBER } from "@/constants";
 import { trpc } from "@/utils/trpc";
+import { UserType } from "@/types";
 
 export const AdminAccounts = () => {
   const searchAccountInputValue = useRef<HTMLInputElement>(null);

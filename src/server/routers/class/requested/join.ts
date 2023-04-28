@@ -5,7 +5,7 @@ import { LanguageEnum, User } from "@prisma/client";
 
 import { protectedProcedure } from "@/server/trpc";
 import { z } from "zod";
-import { sendNotification } from "@/services/onesignal";
+import { sendSingleNotification } from "@/services/notification/onesignal";
 import { format } from "date-fns";
 import { getTimeDuration } from "@/helpers/getTime";
 import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
@@ -67,12 +67,12 @@ export const join = protectedProcedure
         admin: true,
       },
     });
+    const dateTime = format(date, "yyyy-MM-dd");
+    const time = getTimeDuration({ startTime, endTime });
 
     await Promise.all(
       admins.map(async (admin) => {
-        const dateTime = format(date, "dd/MM/yyyy");
-        const time = getTimeDuration({ startTime, endTime });
-        await sendNotification({
+        await sendSingleNotification({
           data: {
             username,
             dateTime,
@@ -81,6 +81,7 @@ export const join = protectedProcedure
           },
           messageKey: NotificationEnums.JOIN_CLASS,
           receiver: admin,
+          url: `admin?class_id=${id}&date=${dateTime}`,
         });
       })
     );

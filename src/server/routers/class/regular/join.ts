@@ -2,11 +2,11 @@ import { protectedProcedure } from "@/server/trpc";
 import { prisma } from "@/services/prisma";
 import { TRPCError } from "@trpc/server";
 
-import { LanguageEnum, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import { z } from "zod";
 import { format } from "date-fns";
 import { getTimeDuration } from "@/helpers/getTime";
-import { sendNotification } from "@/services/onesignal";
+import { sendSingleNotification } from "@/services/notification/onesignal";
 import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
 
 export const join = protectedProcedure
@@ -55,7 +55,7 @@ export const join = protectedProcedure
     }
     const { startTime, endTime, className, numberOfParticipants, coach } =
       regularBookingSlot;
-    await prisma.$transaction(async (txn) => {
+    const result = await prisma.$transaction(async (txn) => {
       await txn.lessons.update({
         data: {
           lesson: {
@@ -68,7 +68,7 @@ export const join = protectedProcedure
       });
 
       const { id } = regularBookingSlot;
-      await txn.bookingTimeSlots.create({
+      return await txn.bookingTimeSlots.create({
         data: {
           date: new Date(date),
           startTime,
@@ -90,11 +90,12 @@ export const join = protectedProcedure
         admin: true,
       },
     });
+    const dateTime = format(new Date(date), "yyyy-MM-dd");
+    const time = getTimeDuration({ startTime, endTime });
+
     await Promise.all(
       admins.map(async (admin) => {
-        const dateTime = format(new Date(date), "dd/MM/yyyy");
-        const time = getTimeDuration({ startTime, endTime });
-        await sendNotification({
+        await sendSingleNotification({
           data: {
             username,
             dateTime,
@@ -103,6 +104,7 @@ export const join = protectedProcedure
           },
           messageKey: NotificationEnums.JOIN_CLASS,
           receiver: admin,
+          url: `admin?class_id=${result.id}&date=${dateTime}`,
         });
       })
     );

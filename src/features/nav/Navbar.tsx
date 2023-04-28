@@ -50,9 +50,7 @@ export const Navbar = () => {
       if (session) {
         const { email, admin, phoneNumber, profileImg, username, id } =
           session?.user as Partial<User>;
-        if (!!id) {
-          await storeUserExternalId(id);
-        }
+
         dispatch(
           updateUser({
             admin,
@@ -62,6 +60,9 @@ export const Navbar = () => {
             username,
           })
         );
+        if (!!id) {
+          await storeUserExternalId(id);
+        }
       } else {
         dispatch(clearUserInfo());
       }
