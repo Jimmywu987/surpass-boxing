@@ -7,6 +7,7 @@ import { z } from "zod";
 import { format } from "date-fns";
 import { getTimeDuration } from "@/helpers/getTime";
 import { sendNotification } from "@/services/onesignal";
+import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
 
 export const join = protectedProcedure
   .input(
@@ -18,7 +19,7 @@ export const join = protectedProcedure
   .mutation(async ({ ctx, input }) => {
     const { id, date } = input;
     const user = ctx.session?.user as User;
-
+    const { username } = user;
     const regularBookingSlot = await prisma.regularBookingTimeSlots.findFirst({
       where: {
         id,
@@ -93,14 +94,15 @@ export const join = protectedProcedure
       admins.map(async (admin) => {
         const dateTime = format(new Date(date), "dd/MM/yyyy");
         const time = getTimeDuration({ startTime, endTime });
-        const message =
-          admin.lang === LanguageEnum.EN
-            ? `${user.username} has joined a ${className} on ${dateTime}: ${time}`
-            : `${user.username}已加入${dateTime}: ${time}的${className}課堂`;
-
         await sendNotification({
-          message,
-          externalId: admin.id,
+          data: {
+            username,
+            dateTime,
+            time,
+            className,
+          },
+          messageKey: NotificationEnums.JOIN_CLASS,
+          receiver: admin,
         });
       })
     );

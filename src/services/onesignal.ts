@@ -1,5 +1,7 @@
+import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
 import * as OneSignal from "@onesignal/node-onesignal";
-import { LanguageEnum } from "@prisma/client";
+import { LanguageEnum, User } from "@prisma/client";
+import { Replacements } from "i18n";
 
 export const appId = process.env["NEXT_PUBLIC_ONESIGNAL_APP_ID"]!;
 
@@ -23,13 +25,33 @@ const configuration = OneSignal.createConfiguration({
 
 export const client = new OneSignal.DefaultApi(configuration);
 
+type NotificationDataType = {
+  [NotificationEnums.JOIN_CLASS]: {
+    username: string;
+    dateTime: string;
+    time: string;
+    className: string;
+  };
+};
+
 export const sendNotification = async ({
-  externalId,
-  message,
+  receiver,
+  messageKey,
+  data,
 }: {
-  externalId: string;
-  message: string;
+  receiver: User;
+  messageKey: NotificationEnums;
+  data: NotificationDataType[typeof messageKey];
 }) => {
+  const { lang, id } = receiver;
+  const message = i18n.__(
+    {
+      phrase: messageKey.toLowerCase(),
+      locale: lang === LanguageEnum.EN ? "en" : "zh-HK",
+    },
+    data as unknown as Replacements
+  );
+
   await client.createNotification({
     app_id: appId,
     contents: {
@@ -38,6 +60,6 @@ export const sendNotification = async ({
     //@todo: get the user to the class
     // url: `${process.env.BACKEND_URL_DEVELOPMENT}/${externalId}`,
     included_segments: ["Subscribed Users"],
-    include_external_user_ids: [externalId],
+    include_external_user_ids: [id],
   });
 };
