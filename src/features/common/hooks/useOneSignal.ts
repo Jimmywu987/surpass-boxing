@@ -1,4 +1,4 @@
-import { appId } from "@/services/onesignal";
+import { appId } from "@/services/notification/onesignal";
 import { useEffect, useRef } from "react";
 import OneSignal from "react-onesignal";
 
@@ -38,9 +38,17 @@ export const useOneSignal = () => {
   }, []);
 
   const storeUserExternalId = async (userId: string) => {
-    await OneSignal.setExternalUserId(userId);
+    const id = await OneSignal.getExternalUserId();
+    if (userId === id) return;
+    if (!id) {
+      await OneSignal.setExternalUserId(userId);
+    }
+  };
+  const removeUserExternalId = async () => {
+    await OneSignal.removeExternalUserId();
   };
   return {
     storeUserExternalId,
+    removeUserExternalId,
   };
 };

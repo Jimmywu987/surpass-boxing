@@ -16,6 +16,7 @@ import useTranslation from "next-translate/useTranslation";
 import { AppProps } from "next/app";
 import { useState } from "react";
 import { getSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 export type AdminPageProps = AppProps & {
   users: User[];
@@ -57,7 +58,7 @@ const AdminPage = () => {
           {t("news_board")}
         </button>
       </div>
-      <div className="flex flex-1">
+      <div className="flex flex-1 px-6">
         {option === AdminOptionEnums.CLASSES && <AdminClasses />}
         {option === AdminOptionEnums.ACCOUNT && <AdminAccounts />}
         {option === AdminOptionEnums.COACHES && <AdminCoaches />}

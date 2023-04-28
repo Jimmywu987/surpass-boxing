@@ -7,25 +7,41 @@ import { getTimeDuration } from "@/helpers/getTime";
 import { timeSlotSelector, updateTimeSlot } from "@/redux/timeSlot";
 import { CheckIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { BookingTimeSlotStatusEnum } from "@prisma/client";
-import { endOfDay, format, subDays } from "date-fns";
+import {
+  endOfDay,
+  format,
+  isAfter,
+  subDays,
+  startOfDay,
+  isBefore,
+} from "date-fns";
 import useTranslation from "next-translate/useTranslation";
 import { Dispatch, SetStateAction, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
-import { ViewRequestedClass } from "./ViewRequestedClass";
+import { ViewRequestedClass } from "@/features/admin/components/ViewRequestedClass";
 import { SKIP_NUMBER, TAKE_NUMBER } from "@/constants";
 import { PageNumberDisplay } from "@/features/common/components/PageNumberDisplay";
 import { DatePicker } from "@/features/common/components/DatePicker";
 import { trpc } from "@/utils/trpc";
+import { useRouter } from "next/router";
 
 export const AdminRequestedClass = () => {
   const { t } = useTranslation("admin");
+  const router = useRouter();
+  const { date, class_id } = router.query;
   const modalDisclosure = useDisclosure();
   const dispatch = useDispatch();
+  const now = new Date();
+
+  const noSpecificDate =
+    !date ||
+    isNaN(new Date(date.toString()) as unknown as number) ||
+    isBefore(new Date(date.toString()), startOfDay(now));
 
   const [query, setQuery] = useState({
     skip: 0,
-    date: new Date().toString(),
+    date: noSpecificDate ? now.toString() : date.toString(),
   });
   const dateTime = new Date(query.date);
   const minDate = endOfDay(subDays(new Date(), 1));
@@ -38,11 +54,20 @@ export const AdminRequestedClass = () => {
     period: null,
   };
   const { data, isLoading } =
-    trpc.classRouter.requestedClassRouter.fetch.useQuery(queryDate);
-
-  const handleOpenModel = () => {
-    onOpen();
-  };
+    trpc.classRouter.requestedClassRouter.fetch.useQuery(queryDate, {
+      onSuccess: (data) => {
+        if (!class_id) return;
+        data.bookingTimeSlots.map(({ timeSlots }) => {
+          timeSlots.map((timeSlot) => {
+            if (timeSlot.id === class_id) {
+              dispatch(updateTimeSlot({ timeSlot }));
+              onOpen();
+            }
+          });
+        });
+        router.replace(router.route, undefined, { shallow: true });
+      },
+    });
 
   if (!data || isLoading) {
     return (
@@ -58,7 +83,7 @@ export const AdminRequestedClass = () => {
         <Button
           onClick={() => {
             dispatch(updateTimeSlot({ timeSlot: null }));
-            handleOpenModel();
+            onOpen();
           }}
           colorScheme="whiteAlpha"
           variant="solid"
@@ -103,7 +128,7 @@ export const AdminRequestedClass = () => {
                     className="flex justify-between p-5 border border-gray-600 rounded-md shadow-lg hover:bg-gray-400 cursor-pointer"
                     onClick={() => {
                       dispatch(updateTimeSlot({ timeSlot }));
-                      handleOpenModel();
+                      onOpen();
                     }}
                   >
                     <div className="space-y-2">

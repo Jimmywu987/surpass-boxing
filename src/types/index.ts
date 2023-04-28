@@ -1,6 +1,3 @@
-import { Lessons, User, UserOnBookingTimeSlots } from "@prisma/client";
+import { RouterOutput } from "@/utils/trpc";
 
-export type UserType = User & {
-  lessons: Lessons[];
-  userOnBookingTimeSlots: UserOnBookingTimeSlots[];
-};
+export type UserType = RouterOutput["userRouter"]["fetch"]["users"][0];

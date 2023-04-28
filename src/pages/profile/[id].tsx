@@ -17,6 +17,7 @@ const ProfilePage = (props: ProfilePageProps) => {
   const session = useSession();
   const isAuthenticated = session.status === "authenticated";
   const currentUser = session.data?.user as User;
+
   const reduxUser = useSelector(userSelector);
 
   return (
@@ -36,7 +37,13 @@ const ProfilePage = (props: ProfilePageProps) => {
         <Link href="/admin" passHref className="">
           管理課堂/帳戶
         </Link>
-        <button onClick={() => signOut()}>Sign out</button>
+        <button
+          onClick={async () => {
+            signOut();
+          }}
+        >
+          Sign out
+        </button>
       </div>
     </div>
   );
