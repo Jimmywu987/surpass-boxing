@@ -1,0 +1,3 @@
+{
+    "join_class": "{{username}} has joined a {{className}} on {{dateTime}}: {{time}}"
+}

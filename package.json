@@ -53,6 +53,7 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
+    "@types/i18n": "^0.13.6",
     "@types/next-redux-wrapper": "^3.0.0",
     "@types/node": "^18.11.10",
     "@types/react": "^18.0.26",
