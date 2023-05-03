@@ -60,8 +60,9 @@ export const sendSingleNotification = async ({
     contents: {
       en: message,
     },
+    data: { on99: "fesygfeusgufy" },
     //@todo: get the user to the class
-    url: `${process.env.VERCEL_URL}/${url}`,
+    // url: `${process.env.VERCEL_URL}/${url}`,
     included_segments: ["Subscribed Users"],
     include_external_user_ids: [id],
   });

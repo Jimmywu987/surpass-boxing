@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.grecaptcha-badge {
+    opacity: 0;
+    visibility: hidden;
+  }
+

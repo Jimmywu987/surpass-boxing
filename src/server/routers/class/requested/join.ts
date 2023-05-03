@@ -81,7 +81,7 @@ export const join = protectedProcedure
           },
           messageKey: NotificationEnums.JOIN_CLASS,
           receiver: admin,
-          url: `admin?class_id=${id}&date=${dateTime}`,
+          url: `admin?time_slot_id=${id}&date=${dateTime}`,
         });
       })
     );

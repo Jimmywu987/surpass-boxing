@@ -88,11 +88,12 @@ const fetchInput = z.object({
       AdminPeriodOptionsEnum.ONE_YEAR,
     ])
     .nullable(),
+  timeSlotId: z.string().optional(),
 });
 export const fetch = publicProcedure
   .input(fetchInput)
   .query(async ({ input }) => {
-    const { skip, ...dateTimeProps } = input;
+    const { skip, timeSlotId, ...dateTimeProps } = input;
     try {
       const result = await prisma.$transaction(async (txn) => {
         const whereQuery = getDurationWhereQuery(
@@ -100,10 +101,13 @@ export const fetch = publicProcedure
             period: AdminPeriodOptionsEnum;
           }
         );
-
+        const specificTimeSlot = timeSlotId
+          ? { OR: [{ id: timeSlotId }] }
+          : undefined;
         const totalClasses = await txn.bookingTimeSlots.aggregate({
           where: {
             date: whereQuery,
+            ...specificTimeSlot,
           },
           _count: true,
         });
@@ -133,6 +137,7 @@ export const fetch = publicProcedure
           },
           where: {
             date: whereQuery,
+            ...specificTimeSlot,
           },
           orderBy: {
             date: "desc",

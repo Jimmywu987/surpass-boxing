@@ -16,7 +16,7 @@ import {
   isBefore,
 } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 import { ViewRequestedClass } from "@/features/admin/components/ViewRequestedClass";
@@ -29,7 +29,7 @@ import { useRouter } from "next/router";
 export const AdminRequestedClass = () => {
   const { t } = useTranslation("admin");
   const router = useRouter();
-  const { date, class_id } = router.query;
+  const { date, time_slot_id } = router.query;
   const modalDisclosure = useDisclosure();
   const dispatch = useDispatch();
   const now = new Date();
@@ -52,20 +52,21 @@ export const AdminRequestedClass = () => {
     ...query,
     isPast: false,
     period: null,
+    timeSlotId: !!time_slot_id ? time_slot_id.toString() : undefined,
   };
   const { data, isLoading } =
     trpc.classRouter.requestedClassRouter.fetch.useQuery(queryDate, {
       onSuccess: (data) => {
-        if (!class_id) return;
+        if (!time_slot_id) return;
         data.bookingTimeSlots.map(({ timeSlots }) => {
           timeSlots.map((timeSlot) => {
-            if (timeSlot.id === class_id) {
+            if (timeSlot.id === time_slot_id) {
               dispatch(updateTimeSlot({ timeSlot }));
               onOpen();
             }
           });
         });
-        router.replace(router.route, undefined, { shallow: true });
+        // router.replace({}, undefined, { shallow: true });
       },
     });
 

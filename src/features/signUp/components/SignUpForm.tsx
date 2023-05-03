@@ -14,6 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { z } from "zod";
 import { LanguageEnum } from "@prisma/client";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 export const SignUpForm = ({
   LoginButton,
@@ -29,6 +30,7 @@ export const SignUpForm = ({
   const [showPassword, setShowPassword] = useState(false);
   const { uploadToS3 } = useS3Upload();
 
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const signUpFormMethods = useForm<z.infer<ReturnType<typeof signUpSchema>>>({
     resolver: zodResolver(signUpSchema()),
     defaultValues: {
@@ -37,6 +39,7 @@ export const SignUpForm = ({
       password: "",
       confirmPassword: "",
       lang: LanguageEnum.ZH,
+      token: "",
     },
   });
   const profileImg = watch("profileImg");
@@ -44,13 +47,18 @@ export const SignUpForm = ({
 
   const onSubmit = signUpFormMethods.handleSubmit(async (data) => {
     let imgUrl = "/default-profile-img.png";
+    if (!executeRecaptcha) {
+      return;
+    }
     try {
+      const token = await executeRecaptcha("yourAction");
       if (updatedProfileImg) {
         const { url } = await uploadToS3(profileImg[0]);
         imgUrl = url;
       }
       await mutateAsync({
         ...data,
+        token,
         lang: lang === "en" ? LanguageEnum.EN : LanguageEnum.ZH,
         profileImg: imgUrl,
       });
