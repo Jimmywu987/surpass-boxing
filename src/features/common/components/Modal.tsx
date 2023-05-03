@@ -1,19 +1,13 @@
+import { UseDisclosureReturn } from "@chakra-ui/react";
 import { useRef } from "react";
-import { AdminPageProps } from "@/pages/admin";
-import { Button, useDisclosure, UseDisclosureReturn } from "@chakra-ui/react";
-import { SingleDatepicker } from "chakra-dayzed-datepicker";
-import { subDays, endOfDay, format } from "date-fns";
-import useTranslation from "next-translate/useTranslation";
-
-import { SignUpForm } from "@/features/signUp/components/SignUpForm";
-import { LoginForm } from "@/features/login/components/LoginForm";
 
 import {
   Modal,
-  ModalOverlay,
-  ModalContent,
   ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 
 export const ModalComponent = ({
   modalDisclosure,
@@ -22,16 +16,23 @@ export const ModalComponent = ({
   modalDisclosure: UseDisclosureReturn;
   content: React.ReactNode;
 }) => {
+  const router = useRouter();
+  const { time_slot_id } = router.query;
   const { isOpen, onClose } = modalDisclosure;
   const initialRef = useRef(null);
   const finalRef = useRef(null);
-
+  const onCloseModal = () => {
+    onClose();
+    if (!!time_slot_id) {
+      router.push({}, undefined, { shallow: true });
+    }
+  };
   return (
     <Modal
       initialFocusRef={initialRef}
       finalFocusRef={finalRef}
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={onCloseModal}
     >
       <ModalOverlay />
       <ModalContent>

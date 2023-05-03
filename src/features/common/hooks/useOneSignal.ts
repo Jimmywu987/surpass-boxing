@@ -1,9 +1,11 @@
 import { appId } from "@/services/notification/onesignal";
+import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import OneSignal from "react-onesignal";
 
 export const useOneSignal = () => {
   const onesignalInitializingRef = useRef(false);
+  const router = useRouter();
 
   useEffect(() => {
     const init = async () => {
@@ -18,13 +20,17 @@ export const useOneSignal = () => {
             },
           });
 
-          OneSignal.addListenerForNotificationOpened((notification) =>
-            console.info("Notification Opened", { notification })
-          );
+          OneSignal.addListenerForNotificationOpened((notification) => {
+            router.push({
+              pathname: "/admin",
+              query: notification.data.on99,
+            });
+            console.info("Notification Opened", { notification });
+          });
 
-          OneSignal.on("notificationDisplay", (event) =>
-            console.info("Notification Display", { event })
-          );
+          OneSignal.on("notificationDisplay", (event) => {
+            console.info("Notification Display", { event });
+          });
         }
       } catch (e) {
         console.error("OneSignal init error", e);

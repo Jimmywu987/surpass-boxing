@@ -2,8 +2,9 @@ import { TAKE_NUMBER } from "@/constants";
 import { AdminAccountFilterOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
 import { protectedProcedure, router } from "@/server/trpc";
 import { prisma } from "@/services/prisma";
-import { BookingTimeSlotStatusEnum } from "@prisma/client";
+import { BookingTimeSlotStatusEnum, User } from "@prisma/client";
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 
 export const userRouter = router({
   fetch: protectedProcedure
@@ -110,4 +111,23 @@ export const userRouter = router({
 
     return { users, totalUsersCount: totalUsersCount._count };
   }),
+  addOrRemoveAdmin: protectedProcedure
+    .input(z.object({ id: z.string(), admin: z.boolean() }))
+    .mutation(async ({ input, ctx }) => {
+      const user = ctx.session?.user as User;
+      const { id, admin } = input;
+      if (user.id === id) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+        });
+      }
+      await prisma.user.update({
+        where: {
+          id,
+        },
+        data: {
+          admin,
+        },
+      });
+    }),
 });

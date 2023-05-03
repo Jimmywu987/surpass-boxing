@@ -58,7 +58,7 @@ const AdminPage = () => {
           {t("news_board")}
         </button>
       </div>
-      <div className="flex flex-1 px-6">
+      <div className="flex flex-1 px-8">
         {option === AdminOptionEnums.CLASSES && <AdminClasses />}
         {option === AdminOptionEnums.ACCOUNT && <AdminAccounts />}
         {option === AdminOptionEnums.COACHES && <AdminCoaches />}

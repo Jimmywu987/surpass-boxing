@@ -28,8 +28,12 @@
     "action": {
         "confirm": "確認",
         "cancel": "取消",
-        "search": "搜尋"
+        "search": "搜尋",
+        "remove_authorization": "移除權限",
+        "grant_authorization": "成為教練"
     },
+    "confirm_remove_authorization": "你確認要移除這教練的權限嗎？",
+    "confirm_grant_authorization": "你確認要更新這用戶成為教練嗎？",
     "search_account": "搜尋學員",
     "used_lessons": "已使用堂數",
     "expired_lessons": "過期堂數",

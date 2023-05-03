@@ -13,9 +13,9 @@ import { useRouter } from "next/router";
 export const AdminClasses = () => {
   const { t } = useTranslation("admin");
   const router = useRouter();
-  const { class_id } = router.query;
+  const { time_slot_id } = router.query;
   const [classOptions, setClassOptions] = useState(
-    !class_id
+    !time_slot_id
       ? AdminClassesOptionEnums.REGULAR_CLASSES
       : AdminClassesOptionEnums.COMING_CLASSES
   );

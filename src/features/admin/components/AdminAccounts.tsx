@@ -34,13 +34,18 @@ import { UserType } from "@/types";
 
 export const AdminAccounts = () => {
   const searchAccountInputValue = useRef<HTMLInputElement>(null);
+  const utils = trpc.useContext();
 
   const [query, setQuery] = useState({
     skip: 0,
     accountFilter: AdminAccountFilterOptionEnums.ALL,
     searchInput: "",
   });
-
+  const { mutateAsync } = trpc.userRouter.addOrRemoveAdmin.useMutation({
+    onSuccess: () => {
+      utils.userRouter.fetch.invalidate();
+    },
+  });
   const { data, isLoading } = trpc.userRouter.fetch.useQuery(query);
 
   const [account, setAccount] = useState<UserType | null>(null);
@@ -81,9 +86,9 @@ export const AdminAccounts = () => {
   }
 
   return (
-    <div className="space-y-2">
-      <div className="flex flex-col md:flex-row items-center space-x-2 border-b border-b-gray-600 py-3">
-        <InputGroup className="flex space-x-2">
+    <div className="space-y-2 flex flex-col flex-1">
+      <div className="flex flex-col md:flex-row items-center space-x-2 border-b border-b-gray-600 py-3 w-4/6">
+        <InputGroup className="flex space-x-2 ">
           <InputLeftElement pointerEvents="none">
             <SearchIcon color="gray.300" />
           </InputLeftElement>
@@ -141,24 +146,22 @@ export const AdminAccounts = () => {
       </div>
 
       <div className="space-y-2">
-        {data.users.map((user) => {
-          return (
-            <div
-              key={user.id}
-              className="flex justify-between p-5 border border-gray-600 rounded-md shadow-lg hover:bg-gray-400 cursor-pointer"
-              onClick={() => {
-                handleOpenModel(user);
-              }}
-            >
-              <div className="space-y-2">
-                <div className="text-2xl flex items-center space-x-2">
-                  <span className="font-semibold">{user.username}</span>
-                </div>
+        {data.users.map((user) => (
+          <div
+            key={user.id}
+            className="flex justify-between p-5 border border-gray-600 rounded-md shadow-lg hover:bg-gray-400 cursor-pointer"
+            onClick={() => {
+              handleOpenModel(user);
+            }}
+          >
+            <div className="space-y-2">
+              <div className="text-xl flex items-center space-x-2">
+                <span className="font-semibold">{user.username}</span>
               </div>
-              <div className="flex flex-col justify-between"></div>
             </div>
-          );
-        })}
+            <div className="flex flex-col justify-between"></div>
+          </div>
+        ))}
 
         {data.users.length !== 0 ? (
           <div className="flex justify-between">

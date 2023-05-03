@@ -15,7 +15,7 @@ export const ViewUnusedClass = ({
   setView,
   setViewAccount,
 }: {
-  lessons: Lessons[];
+  lessons: UserType["lessons"];
   setView: Dispatch<SetStateAction<AdminViewAccountOptionEnums>>;
   setViewAccount: Dispatch<SetStateAction<UserType>>;
 }) => {

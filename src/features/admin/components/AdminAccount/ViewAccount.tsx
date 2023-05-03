@@ -1,17 +1,14 @@
 import { UserType } from "@/types";
 import useTranslation from "next-translate/useTranslation";
-import Image from "next/image";
-import DefaultProfileImg from "@/../public/default-profile-img.png";
 
-import Link from "next/link";
-
-import { useDispatch } from "react-redux";
-import { format, isAfter } from "date-fns";
 import { AdminViewAccountOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
 import { useAddClassInputResolver } from "@/features/admin/schemas/useAddClassInputResolver";
+import { isAfter } from "date-fns";
+import { Dispatch, SetStateAction, useMemo } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 
+import { AccountBasicInfo } from "@/features/admin/components/AdminAccount/AccountBasicInfo";
 import { trpc } from "@/utils/trpc";
 
 const REG_NUM_CHECK = /^\d+$/;
@@ -63,35 +60,7 @@ export const ViewAccount = ({
   });
   return (
     <div className="flex flex-col space-y-2">
-      <Link
-        href={`/profile/${account.id}`}
-        passHref
-        className="flex items-center space-x-2 transition hover:bg-link-bgHover  text-white hover:text-theme-color rounded p-1 text-lg text-link-normal "
-      >
-        <div className="w-10 h-10 relative">
-          <Image
-            src={account.profileImg ?? DefaultProfileImg}
-            alt={`${account.username} profile image`}
-            className="w-full h-full rounded-full object-cover"
-            fill
-          />
-        </div>
-      </Link>
-      <p>
-        {t("common:account.username")}: {account.username}
-      </p>
-      <p>
-        {t("common:account.email_address")}: {account.email}
-      </p>
-      <p>
-        {t("common:account.phone_number")}:{" "}
-        {!!account.phoneNumber ? account.phoneNumber : "--"}
-      </p>
-      <p>
-        {t("common:account.created_at")}:{" "}
-        {format(new Date(account.createdAt!), "yyyy-MM-dd")}
-      </p>
-
+      <AccountBasicInfo account={account} />
       <div className="flex justify-between">
         <p>
           {t("admin:total_lessons")}: {account.userOnBookingTimeSlots.length}
@@ -114,6 +83,7 @@ export const ViewAccount = ({
           {t("admin:edit")}
         </button>
       </div>
+
       <FormProvider {...addClassInputFormMethods}>
         <form className="flex justify-between">
           <div className="flex border border-gray-100 justify-between">
@@ -172,6 +142,14 @@ export const ViewAccount = ({
           </button>
         </form>
       </FormProvider>
+      <button
+        className=" hover:bg-red-400 bg-red-500 px-3 py-1 rounded-md text-white self-start"
+        onClick={() =>
+          setView(AdminViewAccountOptionEnums.VIEW_CONFIRM_GRANT_AUTH)
+        }
+      >
+        {t("admin:action.grant_authorization")}
+      </button>
     </div>
   );
 };
