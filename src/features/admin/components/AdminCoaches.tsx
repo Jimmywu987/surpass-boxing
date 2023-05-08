@@ -16,11 +16,6 @@ export const AdminCoaches = () => {
   const session = useSession();
   const user = session.data?.user as User;
   const { data, isLoading } = trpc.userRouter.fetchForAdmin.useQuery();
-  const { mutateAsync } = trpc.userRouter.addOrRemoveAdmin.useMutation({
-    onSuccess: () => {
-      utils.userRouter.fetchForAdmin.invalidate();
-    },
-  });
 
   const [account, setAccount] = useState<User | null>(null);
   const [confirmView, setConfirmView] = useState(false);

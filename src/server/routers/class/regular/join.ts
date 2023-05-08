@@ -2,12 +2,15 @@ import { protectedProcedure } from "@/server/trpc";
 import { prisma } from "@/services/prisma";
 import { TRPCError } from "@trpc/server";
 
-import { User } from "@prisma/client";
+import { LanguageEnum, User } from "@prisma/client";
 import { z } from "zod";
 import { format } from "date-fns";
 import { getTimeDuration } from "@/helpers/getTime";
 import { sendSingleNotification } from "@/services/notification/onesignal";
+import { getMessage } from "@/services/notification/getMessage";
 import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
+
+import { getTranslatedTerm } from "@/services/notification/getTranslatedTerm";
 
 export const join = protectedProcedure
   .input(
@@ -61,6 +64,8 @@ export const join = protectedProcedure
       coach,
       level,
     } = regularBookingSlot;
+
+    const classLevel = lessons.find((lesson) => lesson.level === level);
     const result = await prisma.$transaction(async (txn) => {
       await txn.lessons.update({
         data: {
@@ -69,7 +74,7 @@ export const join = protectedProcedure
           },
         },
         where: {
-          id: lessons[0].id,
+          id: classLevel ? classLevel.id : lessons[0].id,
         },
       });
 
@@ -105,18 +110,36 @@ export const join = protectedProcedure
     const dateTime = format(new Date(date), "yyyy-MM-dd");
     const time = getTimeDuration({ startTime, endTime });
     const url = `admin?time_slot_id=${result.id}&date=${dateTime}`;
+
     await Promise.all(
       admins.map(async (admin, index) => {
-        const message = await sendSingleNotification({
-          data: {
-            username,
-            dateTime,
-            time,
-            className,
-          },
-          messageKey: NotificationEnums.JOIN_CLASS,
+        const lang = admin.lang === LanguageEnum.EN ? "en" : "zh-HK";
+        const messageData = classLevel
+          ? {
+              username,
+              dateTime,
+              time,
+              className,
+            }
+          : {
+              username,
+              dateTime,
+              time,
+              className,
+              levelFrom: getTranslatedTerm(lessons[0].level, lang),
+              levelTo: getTranslatedTerm(level, lang),
+            };
+        const message = getMessage({
+          data: messageData,
+          messageKey: classLevel
+            ? NotificationEnums.JOIN_CLASS
+            : NotificationEnums.JOIN_DIFFERENT_CLASS,
+          lang: admin.lang,
+        });
+        await sendSingleNotification({
           receiver: admin,
           url,
+          message,
         });
         if (index === 0) {
           await prisma.notification.create({

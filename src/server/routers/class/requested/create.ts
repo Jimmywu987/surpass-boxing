@@ -1,7 +1,7 @@
 import { requestedClassCreateSchema } from "@/schemas/class/requested/create";
 import { protectedProcedure } from "@/server/trpc";
 import { prisma } from "@/services/prisma";
-import { User } from "@prisma/client";
+import { Lessons, User } from "@prisma/client";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { format } from "date-fns";
@@ -14,24 +14,30 @@ export const create = protectedProcedure
     >;
     const dateTime = new Date(date);
     const user = ctx.session.user as User;
+    let lessons: Lessons[] = [];
     if (!user.admin) {
-      const lessons = await prisma.lessons.findFirst({
+      lessons = await prisma.lessons.findMany({
         where: {
           userId: user.id,
-          expiryDate: { gte: new Date() },
+          expiryDate: {
+            gte: new Date(),
+          },
           lesson: {
             gt: 0,
           },
         },
+        orderBy: {
+          expiryDate: "asc",
+        },
       });
-      if (!lessons) {
+      if (lessons.length === 0) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "You don't have any lessons left",
         });
       }
     }
-    let regularBookingTimeSlotId = null;
+    let regularBookingTimeSlotId: string | null = null;
 
     const weekday = format(dateTime, "EEEE").toLowerCase();
 
@@ -49,6 +55,7 @@ export const create = protectedProcedure
         startTime: data.startTime,
         endTime: data.endTime,
         className: data.className,
+        level: data.level,
         ...hasCoachName,
       },
     });
@@ -66,14 +73,29 @@ export const create = protectedProcedure
         },
       };
     }
-    return prisma.bookingTimeSlots.create({
-      data: {
-        ...data,
-        date: dateTime,
-        coachId: !!data.id ? data.id : null,
-        numberOfParticipants: setLimit ? people : null,
-        regularBookingTimeSlotId,
-        ...addOneUserToClass,
-      },
+    return await prisma.$transaction(async (txn) => {
+      if (!user.admin) {
+        await txn.lessons.update({
+          data: {
+            lesson: {
+              decrement: 1,
+            },
+          },
+          where: {
+            id: lessons[0].id,
+          },
+        });
+      }
+
+      return txn.bookingTimeSlots.create({
+        data: {
+          ...data,
+          date: dateTime,
+          coachId: !!data.id ? data.id : null,
+          numberOfParticipants: setLimit ? people : null,
+          regularBookingTimeSlotId,
+          ...addOneUserToClass,
+        },
+      });
     });
   });

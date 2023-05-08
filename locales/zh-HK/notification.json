@@ -1,3 +1,9 @@
 {
-    "join_class": "{{username}}已加入{{dateTime}} | {{time}}的{{className}}課堂"
+    "terms": {
+        "beginner": "初級",
+        "intermediate": "中級",
+        "advanced": "高級"
+    },
+    "join_class": "{{username}}已加入{{dateTime}} | {{time}}的{{className}}課堂",
+    "join_different_class": "{{username}}已加入{{dateTime}} | {{time}}的{{className}}課堂，請留意這學員是{{levelFrom}}，參加了{{levelTo}}的課堂"
 }

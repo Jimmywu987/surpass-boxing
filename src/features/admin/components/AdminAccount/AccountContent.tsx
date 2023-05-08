@@ -28,11 +28,7 @@ export const AccountContent = ({
   const utils = trpc.useContext();
 
   const { onClose } = modalDisclosure;
-  const { mutateAsync } = trpc.userRouter.addOrRemoveAdmin.useMutation({
-    onSuccess: () => {
-      utils.userRouter.fetch.invalidate();
-    },
-  });
+
   if (!account) {
     return <></>;
   }

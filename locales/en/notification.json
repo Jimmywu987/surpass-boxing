@@ -1,3 +1,9 @@
 {
-    "join_class": "{{username}} has joined a {{className}} on {{dateTime}} | {{time}}"
+    "terms": {
+        "beginner": "Beginner",
+        "intermediate": "Intermediate",
+        "advanced": "Advanced"
+    },
+    "join_class": "{{username}} has joined a {{className}} on {{dateTime}} | {{time}}",
+    "join_different_class": "{{username}} has joined a {{className}} on {{dateTime}} | {{time}}, Please be aware that this is a {{levelFrom}} student joined a {{levelTo}} class."
 }
