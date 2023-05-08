@@ -19,7 +19,6 @@ export const ViewUsedClass = ({
   setView: Dispatch<SetStateAction<AdminViewAccountOptionEnums>>;
 }) => {
   const { t } = useTranslation("classes");
-  const dispatch = useDispatch();
 
   const { data, isLoading } = trpc.bookingTimeSlotRouter.fetch.useQuery({
     ids: bookingTimeSlotIds,

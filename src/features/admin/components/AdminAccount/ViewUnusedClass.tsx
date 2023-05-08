@@ -58,7 +58,7 @@ export const ViewUnusedClass = ({
                 {t("admin:expired_date")}:{" "}
                 {format(new Date(expiryDate), "dd/MM/yyyy")}
               </p>
-              <p>{t(level?.toLowerCase())}</p>
+              <p>{t(level.toLowerCase())}</p>
             </div>
             <button
               className="bg-red-600 px-2 py-1 text-white rounded hover:bg-red-500"
