@@ -64,8 +64,7 @@ export const EditRequestedClassForm = ({
     },
   });
 
-  const { setValue, watch, formState, register } =
-    requestedClassInputFormMethods;
+  const { setValue, watch, formState } = requestedClassInputFormMethods;
 
   const onSubmit = requestedClassInputFormMethods.handleSubmit(async (data) => {
     await mutateAsync(data);

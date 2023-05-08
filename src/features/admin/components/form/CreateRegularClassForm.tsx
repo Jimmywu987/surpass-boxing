@@ -59,7 +59,7 @@ export const CreateRegularClassForm = ({
       people: 0,
     },
   });
-  const { setValue, watch, formState, register } = regularClassInputFormMethods;
+  const { setValue, watch, formState } = regularClassInputFormMethods;
   const onSubmit = regularClassInputFormMethods.handleSubmit(async (data) => {
     await mutateAsync(data);
     utils.classRouter.regularClassRouter.fetch.invalidate();

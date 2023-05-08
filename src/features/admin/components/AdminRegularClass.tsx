@@ -4,7 +4,7 @@ import useTranslation from "next-translate/useTranslation";
 
 import { CreateRegularClassForm } from "@/features/admin/components/form/CreateRegularClassForm";
 import { ModalComponent } from "@/features/common/components/Modal";
-import { WEEK_NAMES } from "@/features/common/constants/weekNames";
+import { WeekEnums } from "@/features/common/enums/WeekEnums";
 import { getDuration } from "@/helpers/getDuration";
 import { getTimeDuration } from "@/helpers/getTime";
 import { trpc } from "@/utils/trpc";
@@ -53,7 +53,7 @@ export const AdminRegularClass = () => {
             return (
               <div
                 key={timeSlot.id}
-                className="flex  justify-between p-5 border border-gray-600 rounded-md  shadow-lg"
+                className="flex justify-between p-5 border border-gray-600 rounded-md shadow-lg"
               >
                 <div className="space-y-2">
                   <div className="text-2xl font-semibold">
@@ -61,17 +61,15 @@ export const AdminRegularClass = () => {
                     {t(`classes:${timeSlot.level.toLowerCase()}`)})
                   </div>
                   <div className="flex flex-wrap space-x-6">
-                    {WEEK_NAMES.map((weekName, indx) => {
+                    {Object.values(WeekEnums).map((weekDay, indx) => {
                       return (
                         <div key={indx} className="flex items-center space-x-2">
                           <div
                             className={`rounded-full w-1 h-1 ${
-                              timeSlot[weekName as "monday"]
-                                ? "bg-green-400"
-                                : "bg-red-400"
+                              timeSlot[weekDay] ? "bg-green-400" : "bg-red-400"
                             }`}
                           />
-                          <span>{t(`classes:${weekName}`)}</span>
+                          <span>{t(`classes:${weekDay}`)}</span>
                         </div>
                       );
                     })}

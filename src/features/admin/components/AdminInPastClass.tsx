@@ -178,9 +178,9 @@ export const AdminInPastClass = () => {
                               BookingTimeSlotStatusEnum.CONFIRM && (
                               <CheckIcon bg="green.600" rounded="full" p="1" />
                             )}
-
                             <span className="font-semibold">
-                              {timeSlot.className}
+                              {timeSlot.className} (
+                              {t(`classes:${timeSlot.level.toLowerCase()}`)} )
                             </span>
                             {timeSlot.status ===
                               BookingTimeSlotStatusEnum.CANCELED && (

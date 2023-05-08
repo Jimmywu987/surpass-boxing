@@ -2,6 +2,7 @@ import { prisma } from "@/services/prisma";
 import { TRPCError } from "@trpc/server";
 
 import { LanguageEnum, User } from "@prisma/client";
+import { getMessage } from "@/services/notification/getMessage";
 
 import { protectedProcedure } from "@/server/trpc";
 import { z } from "zod";
@@ -9,6 +10,7 @@ import { sendSingleNotification } from "@/services/notification/onesignal";
 import { format } from "date-fns";
 import { getTimeDuration } from "@/helpers/getTime";
 import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
+import { getTranslatedTerm } from "@/services/notification/getTranslatedTerm";
 export const join = protectedProcedure
   .input(
     z.object({
@@ -19,6 +21,7 @@ export const join = protectedProcedure
     const { id } = input;
     const user = ctx.session?.user as User;
     const { username } = user;
+
     const lessons = await prisma.lessons.findMany({
       where: {
         userId: user.id,
@@ -39,7 +42,23 @@ export const join = protectedProcedure
         code: "UNAUTHORIZED",
       });
     }
-    const result = await prisma.$transaction(async (txn) => {
+    const bookingTimeSlots = await prisma.bookingTimeSlots.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        coach: true,
+      },
+    });
+    if (!bookingTimeSlots) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+      });
+    }
+    const classLevel = lessons.find(
+      (lesson) => lesson.level === bookingTimeSlots.level
+    );
+    await prisma.$transaction(async (txn) => {
       await txn.lessons.update({
         data: {
           lesson: {
@@ -47,25 +66,18 @@ export const join = protectedProcedure
           },
         },
         where: {
-          id: lessons[0].id,
+          id: classLevel ? classLevel.id : lessons[0].id,
         },
       });
-      return await txn.userOnBookingTimeSlots.create({
+      await txn.userOnBookingTimeSlots.create({
         data: {
           userId: user.id,
           bookingTimeSlotId: id,
         },
-        include: {
-          bookingTimeSlots: {
-            include: {
-              coach: true,
-            },
-          },
-        },
       });
     });
-    const { className, startTime, endTime, date, coachId } =
-      result.bookingTimeSlots;
+    const { className, startTime, endTime, date, coachId, level } =
+      bookingTimeSlots;
 
     const admins = await prisma.user.findMany({
       where: coachId
@@ -81,16 +93,33 @@ export const join = protectedProcedure
 
     await Promise.all(
       admins.map(async (admin, index) => {
-        const message = await sendSingleNotification({
-          data: {
-            username,
-            dateTime,
-            time,
-            className,
-          },
-          messageKey: NotificationEnums.JOIN_CLASS,
+        const lang = admin.lang === LanguageEnum.EN ? "en" : "zh-HK";
+        const messageData = classLevel
+          ? {
+              username,
+              dateTime,
+              time,
+              className,
+            }
+          : {
+              username,
+              dateTime,
+              time,
+              className,
+              levelFrom: getTranslatedTerm(lessons[0].level, lang),
+              levelTo: getTranslatedTerm(level, lang),
+            };
+        const message = getMessage({
+          data: messageData,
+          messageKey: classLevel
+            ? NotificationEnums.JOIN_CLASS
+            : NotificationEnums.JOIN_DIFFERENT_CLASS,
+          lang: admin.lang,
+        });
+        await sendSingleNotification({
           receiver: admin,
           url,
+          message,
         });
         if (index === 0) {
           await prisma.notification.create({

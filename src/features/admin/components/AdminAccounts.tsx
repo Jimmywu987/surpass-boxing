@@ -41,11 +41,7 @@ export const AdminAccounts = () => {
     accountFilter: AdminAccountFilterOptionEnums.ALL,
     searchInput: "",
   });
-  const { mutateAsync } = trpc.userRouter.addOrRemoveAdmin.useMutation({
-    onSuccess: () => {
-      utils.userRouter.fetch.invalidate();
-    },
-  });
+
   const { data, isLoading } = trpc.userRouter.fetch.useQuery(query);
 
   const [account, setAccount] = useState<UserType | null>(null);

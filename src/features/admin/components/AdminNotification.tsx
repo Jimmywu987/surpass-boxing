@@ -1,5 +1,6 @@
 import { trpc } from "@/utils/trpc";
 import { SmallCloseIcon } from "@chakra-ui/icons";
+import { format } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
 import Image from "next/image";
 
@@ -32,8 +33,11 @@ export const AdminNotification = () => {
   return (
     <div className="w-full">
       {data.map((notification, index) => (
-        <div key={index} className="space-y-2 border-b border-b-gray-600 py-2">
+        <div key={index} className="border-b border-b-gray-600 py-2 ">
           <div className="flex justify-between">
+            <p className="whitespace-pre-wrap text-xl">
+              {notification.message}
+            </p>
             <SmallCloseIcon
               className={`${
                 isLoading ? "bg-gray-300" : "cursor-pointer bg-black"
@@ -43,7 +47,9 @@ export const AdminNotification = () => {
               }}
             />
           </div>
-          <p className="whitespace-pre-wrap">{notification.message}</p>
+          <p className="">
+            {format(notification.createdAt, "yyyy-MM-dd, HH:mm:ss")}
+          </p>
         </div>
       ))}
     </div>
