@@ -57,7 +57,8 @@ export const AdminRegularClass = () => {
               >
                 <div className="space-y-2">
                   <div className="text-2xl font-semibold">
-                    {timeSlot.className}
+                    {timeSlot.className} (
+                    {t(`classes:${timeSlot.level.toLowerCase()}`)})
                   </div>
                   <div className="flex flex-wrap space-x-6">
                     {WEEK_NAMES.map((weekName, indx) => {

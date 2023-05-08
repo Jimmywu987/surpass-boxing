@@ -203,11 +203,11 @@ export const AdminInPastClass = () => {
                         </div>
                         <div className="flex flex-col justify-between">
                           <div>
-                            {!!timeSlot.coachName && (
+                            {!!timeSlot.coach && (
                               <div className="">
                                 {t("classes:coaches")}
                                 {": "}
-                                {timeSlot.coachName}
+                                {timeSlot.coach.username}
                               </div>
                             )}
                             {!!timeSlot.numberOfParticipants ? (

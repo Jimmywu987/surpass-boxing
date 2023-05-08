@@ -7,14 +7,7 @@ import { getTimeDuration } from "@/helpers/getTime";
 import { timeSlotSelector, updateTimeSlot } from "@/redux/timeSlot";
 import { CheckIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { BookingTimeSlotStatusEnum } from "@prisma/client";
-import {
-  endOfDay,
-  format,
-  isAfter,
-  subDays,
-  startOfDay,
-  isBefore,
-} from "date-fns";
+import { endOfDay, format, subDays, startOfDay, isBefore } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
@@ -140,7 +133,8 @@ export const AdminRequestedClass = () => {
                         )}
 
                         <span className="font-semibold">
-                          {timeSlot.className}
+                          {timeSlot.className} (
+                          {t(`classes:${timeSlot.level.toLowerCase()}`)})
                         </span>
                         {timeSlot.status ===
                           BookingTimeSlotStatusEnum.CANCELED && (
@@ -168,11 +162,11 @@ export const AdminRequestedClass = () => {
                     </div>
                     <div className="flex flex-col justify-between">
                       <div>
-                        {!!timeSlot.coachName && (
+                        {!!timeSlot.coach && (
                           <div className="">
                             {t("classes:coaches")}
                             {": "}
-                            {timeSlot.coachName}
+                            {timeSlot.coach.username}
                           </div>
                         )}
                         {!!timeSlot.numberOfParticipants ? (

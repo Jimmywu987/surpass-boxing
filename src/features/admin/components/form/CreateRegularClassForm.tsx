@@ -1,4 +1,5 @@
 import { useRegularClassInputResolver } from "@/features/admin/schemas/useRegularClassInputResolver";
+import { SelectClassType } from "@/features/classes/components/SelectClassType";
 import { SubmitButton } from "@/features/common/components/buttons/SubmitButton";
 import { getDuration } from "@/helpers/getDuration";
 import { regularClassCreateSchema } from "@/schemas/class/regular/create";
@@ -12,13 +13,14 @@ import {
   Stack,
   UseDisclosureReturn,
 } from "@chakra-ui/react";
-import { User } from "@prisma/client";
+import { ClassLevelEnum, User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import useTranslation from "next-translate/useTranslation";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
+import { SelectCoach } from "@/features/admin/components/form/SelectCoach";
 
-import { WeekSelectionCheckBox } from "./WeekSelectionCheckBox";
+import { WeekSelectionCheckBox } from "@/features/admin/components/form/WeekSelectionCheckBox";
 
 export const CreateRegularClassForm = ({
   modalDisclosure,
@@ -27,14 +29,11 @@ export const CreateRegularClassForm = ({
 }) => {
   const { t } = useTranslation("classes");
   const utils = trpc.useContext();
-  const { data } = trpc.classRouter.fetch.useQuery();
 
   const { data: userData } = trpc.userRouter.fetchForAdmin.useQuery();
 
   const { mutateAsync, isLoading } =
     trpc.classRouter.regularClassRouter.create.useMutation();
-  const session = useSession();
-  const user = session.data?.user as User;
 
   const { onClose } = modalDisclosure;
 
@@ -54,6 +53,7 @@ export const CreateRegularClassForm = ({
       startTime: 0,
       endTime: 0,
       className: "",
+      level: ClassLevelEnum.BEGINNER,
       coachId: "",
       setLimit: false,
       people: 0,
@@ -63,11 +63,11 @@ export const CreateRegularClassForm = ({
   const onSubmit = regularClassInputFormMethods.handleSubmit(async (data) => {
     await mutateAsync(data);
     utils.classRouter.regularClassRouter.fetch.invalidate();
-
     onClose();
   });
   const { errors, isValid } = formState;
-  if (!data || isLoading || !userData) {
+
+  if (isLoading || !userData) {
     return (
       <Stack mt="12">
         <Skeleton height="350px" />
@@ -95,13 +95,7 @@ export const CreateRegularClassForm = ({
           )}
         </CheckboxGroup>
         <div>
-          <Select placeholder={t("class_type")} {...register("className")}>
-            {data.map((type) => (
-              <option key={type.id} value={type.name}>
-                {type.name}
-              </option>
-            ))}
-          </Select>
+          <SelectClassType />
           {errors.className && (
             <div className="text-sm text-red-600">
               {errors.className.message}
@@ -109,17 +103,9 @@ export const CreateRegularClassForm = ({
           )}
         </div>
         <div>
-          <Select placeholder={t("coaches")} {...register("coachId")}>
-            {userData.users.map((user) => (
-              <option key={user.id} value={user.id}>
-                {user.username}
-              </option>
-            ))}
-          </Select>
-          {errors.className && (
-            <div className="text-sm text-red-600">
-              {errors.className.message}
-            </div>
+          <SelectCoach />
+          {errors.coachId && (
+            <div className="text-sm text-red-600">{errors.coachId.message}</div>
           )}
         </div>
         <div className="space-y-3">
@@ -177,9 +163,13 @@ export const CreateRegularClassForm = ({
                 type="number"
                 name="people"
                 onChange={(e) =>
-                  setValue("people", e.target.valueAsNumber, {
-                    shouldValidate: true,
-                  })
+                  setValue(
+                    "people",
+                    isNaN(e.target.valueAsNumber) ? 0 : e.target.valueAsNumber,
+                    {
+                      shouldValidate: true,
+                    }
+                  )
                 }
                 w="full "
                 disabled={!watch("setLimit")}

@@ -14,6 +14,7 @@ import { ViewAccount } from "@/features/admin/components/AdminAccount/ViewAccoun
 import { ViewUsedClass } from "@/features/admin/components/AdminAccount/ViewUsedClass";
 import { ViewUnusedClass } from "@/features/admin/components/AdminAccount/ViewUnusedClass";
 import { trpc } from "@/utils/trpc";
+import { CoachConfirm } from "@/features/admin/components/AdminAccount/CoachConfirm";
 
 export const AccountContent = ({
   account,
@@ -26,6 +27,7 @@ export const AccountContent = ({
   const dispatch = useDispatch();
   const utils = trpc.useContext();
 
+  const { onClose } = modalDisclosure;
   const { mutateAsync } = trpc.userRouter.addOrRemoveAdmin.useMutation({
     onSuccess: () => {
       utils.userRouter.fetch.invalidate();
@@ -60,30 +62,12 @@ export const AccountContent = ({
   }
   if (view === AdminViewAccountOptionEnums.VIEW_CONFIRM_GRANT_AUTH) {
     return (
-      <div className="space-y-3">
-        <p className="text-blueGray-700 text-lg text-center">
-          {t("confirm_grant_authorization")}
-        </p>
-        <div className="flex space-x-3 justify-center">
-          <button
-            className="bg-gray-500 px-3 py-1 rounded-md text-white self-end"
-            onClick={() => setView(AdminViewAccountOptionEnums.VIEW_ACCOUNT)}
-          >
-            {t("action.cancel")}
-          </button>
-          <button
-            className="hover:bg-red-400 bg-red-500 px-3 py-1 rounded-md text-white self-end"
-            onClick={async () => {
-              await mutateAsync({
-                id: account.id,
-                admin: true,
-              });
-            }}
-          >
-            {t("action.confirm")}
-          </button>
-        </div>
-      </div>
+      <CoachConfirm
+        confirmText={t("confirm_grant_authorization")}
+        account={account}
+        onReturn={() => setView(AdminViewAccountOptionEnums.VIEW_ACCOUNT)}
+        onClose={onClose}
+      />
     );
   }
 

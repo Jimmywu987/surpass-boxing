@@ -49,6 +49,11 @@ export const bookingTimeSlotRouter = router({
                   },
                 },
               },
+              coach: {
+                select: {
+                  username: true,
+                },
+              },
             },
             where: {
               date: whereQuery,
@@ -111,6 +116,13 @@ export const bookingTimeSlotRouter = router({
           where: {
             id: {
               in: ids,
+            },
+          },
+          include: {
+            coach: {
+              select: {
+                username: true,
+              },
             },
           },
           orderBy: {

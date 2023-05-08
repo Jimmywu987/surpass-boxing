@@ -25,6 +25,12 @@ enum BookingTimeSlotStatusEnum {
   CANCELED
 }
 
+enum ClassLevelEnum {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
 enum LanguageEnum {
   EN
   ZH
@@ -50,6 +56,8 @@ model User {
   lessons                 Lessons[]
   userOnBookingTimeSlots  UserOnBookingTimeSlots[]
   regularBookingTimeSlots RegularBookingTimeSlots[]
+  notifications           Notification[]
+  bookingTimeSlots        BookingTimeSlots[]
 }
 
 model Lessons {
@@ -60,7 +68,8 @@ model Lessons {
   expiryDate DateTime
   lesson     Int
   userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  level      ClassLevelEnum
 }
 
 model ClassesType {
@@ -68,7 +77,8 @@ model ClassesType {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  name String
+  name  String
+  level ClassLevelEnum
 }
 
 model RegularBookingTimeSlots {
@@ -90,6 +100,7 @@ model RegularBookingTimeSlots {
   numberOfParticipants Int?
 
   className String
+  level     ClassLevelEnum
 }
 
 model BookingTimeSlots {
@@ -106,7 +117,10 @@ model BookingTimeSlots {
   regularBookingTimeSlotId String?
 
   className String
-  coachName String?
+  level     ClassLevelEnum
+
+  coachId String?
+  coach   User?   @relation(fields: [coachId], references: [id], onDelete: Cascade)
 
   userOnBookingTimeSlots UserOnBookingTimeSlots[]
 }
@@ -129,8 +143,19 @@ model News {
   updatedAt DateTime @updatedAt
 
   title   String
-  acticle String
+  article String @db.Text
   img     String
 
   url String?
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  message String
+  url     String?
+
+  adminId String?
+  user    User?   @relation(fields: [adminId], references: [id], onDelete: Cascade)
 }

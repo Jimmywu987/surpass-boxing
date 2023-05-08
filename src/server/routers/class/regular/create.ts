@@ -7,7 +7,11 @@ export const create = protectedProcedure
   .input(regularClassCreateSchema())
   .mutation(async ({ input }) => {
     const { setLimit, people, ...data } = input;
+
     return prisma.regularBookingTimeSlots.create({
-      data: { ...data, numberOfParticipants: setLimit ? people : null },
+      data: {
+        ...data,
+        numberOfParticipants: setLimit ? people : null,
+      },
     });
   });

@@ -9,16 +9,19 @@ import {
   Stack,
   UseDisclosureReturn,
 } from "@chakra-ui/react";
-import { User } from "@prisma/client";
+import { ClassLevelEnum, User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import useTranslation from "next-translate/useTranslation";
 import { FormProvider, useForm } from "react-hook-form";
+import { SelectCoach } from "@/features/admin/components/form/SelectCoach";
 
 import { useRequestedClassInputResolver } from "@/features/admin/schemas/useRequestedClassInputResolver";
 import { format } from "date-fns";
-import { WeekSelectionCheckBox } from "../../../admin/components/form/WeekSelectionCheckBox";
+import { WeekSelectionCheckBox } from "@/features/admin/components/form/WeekSelectionCheckBox";
 import { trpc } from "@/utils/trpc";
 import { z } from "zod";
+import { SelectClassType } from "@/features/classes/components/SelectClassType";
+import { useRouter } from "next/router";
 
 export const CreateRequestedClassForm = ({
   modalDisclosure,
@@ -28,16 +31,21 @@ export const CreateRequestedClassForm = ({
   date: Date;
 }) => {
   const { t } = useTranslation("classes");
-  const { classRouter } = trpc;
   const utils = trpc.useContext();
-
-  const { data } = classRouter.fetch.useQuery();
-
+  const router = useRouter();
   const { data: userData } = trpc.userRouter.fetchForAdmin.useQuery();
   const session = useSession();
   const user = session.data?.user as User;
   const { mutateAsync, isLoading } =
-    trpc.classRouter.requestedClassRouter.create.useMutation();
+    trpc.classRouter.requestedClassRouter.create.useMutation({
+      onSuccess: () => {
+        if (router.route === "/admin") {
+          utils.classRouter.requestedClassRouter.fetch.invalidate();
+          return;
+        }
+        utils.bookingTimeSlotRouter.fetchForStudent.invalidate();
+      },
+    });
 
   const { onClose } = modalDisclosure;
 
@@ -51,21 +59,20 @@ export const CreateRequestedClassForm = ({
       startTime: 0,
       endTime: 0,
       className: "",
+      level: ClassLevelEnum.BEGINNER,
       setLimit: false,
       people: 0,
-      coachName: "",
+      coachId: "",
     },
   });
-  const { setValue, watch, formState, register } =
-    requestedClassInputFormMethods;
+  const { setValue, watch, formState } = requestedClassInputFormMethods;
   const onSubmit = requestedClassInputFormMethods.handleSubmit(async (data) => {
     await mutateAsync(data);
-    utils.bookingTimeSlotRouter.fetchForStudent.invalidate();
 
     onClose();
   });
   const { errors, isValid } = formState;
-  if (!data || isLoading || !userData) {
+  if (isLoading || !userData) {
     return (
       <Stack mt="12">
         <Skeleton height="350px" />
@@ -89,13 +96,7 @@ export const CreateRequestedClassForm = ({
             <div>{t(format(date, "EEEE").toLowerCase())}</div>
           </div>
           <div>
-            <Select placeholder={t("class_type")} {...register("className")}>
-              {data.map((type) => (
-                <option key={type.id} value={type.name}>
-                  {type.name}
-                </option>
-              ))}
-            </Select>
+            <SelectClassType />
             {errors.className && (
               <div className="text-sm text-red-600">
                 {errors.className.message}
@@ -150,16 +151,10 @@ export const CreateRequestedClassForm = ({
           {user.admin && (
             <div className="space-y-2">
               <div>
-                <Select placeholder={t("coaches")} {...register("coachName")}>
-                  {userData.users.map((user) => (
-                    <option key={user.id} value={user.username}>
-                      {user.username}
-                    </option>
-                  ))}
-                </Select>
-                {errors.className && (
+                <SelectCoach />
+                {errors.coachId && (
                   <div className="text-sm text-red-600">
-                    {errors.className.message}
+                    {errors.coachId.message}
                   </div>
                 )}
               </div>
@@ -178,7 +173,7 @@ export const CreateRequestedClassForm = ({
                       onChange={(e) =>
                         setValue(
                           "people",
-                          !Number.isNaN(e.target.valueAsNumber)
+                          !isNaN(e.target.valueAsNumber)
                             ? e.target.valueAsNumber
                             : 0,
                           {

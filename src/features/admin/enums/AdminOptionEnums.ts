@@ -3,6 +3,7 @@ export enum AdminOptionEnums {
   ACCOUNT = "ACCOUNT",
   COACHES = "COACHES",
   NEWS = "NEWS",
+  NOTIFICATION = "NOTIFICATION",
 }
 
 export enum AdminClassesOptionEnums {

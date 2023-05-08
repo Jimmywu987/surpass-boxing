@@ -53,8 +53,14 @@ export const join = protectedProcedure
         code: "UNAUTHORIZED",
       });
     }
-    const { startTime, endTime, className, numberOfParticipants, coach } =
-      regularBookingSlot;
+    const {
+      startTime,
+      endTime,
+      className,
+      numberOfParticipants,
+      coach,
+      level,
+    } = regularBookingSlot;
     const result = await prisma.$transaction(async (txn) => {
       await txn.lessons.update({
         data: {
@@ -74,7 +80,8 @@ export const join = protectedProcedure
           startTime,
           endTime,
           className,
-          coachName: coach?.username ?? null,
+          level,
+          coachId: coach?.id ?? null,
           numberOfParticipants,
           regularBookingTimeSlotId: id,
           userOnBookingTimeSlots: {
@@ -85,17 +92,22 @@ export const join = protectedProcedure
         },
       });
     });
+
     const admins = await prisma.user.findMany({
-      where: {
-        admin: true,
-      },
+      where: coach?.id
+        ? {
+            id: coach.id,
+          }
+        : {
+            admin: true,
+          },
     });
     const dateTime = format(new Date(date), "yyyy-MM-dd");
     const time = getTimeDuration({ startTime, endTime });
-
+    const url = `admin?time_slot_id=${result.id}&date=${dateTime}`;
     await Promise.all(
-      admins.map(async (admin) => {
-        await sendSingleNotification({
+      admins.map(async (admin, index) => {
+        const message = await sendSingleNotification({
           data: {
             username,
             dateTime,
@@ -104,8 +116,17 @@ export const join = protectedProcedure
           },
           messageKey: NotificationEnums.JOIN_CLASS,
           receiver: admin,
-          url: `admin?time_slot_id=${result.id}&date=${dateTime}`,
+          url,
         });
+        if (index === 0) {
+          await prisma.notification.create({
+            data: {
+              url,
+              message,
+              adminId: coach?.id ? coach?.id : null,
+            },
+          });
+        }
       })
     );
   });

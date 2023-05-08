@@ -180,8 +180,11 @@ const ClassesPage = () => {
                 (slot) => slot.userId === user.id
               );
             const isInPast = isPast(
-              startOfDay(new Date()).getTime() + startTime
+              startOfDay(
+                !isRegular ? new Date(bookingTimeSlot.date) : new Date()
+              ).getTime() + startTime
             );
+
             return (
               <div
                 key={slot.id}
@@ -252,11 +255,11 @@ const ClassesPage = () => {
                 </div>
                 <div className="flex flex-col justify-between">
                   <div>
-                    {!isRegular && !!bookingTimeSlot.coachName && (
+                    {!isRegular && !!bookingTimeSlot.coach && (
                       <div className="">
                         {t("classes:coaches")}
                         {": "}
-                        {bookingTimeSlot.coachName}
+                        {bookingTimeSlot.coach.username}
                       </div>
                     )}
                     {isRegular &&

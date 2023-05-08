@@ -36,10 +36,10 @@ export const create = protectedProcedure
     const weekday = format(dateTime, "EEEE").toLowerCase();
 
     let hasCoachName = {};
-    if (data.coachName) {
+    if (data.coachId) {
       hasCoachName = {
         coach: {
-          username: data.coachName,
+          id: data.coachId,
         },
       };
     }
@@ -70,7 +70,7 @@ export const create = protectedProcedure
       data: {
         ...data,
         date: dateTime,
-        coachName: !!data.coachName ? data.coachName : null,
+        coachId: !!data.id ? data.id : null,
         numberOfParticipants: setLimit ? people : null,
         regularBookingTimeSlotId,
         ...addOneUserToClass,

@@ -1,6 +1,10 @@
 import { BookingTimeSlots, UserOnBookingTimeSlots } from "@prisma/client";
 
-export type TimeSlotsType = BookingTimeSlots & {
+type BookingTimeSlotsType = BookingTimeSlots & {
+  coach: { username: string } | null;
+};
+
+export type TimeSlotsType = BookingTimeSlotsType & {
   userOnBookingTimeSlots: (UserOnBookingTimeSlots & {
     user: {
       username: string;

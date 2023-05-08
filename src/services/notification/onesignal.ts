@@ -3,6 +3,7 @@ import * as OneSignal from "@onesignal/node-onesignal";
 import { LanguageEnum, User } from "@prisma/client";
 import { Replacements } from "i18n";
 import { i18n } from "@/services/notification/i18n/i18n.config";
+import { prisma } from "@/services/prisma";
 export const appId = process.env["NEXT_PUBLIC_ONESIGNAL_APP_ID"]!;
 
 const userAuthKey = process.env["NEXT_PUBLIC_ONESIGNAL_API_AUTH_KEY"]!;
@@ -60,10 +61,10 @@ export const sendSingleNotification = async ({
     contents: {
       en: message,
     },
-    data: { on99: "fesygfeusgufy" },
     //@todo: get the user to the class
-    // url: `${process.env.VERCEL_URL}/${url}`,
+    url: `${process.env.VERCEL_URL}/${url}`,
     included_segments: ["Subscribed Users"],
     include_external_user_ids: [id],
   });
+  return message;
 };

@@ -56,23 +56,32 @@ export const join = protectedProcedure
           bookingTimeSlotId: id,
         },
         include: {
-          bookingTimeSlots: true,
+          bookingTimeSlots: {
+            include: {
+              coach: true,
+            },
+          },
         },
       });
     });
-    const { className, startTime, endTime, date } = result.bookingTimeSlots;
+    const { className, startTime, endTime, date, coachId } =
+      result.bookingTimeSlots;
 
     const admins = await prisma.user.findMany({
-      where: {
-        admin: true,
-      },
+      where: coachId
+        ? { id: coachId }
+        : {
+            admin: true,
+          },
     });
     const dateTime = format(date, "yyyy-MM-dd");
     const time = getTimeDuration({ startTime, endTime });
 
+    const url = `admin?time_slot_id=${id}&date=${dateTime}`;
+
     await Promise.all(
-      admins.map(async (admin) => {
-        await sendSingleNotification({
+      admins.map(async (admin, index) => {
+        const message = await sendSingleNotification({
           data: {
             username,
             dateTime,
@@ -81,8 +90,17 @@ export const join = protectedProcedure
           },
           messageKey: NotificationEnums.JOIN_CLASS,
           receiver: admin,
-          url: `admin?time_slot_id=${id}&date=${dateTime}`,
+          url,
         });
+        if (index === 0) {
+          await prisma.notification.create({
+            data: {
+              url,
+              message,
+              adminId: coachId ? coachId : null,
+            },
+          });
+        }
       })
     );
   });

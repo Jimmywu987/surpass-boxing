@@ -40,12 +40,12 @@ export const ViewUsedClass = ({
       <div>
         {bookingTimeSlotIds.length > 0 ? (
           data.map((bookingTimeSlot, index) => {
-            const { startTime, endTime, className, coachName, date } =
+            const { startTime, endTime, className, coach, date } =
               bookingTimeSlot;
             return (
               <div key={index}>
                 <p>{className}</p>
-                <p>{coachName}</p>
+                {coach && <p>{coach.username}</p>}
                 <div>
                   <p>{format(new Date(date!), "yyyy-MM-dd")}</p>
                   <div>

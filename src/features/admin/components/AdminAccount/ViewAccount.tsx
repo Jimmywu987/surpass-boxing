@@ -3,15 +3,14 @@ import useTranslation from "next-translate/useTranslation";
 
 import { AdminViewAccountOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
 import { useAddClassInputResolver } from "@/features/admin/schemas/useAddClassInputResolver";
-import { isAfter } from "date-fns";
+import { format, isAfter, add } from "date-fns";
 import { Dispatch, SetStateAction, useMemo } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
 import { AccountBasicInfo } from "@/features/admin/components/AdminAccount/AccountBasicInfo";
 import { trpc } from "@/utils/trpc";
-
-const REG_NUM_CHECK = /^\d+$/;
+import { ClassLevelEnum } from "@prisma/client";
 
 export const ViewAccount = ({
   account,
@@ -34,9 +33,10 @@ export const ViewAccount = ({
       duration: 1,
       durationUnit: "months",
       userId: account.id,
+      level: ClassLevelEnum.BEGINNER,
     },
   });
-  const { handleSubmit, formState, register, setValue } =
+  const { handleSubmit, formState, register, setValue, watch } =
     addClassInputFormMethods;
 
   const unusedLessonNum = useMemo(
@@ -127,6 +127,16 @@ export const ViewAccount = ({
                 <option value="months">{t("classes:month")}</option>
                 <option value="years">{t("classes:year")}</option>
               </select>
+              <select
+                className="outline-none border-l border-l-gray-300"
+                {...register("level")}
+              >
+                {Object.values(ClassLevelEnum).map((level, index) => (
+                  <option value={level} key={index}>
+                    {t(`classes:${level.toLowerCase()}`)}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
           <button
@@ -141,6 +151,17 @@ export const ViewAccount = ({
             {t("admin:add_lesson")}
           </button>
         </form>
+        <div>
+          <p>
+            {t("admin:expired_date")}:{" "}
+            {format(
+              add(new Date(), {
+                [watch("durationUnit")]: watch("duration"),
+              }),
+              "dd/MM/yyyy"
+            )}
+          </p>
+        </div>
       </FormProvider>
       <button
         className=" hover:bg-red-400 bg-red-500 px-3 py-1 rounded-md text-white self-start"

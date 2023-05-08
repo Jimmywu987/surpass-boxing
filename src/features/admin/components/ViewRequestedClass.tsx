@@ -106,11 +106,11 @@ export const ViewRequestedClass = ({
             </div>
           </div>
           <div className="flex flex-col justify-between space-y-3">
-            {!!timeSlot.coachName && (
+            {!!timeSlot.coach && (
               <div className="">
                 {t("classes:coaches")}
                 {": "}
-                {timeSlot.coachName}
+                {timeSlot.coach.username}
               </div>
             )}
             {!!timeSlot.numberOfParticipants ? (
