@@ -46,5 +46,8 @@
     "coaches": "Coaches",
     "no_class": "No Class",
     "request_class_message": "Before joining the class,",
-    "contact_coach": " please contact the coach to activate your account."
+    "contact_coach": " please contact the coach to activate your account.",
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced"
 }

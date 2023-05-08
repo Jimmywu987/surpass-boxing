@@ -3,10 +3,14 @@
     "members": "學員",
     "coaches": "教練",
     "news_board": "資訊板",
+    "notification": "信息板",
     "regular_class": "固定時間",
+    "no_notification": "暫時未有信息",
+    "no_news": "暫時未有資訊",
     "add_regular_class": "增加固定課堂",
     "edit_requested_class": "更改課堂",
     "add_class": "增加課堂",
+    "add_news": "增加資訊",
     "class_type": "堂類",
     "add_class_type": "增加堂類",
     "not_limited": "不限",
@@ -44,5 +48,6 @@
     "duration": "為期",
     "lesson_number": "堂數",
     "check": "查看",
-    "edit": "更改"
+    "edit": "更改",
+    "level": "級別"
 }

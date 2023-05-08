@@ -3,10 +3,14 @@
     "members": "Members",
     "coaches": "Coaches",
     "news_board": "News Board",
+    "notification": "Notification Board",
+    "no_notification": "Currently no notification",
+    "no_news": "Currently no news",
     "regular_class": "Regular Class",
     "add_regular_class": "Add regular class",
     "edit_requested_class": "Edit requested class",
     "add_class": "Add class",
+    "add_news": "Add news",
     "class_type": "Class type",
     "add_class_type": "Add class type",
     "not_limited": "Not limited",
@@ -44,5 +48,6 @@
     "duration": "Duration",
     "lesson_number": "Lesson Number",
     "check": "Check",
-    "edit": "Edit"
+    "edit": "Edit",
+    "level": "Level"
 }

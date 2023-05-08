@@ -21,10 +21,10 @@ export const update = protectedProcedure
     const weekday = format(dateTime, "EEEE").toLowerCase();
 
     let hasCoachName = {};
-    if (data.coachName) {
+    if (data.coachId) {
       hasCoachName = {
         coach: {
-          username: data.coachName,
+          id: data.coachId,
         },
       };
     }
@@ -50,7 +50,8 @@ export const update = protectedProcedure
         startTime: data.startTime,
         endTime: data.endTime,
         className: data.className,
-        coachName: !!data.coachName ? data.coachName : null,
+        level: data.level,
+        coachId: !!data.coachId ? data.coachId : null,
         numberOfParticipants: setLimit ? people : null,
         regularBookingTimeSlotId,
       },

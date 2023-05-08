@@ -9,6 +9,7 @@ import { User } from "@prisma/client";
 
 import { AccountBasicInfo } from "@/features/admin/components/AdminAccount/AccountBasicInfo";
 import { useSession } from "next-auth/react";
+import { CoachConfirm } from "@/features/admin/components/AdminAccount/CoachConfirm";
 
 export const AdminCoaches = () => {
   const utils = trpc.useContext();
@@ -25,7 +26,7 @@ export const AdminCoaches = () => {
   const [confirmView, setConfirmView] = useState(false);
   const { t } = useTranslation("admin");
   const modalDisclosure = useDisclosure();
-  const { onOpen } = modalDisclosure;
+  const { onOpen, onClose } = modalDisclosure;
   const handleOpenModel = (user: User) => {
     setAccount(user);
     onOpen();
@@ -80,30 +81,12 @@ export const AdminCoaches = () => {
                 </button>
               </div>
             ) : (
-              <div className="space-y-3">
-                <p className="text-blueGray-700 text-lg text-center">
-                  {t("confirm_remove_authorization")}
-                </p>
-                <div className="flex space-x-3 justify-center">
-                  <button
-                    className="bg-gray-500 px-3 py-1 rounded-md text-white self-end"
-                    onClick={() => setConfirmView(false)}
-                  >
-                    {t("action.cancel")}
-                  </button>
-                  <button
-                    className="hover:bg-red-400 bg-red-500 px-3 py-1 rounded-md text-white self-end"
-                    onClick={async () => {
-                      await mutateAsync({
-                        id: account?.id as string,
-                        admin: false,
-                      });
-                    }}
-                  >
-                    {t("action.confirm")}
-                  </button>
-                </div>
-              </div>
+              <CoachConfirm
+                confirmText={t("confirm_remove_authorization")}
+                account={account as User}
+                onReturn={() => setConfirmView(false)}
+                onClose={onClose}
+              />
             )}
           </div>
         }

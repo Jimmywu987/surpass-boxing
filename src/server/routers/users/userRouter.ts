@@ -89,6 +89,7 @@ export const userRouter = router({
               lesson: true,
               expiryDate: true,
               id: true,
+              level: true,
             },
           },
         },

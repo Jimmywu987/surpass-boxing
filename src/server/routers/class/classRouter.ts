@@ -5,15 +5,24 @@ import { prisma } from "@/services/prisma";
 import { z } from "zod";
 import { requestedClassRouter } from "@/server/routers/class/requested/requestedClassRouter";
 import { regularClassRouter } from "@/server/routers/class/regular/regularClassRouter";
+import { ClassLevelEnum } from "@prisma/client";
 
 export const classRouter = router({
   create: protectedProcedure
-    .input(z.object({ name: z.string() }))
+    .input(
+      z.object({
+        name: z.string(),
+        level: z.enum([
+          ClassLevelEnum.ADVANCED,
+          ClassLevelEnum.BEGINNER,
+          ClassLevelEnum.INTERMEDIATE,
+        ]),
+      })
+    )
     .mutation(async ({ input }) => {
       try {
-        const { name } = input;
         return prisma.classesType.create({
-          data: { name },
+          data: input,
         });
       } catch (error) {
         throw new TRPCError({

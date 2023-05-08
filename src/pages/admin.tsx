@@ -17,6 +17,7 @@ import { AppProps } from "next/app";
 import { useState } from "react";
 import { getSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { AdminNotification } from "@/features/admin/components/AdminNotification";
 
 export type AdminPageProps = AppProps & {
   users: User[];
@@ -57,12 +58,19 @@ const AdminPage = () => {
         >
           {t("news_board")}
         </button>
+        <button
+          onClick={() => setOption(AdminOptionEnums.NOTIFICATION)}
+          className="text-xl"
+        >
+          {t("notification")}
+        </button>
       </div>
       <div className="flex flex-1 px-8">
         {option === AdminOptionEnums.CLASSES && <AdminClasses />}
         {option === AdminOptionEnums.ACCOUNT && <AdminAccounts />}
         {option === AdminOptionEnums.COACHES && <AdminCoaches />}
         {option === AdminOptionEnums.NEWS && <AdminNews />}
+        {option === AdminOptionEnums.NOTIFICATION && <AdminNotification />}
       </div>
     </div>
   );

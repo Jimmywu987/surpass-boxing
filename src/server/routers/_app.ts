@@ -9,6 +9,7 @@ import { classRouter } from "@/server/routers/class/classRouter";
 import { lessonClassRouter } from "@/server/routers/lesson/lessonClassRouter";
 import { userRouter } from "@/server/routers/users/userRouter";
 import { newsRouter } from "@/server/routers/news/newsRouter";
+import { notificationRouter } from "@/server/routers/notification/notificationRouter";
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -20,6 +21,7 @@ export const appRouter = router({
   lessonClassRouter,
   userRouter,
   newsRouter,
+  notificationRouter,
 });
 
 export type AppRouter = typeof appRouter;

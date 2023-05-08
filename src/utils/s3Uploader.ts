@@ -1,6 +1,4 @@
 import aws from "aws-sdk";
-import { getServerConfig } from "./getServerConfig";
-const config = getServerConfig();
 
 aws.config.update({
   accessKeyId: process.env.S3_UPLOAD_KEY,
@@ -9,14 +7,14 @@ aws.config.update({
   signatureVersion: "v4",
 });
 
-let s3 = new aws.S3({ signatureVersion: "v4" });
+const s3 = new aws.S3({ signatureVersion: "v4" });
 
 const deleteFile = (fileName: string) => {
   return new Promise((resolve, reject) => {
     const params = {
-      Bucket: "zpace",
+      Bucket: process.env.S3_UPLOAD_BUCKET as string,
       Key: fileName.replace(
-        "https://zpace.s3.ap-southeast-1.amazonaws.com/",
+        `https://${process.env.S3_UPLOAD_BUCKET}.s3.${process.env.S3_UPLOAD_REGION}.amazonaws.com/`,
         ""
       ),
     };

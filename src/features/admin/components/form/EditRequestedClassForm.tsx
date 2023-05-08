@@ -12,6 +12,7 @@ import { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import useTranslation from "next-translate/useTranslation";
 import { FormProvider, useForm } from "react-hook-form";
+import { SelectCoach } from "@/features/admin/components/form/SelectCoach";
 
 import { useRequestedClassInputResolver } from "@/features/admin/schemas/useRequestedClassInputResolver";
 import { format, intervalToDuration } from "date-fns";
@@ -21,6 +22,7 @@ import { getTimeDisplay } from "@/helpers/getTime";
 import { requestedClassCreateSchema } from "@/schemas/class/requested/create";
 import { z } from "zod";
 import { trpc } from "@/utils/trpc";
+import { SelectClassType } from "@/features/classes/components/SelectClassType";
 
 export const EditRequestedClassForm = ({
   modalDisclosure,
@@ -32,7 +34,6 @@ export const EditRequestedClassForm = ({
   const { t } = useTranslation("classes");
   const utils = trpc.useContext();
   const { classRouter } = trpc;
-  const { data } = classRouter.fetch.useQuery();
 
   const { data: userData } = trpc.userRouter.fetchForAdmin.useQuery();
 
@@ -56,9 +57,10 @@ export const EditRequestedClassForm = ({
       startTime: timeSlot.startTime,
       endTime: timeSlot.endTime,
       className: timeSlot.className,
+      level: timeSlot.level,
       setLimit: timeSlot.numberOfParticipants ? true : false,
       people: timeSlot.numberOfParticipants ?? 0,
-      coachName: timeSlot.coachName ?? "",
+      coachId: timeSlot.coachId ?? "",
     },
   });
 
@@ -71,7 +73,7 @@ export const EditRequestedClassForm = ({
     onClose();
   });
   const { errors } = formState;
-  if (!data || isLoading || !userData) {
+  if (isLoading || !userData) {
     return (
       <Stack mt="12">
         <Skeleton height="350px" />
@@ -102,13 +104,7 @@ export const EditRequestedClassForm = ({
             </div>
           </div>
           <div>
-            <Select placeholder={t("class_type")} {...register("className")}>
-              {data.map((type) => (
-                <option key={type.id} value={type.name}>
-                  {type.name}
-                </option>
-              ))}
-            </Select>
+            <SelectClassType />
             {errors.className && (
               <div className="text-sm text-red-600">
                 {errors.className.message}
@@ -176,57 +172,55 @@ export const EditRequestedClassForm = ({
               )}
             </div>
           </div>
-          {user.admin && (
-            <div className="space-y-2">
-              <div>
-                <Select placeholder={t("coaches")} {...register("coachName")}>
-                  {userData.users.map((user) => (
-                    <option key={user.id} value={user.username}>
-                      {user.username}
-                    </option>
-                  ))}
-                </Select>
-                {errors.className && (
-                  <div className="text-sm text-red-600">
-                    {errors.className.message}
-                  </div>
-                )}
-              </div>
-              <div className="flex flex-col space-y-2 ">
-                <WeekSelectionCheckBox text={t("set_limit")} name="setLimit" />
-                <InputGroup>
-                  <div
-                    className={`flex flex-col w-full space-y-2 ${
-                      !watch("setLimit") && "opacity-60"
-                    }`}
-                  >
-                    <div>{t("number_of_people_can_join")}:</div>
-
-                    <Input
-                      type="number"
-                      name="people"
-                      onChange={(e) =>
-                        setValue("people", e.target.valueAsNumber, {
-                          shouldValidate: true,
-                        })
-                      }
-                      w="full"
-                      defaultValue={
-                        watch("setLimit")
-                          ? timeSlot.numberOfParticipants ?? undefined
-                          : undefined
-                      }
-                      disabled={!watch("setLimit")}
-                    />
-                  </div>
-                </InputGroup>
-                <div>
-                  {t("number_of_people_already_joined")}:{" "}
-                  {timeSlot.userOnBookingTimeSlots.length}
+          <div className="space-y-2">
+            <div>
+              <SelectCoach />
+              {errors.coachId && (
+                <div className="text-sm text-red-600">
+                  {errors.coachId.message}
                 </div>
+              )}
+            </div>
+            <div className="flex flex-col space-y-2 ">
+              <WeekSelectionCheckBox text={t("set_limit")} name="setLimit" />
+              <InputGroup>
+                <div
+                  className={`flex flex-col w-full space-y-2 ${
+                    !watch("setLimit") && "opacity-60"
+                  }`}
+                >
+                  <div>{t("number_of_people_can_join")}:</div>
+
+                  <Input
+                    type="number"
+                    name="people"
+                    onChange={(e) =>
+                      setValue(
+                        "people",
+                        isNaN(e.target.valueAsNumber)
+                          ? 0
+                          : e.target.valueAsNumber,
+                        {
+                          shouldValidate: true,
+                        }
+                      )
+                    }
+                    w="full"
+                    defaultValue={
+                      watch("setLimit")
+                        ? timeSlot.numberOfParticipants ?? undefined
+                        : undefined
+                    }
+                    disabled={!watch("setLimit")}
+                  />
+                </div>
+              </InputGroup>
+              <div>
+                {t("number_of_people_already_joined")}:{" "}
+                {timeSlot.userOnBookingTimeSlots.length}
               </div>
             </div>
-          )}
+          </div>
           <SubmitButton type="submit" disabled={isLoading}>
             {t("common:action.confirm")}
           </SubmitButton>

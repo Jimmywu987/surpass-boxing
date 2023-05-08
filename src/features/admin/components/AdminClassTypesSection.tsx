@@ -3,45 +3,50 @@ import { SmallCloseIcon } from "@chakra-ui/icons";
 import {
   Button,
   Input,
-  InputGroup,
-  InputRightElement,
+  Select,
   Skeleton,
   Spinner,
   Stack,
 } from "@chakra-ui/react";
+import { ClassLevelEnum } from "@prisma/client";
 
 import useTranslation from "next-translate/useTranslation";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 export const AdminClassTypesSection = () => {
   const { classRouter } = trpc;
-
-  const { data, isLoading } = classRouter.fetch.useQuery();
+  const [level, setLevel] = useState<ClassLevelEnum>(ClassLevelEnum.BEGINNER);
+  const { data, isLoading } = trpc.classRouter.fetch.useQuery();
   const utils = trpc.useContext();
-
+  const classTypeRef = useRef<HTMLInputElement>(null);
   const { t } = useTranslation("admin");
   const {
     mutateAsync: createClassTypeMutateAsync,
     isLoading: createClassTypeIsLoading,
-  } = classRouter.create.useMutation();
+  } = classRouter.create.useMutation({
+    onSuccess: async () => {
+      utils.classRouter.fetch.invalidate();
+    },
+  });
   const {
     mutateAsync: removeClassTypeMutateAsync,
     isLoading: removeClassTypeIsLoading,
-  } = classRouter.remove.useMutation();
+  } = classRouter.remove.useMutation({
+    onSuccess: async () => {
+      utils.classRouter.fetch.invalidate();
+    },
+  });
 
-  const classTypeRef = useRef<HTMLInputElement>(null);
   const handleClassTypeAdd = async () => {
     if (classTypeRef && classTypeRef.current && classTypeRef.current.value) {
       const name = classTypeRef.current.value;
-      await createClassTypeMutateAsync({ name });
-      await utils.classRouter.fetch.invalidate();
+      await createClassTypeMutateAsync({ name, level });
       classTypeRef.current.value = "";
     }
   };
   const handleClassTypeRemove = async (id: string) => {
     if (!createClassTypeIsLoading || !removeClassTypeIsLoading) {
       await removeClassTypeMutateAsync({ id });
-      await utils.classRouter.fetch.invalidate();
     }
   };
   if (!data || isLoading) {
@@ -57,34 +62,50 @@ export const AdminClassTypesSection = () => {
   }
   return (
     <div className="space-y-2">
-      <InputGroup size="md" px="3">
-        <Input
-          pr="4.5rem"
-          type="text"
-          placeholder={t("class_type")}
-          bg="white"
-          textColor="gray.800"
-          ref={classTypeRef}
-        />
-        <InputRightElement width="4.5rem" mr="6">
-          <Button
-            h="1.75rem"
-            size="sm"
-            onClick={handleClassTypeAdd}
+      <div className="flex flex-col space-y-1">
+        <div className="flex bg-white rounded ">
+          <Input
+            type="text"
+            placeholder={t("class_type")}
+            bg="white"
+            textColor="gray.800"
+            ref={classTypeRef}
+          />
+          <Select
+            onChange={(event) => {
+              const value = event.target.value as ClassLevelEnum;
+              setLevel(value);
+            }}
+            value={level}
             color="gray.800"
-            disabled={createClassTypeIsLoading || removeClassTypeIsLoading}
+            className="border border-gray-400 text-gray-700"
           >
-            {t("add_class_type")}
-          </Button>
-        </InputRightElement>
-      </InputGroup>
+            {Object.values(ClassLevelEnum).map((level, index) => (
+              <option key={index} value={level}>
+                {t(`classes:${level.toLowerCase()}`)}
+              </option>
+            ))}
+          </Select>
+        </div>
+        <Button
+          size="sm"
+          onClick={handleClassTypeAdd}
+          color="gray.800"
+          alignSelf="flex-end"
+          disabled={createClassTypeIsLoading || removeClassTypeIsLoading}
+        >
+          {t("add_class_type")}
+        </Button>
+      </div>
       <div className="mx-2">
         {data.map((type) => (
           <div
             key={type.id}
             className="flex justify-between items-center p-3 border border-gray-700 rounded"
           >
-            <span>{type.name}</span>
+            <span>
+              {type.name} ({t(`classes:${type.level?.toLowerCase()}`)})
+            </span>
 
             <SmallCloseIcon
               onClick={() => handleClassTypeRemove(type.id)}

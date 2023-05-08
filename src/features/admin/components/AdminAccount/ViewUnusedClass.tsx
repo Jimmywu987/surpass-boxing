@@ -48,7 +48,7 @@ export const ViewUnusedClass = ({
         }}
       />
       <div className="space-y-2">
-        {lessons.map(({ lesson, expiryDate, id }, index) => (
+        {lessons.map(({ lesson, expiryDate, id, level }, index) => (
           <div key={index} className="flex justify-between items-end">
             <div>
               <p>
@@ -58,6 +58,7 @@ export const ViewUnusedClass = ({
                 {t("admin:expired_date")}:{" "}
                 {format(new Date(expiryDate), "dd/MM/yyyy")}
               </p>
+              <p>{t(level.toLowerCase())}</p>
             </div>
             <button
               className="bg-red-600 px-2 py-1 text-white rounded hover:bg-red-500"

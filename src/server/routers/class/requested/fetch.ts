@@ -134,6 +134,11 @@ export const fetch = publicProcedure
                 },
               },
             },
+            coach: {
+              select: {
+                username: true,
+              },
+            },
           },
           where: {
             date: whereQuery,

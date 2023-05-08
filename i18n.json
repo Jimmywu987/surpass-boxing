@@ -11,7 +11,8 @@
       "common",
       "auth",
       "classes",
-      "admin"
+      "admin",
+      "news"
     ]
   }
 }
