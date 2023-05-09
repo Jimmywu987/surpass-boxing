@@ -53,11 +53,12 @@ model User {
 
   lang LanguageEnum
 
-  lessons                 Lessons[]
-  userOnBookingTimeSlots  UserOnBookingTimeSlots[]
-  regularBookingTimeSlots RegularBookingTimeSlots[]
-  notifications           Notification[]
-  bookingTimeSlots        BookingTimeSlots[]
+  lessons                    Lessons[]
+  userOnBookingTimeSlots     UserOnBookingTimeSlots[]
+  regularBookingTimeSlots    RegularBookingTimeSlots[]
+  notifications              Notification[]
+  bookingTimeSlots           BookingTimeSlots[]
+  classLevelDifferentRecords ClassLevelDifferentRecord[]
 }
 
 model Lessons {
@@ -158,4 +159,17 @@ model Notification {
 
   adminId String?
   user    User?   @relation(fields: [adminId], references: [id], onDelete: Cascade)
+}
+
+model ClassLevelDifferentRecord {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  levelFrom ClassLevelEnum
+  levelTo   ClassLevelEnum
+
+  bookingTimeSlotId String
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

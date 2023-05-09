@@ -29,6 +29,8 @@ export const AdminInPastClass = () => {
   const [isOpen, setIsOpen] = useState(false);
   const modalDisclosure = useDisclosure();
   const dispatch = useDispatch();
+  const utils = trpc.useContext();
+
   const yesterday = endOfDay(subDays(new Date(), 1)).toString();
 
   const [query, setQuery] = useState({
@@ -45,6 +47,11 @@ export const AdminInPastClass = () => {
       ...query,
       isPast: true,
     });
+  const { mutateAsync } = trpc.bookingTimeSlotRouter.remove.useMutation({
+    onSuccess: () => {
+      utils.classRouter.requestedClassRouter.fetch.invalidate();
+    },
+  });
   const handleOpenModel = () => {
     onOpen();
   };
@@ -124,27 +131,38 @@ export const AdminInPastClass = () => {
         </Stack>
       ) : (
         <>
-          <div className="flex space-x-2">
-            <div>
-              <span>{t("admin:in_total")}: </span>
-              <span>{data.totalClassesCount}</span>
+          <div className="flex space-x-2 items-center justify-between">
+            <div className="flex space-x-2 ">
+              <div>
+                <span>{t("admin:in_total")}: </span>
+                <span>{data.totalClassesCount}</span>
+              </div>
+              <div>
+                <span>{t("admin:total_confirmed")}: </span>
+                <span>{data.totalConfirmedClasses}</span>
+              </div>
+              <div>
+                <span>{t("admin:total_canceled")}: </span>
+                <span>{data.totalCanceledClasses}</span>
+              </div>
+              <div>
+                <span>{t("admin:total_pending")}: </span>
+                <span>
+                  {data.totalClassesCount -
+                    data.totalCanceledClasses -
+                    data.totalConfirmedClasses}
+                </span>
+              </div>
             </div>
-            <div>
-              <span>{t("admin:total_confirmed")}: </span>
-              <span>{data.totalConfirmedClasses}</span>
-            </div>
-            <div>
-              <span>{t("admin:total_canceled")}: </span>
-              <span>{data.totalCanceledClasses}</span>
-            </div>
-            <div>
-              <span>{t("admin:total_pending")}: </span>
-              <span>
-                {data.totalClassesCount -
-                  data.totalCanceledClasses -
-                  data.totalConfirmedClasses}
-              </span>
-            </div>
+            <Button
+              colorScheme="whiteAlpha"
+              variant={"solid"}
+              onClick={() => {
+                mutateAsync();
+              }}
+            >
+              {t("clear_unattended_class")}
+            </Button>
           </div>
           <div className="space-y-2">
             {data.bookingTimeSlots.map(({ date, timeSlots }, indx) => {

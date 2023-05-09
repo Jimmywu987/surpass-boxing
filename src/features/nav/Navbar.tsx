@@ -33,7 +33,7 @@ import { useOneSignal } from "@/features/common/hooks/useOneSignal";
 export const Navbar = () => {
   const dispatch = useDispatch();
   const { t, lang } = useTranslation("common");
-  const [oneSignalInitialized, setOneSignalInitialized] = useState(false);
+
   const router = useRouter();
   const { pathname, asPath, query } = router;
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -95,7 +95,9 @@ export const Navbar = () => {
         <div className="hidden md:flex flex-col justify-start">
           <div className="flex h-28">
             <div className="flex flex-col justify-between">
-              <div className="my-1 mx-4 flex justify-end">
+              <div className="my-1 mx-4 flex justify-end items-center">
+                {reduxUser.admin && <NavLink text={t("admin")} url="/admin" />}
+
                 <Menu>
                   <MenuButton
                     leftIcon={

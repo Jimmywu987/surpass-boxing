@@ -79,7 +79,8 @@ export const join = protectedProcedure
       });
 
       const { id } = regularBookingSlot;
-      return await txn.bookingTimeSlots.create({
+
+      const result = await txn.bookingTimeSlots.create({
         data: {
           date: new Date(date),
           startTime,
@@ -96,6 +97,18 @@ export const join = protectedProcedure
           },
         },
       });
+
+      if (!classLevel) {
+        await txn.classLevelDifferentRecord.create({
+          data: {
+            userId: user.id,
+            levelFrom: lessons[0].level,
+            levelTo: level,
+            bookingTimeSlotId: result.id,
+          },
+        });
+      }
+      return result;
     });
 
     const admins = await prisma.user.findMany({

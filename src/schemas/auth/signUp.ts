@@ -18,7 +18,7 @@ export const signUpSchema = () =>
         .string({ required_error: "Confirm Password is required" })
         .min(8, "At least 8-digit password is required"),
       token: z.string(),
-      profileImg: z.any(),
+      profileImg: z.string(),
     })
     .superRefine(({ confirmPassword, password }, ctx) => {
       if (confirmPassword !== password) {

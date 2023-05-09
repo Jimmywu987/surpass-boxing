@@ -75,6 +75,16 @@ export const join = protectedProcedure
           bookingTimeSlotId: id,
         },
       });
+      if (!classLevel) {
+        await txn.classLevelDifferentRecord.create({
+          data: {
+            userId: user.id,
+            bookingTimeSlotId: id,
+            levelFrom: lessons[0].level,
+            levelTo: bookingTimeSlots.level,
+          },
+        });
+      }
     });
     const { className, startTime, endTime, date, coachId, level } =
       bookingTimeSlots;

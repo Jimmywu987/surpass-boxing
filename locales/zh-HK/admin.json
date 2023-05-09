@@ -4,8 +4,10 @@
     "coaches": "教練",
     "news_board": "資訊板",
     "notification": "信息板",
+    "class_level_record": "級別記錄",
     "regular_class": "固定時間",
     "no_notification": "暫時未有信息",
+    "no_record": "暫時未有記錄",
     "no_news": "暫時未有資訊",
     "add_regular_class": "增加固定課堂",
     "edit_requested_class": "更改課堂",
@@ -29,6 +31,7 @@
     "total_confirmed": "已確認課堂數",
     "total_canceled": "已取消課堂數",
     "total_pending": "未確認課堂數",
+    "clear_unattended_class": "刪除已開未有學員課堂",
     "action": {
         "confirm": "確認",
         "cancel": "取消",

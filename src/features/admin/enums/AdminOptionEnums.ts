@@ -4,6 +4,7 @@ export enum AdminOptionEnums {
   COACHES = "COACHES",
   NEWS = "NEWS",
   NOTIFICATION = "NOTIFICATION",
+  CLASS_LEVEL_RECORD = "CLASS_LEVEL_RECORD",
 }
 
 export enum AdminClassesOptionEnums {
