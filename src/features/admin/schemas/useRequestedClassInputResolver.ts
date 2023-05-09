@@ -24,7 +24,6 @@ export const useRequestedClassInputResolver = ({
               startOfDay(new Date(date)).getTime() + startTime
           );
         },
-
         {
           message: t("please_select_time_correctly", { hours: withInHours }),
           path: ["endTime"],
