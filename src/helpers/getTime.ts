@@ -1,9 +1,15 @@
 import { intervalToDuration } from "date-fns";
 
 export const getTimeDisplay = (hours = 0, minutes = 0) => {
-  const hourDisplay = hours / 10 > 1 ? hours : hours === 0 ? "00" : `0${hours}`;
+  const hourDisplay =
+    hours / 10 > 1 || hours === 10 ? hours : hours === 0 ? "00" : `0${hours}`;
+
   const minuteDisplay =
-    minutes / 10 > 1 ? minutes : minutes === 0 ? "00" : `0${minutes}`;
+    minutes / 10 > 1 || minutes === 10
+      ? minutes
+      : minutes === 0
+      ? "00"
+      : `0${minutes}`;
   return `${hourDisplay}:${minuteDisplay}`;
 };
 

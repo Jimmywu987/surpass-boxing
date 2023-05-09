@@ -5,6 +5,7 @@ import { prisma } from "@/services/prisma";
 import { z } from "zod";
 import { requestedClassRouter } from "@/server/routers/class/requested/requestedClassRouter";
 import { regularClassRouter } from "@/server/routers/class/regular/regularClassRouter";
+import { levelRecordRouter } from "@/server/routers/class/levelRecord/levelRecordRouter";
 import { ClassLevelEnum } from "@prisma/client";
 
 export const classRouter = router({
@@ -58,4 +59,5 @@ export const classRouter = router({
     }),
   requestedClassRouter,
   regularClassRouter,
+  levelRecordRouter,
 });

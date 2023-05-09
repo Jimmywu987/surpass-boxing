@@ -1,31 +1,15 @@
 import { AdminAccounts } from "@/features/admin/components/AdminAccounts";
 import { AdminClasses } from "@/features/admin/components/AdminClasses";
-import { AdminNews } from "@/features/admin/components/AdminNews";
-import { AdminOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
+import { AdminClassLevelRecord } from "@/features/admin/components/AdminClassLevelRecord";
 import { AdminCoaches } from "@/features/admin/components/AdminCoaches";
-import { prisma } from "@/services/prisma";
-import {
-  User,
-  ClassesType,
-  News,
-  RegularBookingTimeSlots,
-  BookingTimeSlots,
-} from "@prisma/client";
-import { GetServerSideProps } from "next";
-import useTranslation from "next-translate/useTranslation";
-import { AppProps } from "next/app";
-import { useState } from "react";
-import { getSession } from "next-auth/react";
-import { useRouter } from "next/router";
+import { AdminNews } from "@/features/admin/components/AdminNews";
 import { AdminNotification } from "@/features/admin/components/AdminNotification";
-
-export type AdminPageProps = AppProps & {
-  users: User[];
-  classTypes: ClassesType[];
-  news: News;
-  regularBookingTimeSlots: RegularBookingTimeSlots[];
-  bookingTimeSlots: BookingTimeSlots[];
-};
+import { AdminOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
+import { User } from "@prisma/client";
+import { GetServerSideProps } from "next";
+import { getSession } from "next-auth/react";
+import useTranslation from "next-translate/useTranslation";
+import { useState } from "react";
 
 const AdminPage = () => {
   const { t } = useTranslation("admin");
@@ -64,6 +48,12 @@ const AdminPage = () => {
         >
           {t("notification")}
         </button>
+        <button
+          onClick={() => setOption(AdminOptionEnums.CLASS_LEVEL_RECORD)}
+          className="text-xl"
+        >
+          {t("class_level_record")}
+        </button>
       </div>
       <div className="flex flex-1 px-8">
         {option === AdminOptionEnums.CLASSES && <AdminClasses />}
@@ -71,6 +61,9 @@ const AdminPage = () => {
         {option === AdminOptionEnums.COACHES && <AdminCoaches />}
         {option === AdminOptionEnums.NEWS && <AdminNews />}
         {option === AdminOptionEnums.NOTIFICATION && <AdminNotification />}
+        {option === AdminOptionEnums.CLASS_LEVEL_RECORD && (
+          <AdminClassLevelRecord />
+        )}
       </div>
     </div>
   );
@@ -98,26 +91,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       props: {},
     };
   }
-  const classTypes = await prisma.classesType.findMany();
-  const users = await prisma.user.findMany();
-  const news = await prisma.news.findMany();
-  const regularBookingTimeSlots =
-    await prisma.regularBookingTimeSlots.findMany();
-  const bookingTimeSlots = await prisma.bookingTimeSlots.findMany({
-    orderBy: {
-      date: "desc",
-    },
-  });
+
   return {
-    props: JSON.parse(
-      JSON.stringify({
-        classTypes,
-        users,
-        news,
-        regularBookingTimeSlots,
-        bookingTimeSlots,
-      })
-    ),
+    props: {},
   };
 };
 

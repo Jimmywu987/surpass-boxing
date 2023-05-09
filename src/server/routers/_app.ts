@@ -12,9 +12,6 @@ import { newsRouter } from "@/server/routers/news/newsRouter";
 import { notificationRouter } from "@/server/routers/notification/notificationRouter";
 
 export const appRouter = router({
-  healthCheck: publicProcedure.query(() => {
-    return "yay!";
-  }),
   authRouter,
   bookingTimeSlotRouter,
   classRouter,

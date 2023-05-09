@@ -1,10 +1,11 @@
-import { protectedProcedure, router } from "@/server/trpc";
-import { prisma } from "@/services/prisma";
-import { User } from "@prisma/client";
+import { router } from "@/server/trpc";
+import { protectedProcedure } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
+import { User } from "@prisma/client";
 import { z } from "zod";
+import { prisma } from "@/services/prisma";
 
-export const notificationRouter = router({
+export const levelRecordRouter = router({
   fetch: protectedProcedure.query(async ({ ctx }) => {
     if (!ctx.session || !ctx.session.user) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -13,9 +14,13 @@ export const notificationRouter = router({
     if (!user.admin) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
-    return prisma.notification.findMany({
-      where: {
-        OR: [{ adminId: user.id }, { adminId: null }],
+    return await prisma.classLevelDifferentRecord.findMany({
+      include: {
+        user: {
+          select: {
+            username: true,
+          },
+        },
       },
     });
   }),
@@ -34,7 +39,7 @@ export const notificationRouter = router({
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
       const { id } = input;
-      await prisma.notification.delete({
+      await prisma.classLevelDifferentRecord.delete({
         where: {
           id,
         },

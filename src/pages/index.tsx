@@ -3,7 +3,6 @@ import { signOut, useSession } from "next-auth/react";
 import { trpc } from "utils/trpc";
 export default function HomePage() {
   const { t } = useTranslation("common");
-  const { data } = trpc.healthCheck.useQuery();
 
   return (
     <div>
