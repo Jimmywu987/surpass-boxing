@@ -34,7 +34,7 @@
     "duration": "Duration",
     "please_select_class_type": "Please select class type",
     "please_select_a_coach": "Please select a coach",
-    "please_select_time_correctly": "Please select time correctly",
+    "please_select_time_correctly": "Please select time correctly (The starting time must not be within {{hours}} hours from now)",
     "please_at_least_select_one_weekday": "Please select at least one weekday",
     "please_set_more_than_zero": "Please correctly input the maximum number of participants",
     "please_set_less_than_num_joined_people": "The maximum number of participants must be greater than the number of joined participants",

@@ -52,7 +52,7 @@ export const CreateRequestedClassForm = ({
   const requestedClassInputFormMethods = useForm<
     z.infer<ReturnType<typeof requestedClassCreateSchema>>
   >({
-    resolver: useRequestedClassInputResolver(),
+    resolver: useRequestedClassInputResolver({ withInHours: 12 }),
     mode: "onChange",
     defaultValues: {
       date: date.toString(),

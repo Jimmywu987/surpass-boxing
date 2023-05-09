@@ -10,9 +10,6 @@ export const PageNumberDisplay = ({
   totalPages: number;
 }) => {
   if (totalPages <= 5) {
-    console.log("currentPage", currentPage);
-    console.log("totalPages", totalPages);
-
     return (
       <div className="flex space-x-1">
         {[...Array(totalPages)].map((_, index) => (

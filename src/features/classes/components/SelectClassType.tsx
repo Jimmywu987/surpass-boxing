@@ -34,10 +34,15 @@ export const SelectClassType = () => {
       placeholder={t("class_type")}
       onChange={(event) => {
         const { value } = event.target;
+        if (!value) {
+          setValue("className", "");
+          setValue("level", "", { shouldValidate: true });
+          return;
+        }
         const selectedClass = data.find((type) => type.id === value);
         if (!selectedClass) return;
         setValue("className", selectedClass.name);
-        setValue("level", selectedClass.level);
+        setValue("level", selectedClass.level, { shouldValidate: true });
       }}
     >
       {data
