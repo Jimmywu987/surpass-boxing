@@ -8,7 +8,7 @@ export const getDuration = ({
   endTime: number;
 }) => {
   if (endTime - startTime <= 0) {
-    return ["classes:hours", { hours: 0 }];
+    return ["classes:hours", { hours: 0, hourPlural: "" }];
   }
   const duration = intervalToDuration({ start: startTime, end: endTime });
 

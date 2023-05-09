@@ -1,35 +1,27 @@
 import { Button, Skeleton, Stack, useDisclosure } from "@chakra-ui/react";
 
-import { subDays, endOfDay, format } from "date-fns";
-import useTranslation from "next-translate/useTranslation";
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
-import { SignUpForm } from "@/features/signUp/components/SignUpForm";
-import { LoginForm } from "@/features/login/components/LoginForm";
-import Image from "next/image";
 import DefaultProfileImg from "@/../public/default-profile-img.png";
-import { isPast, startOfDay } from "date-fns";
+import { LoginForm } from "@/features/login/components/LoginForm";
+import { SignUpForm } from "@/features/signUp/components/SignUpForm";
+import { endOfDay, format, isPast, startOfDay, subDays, add } from "date-fns";
+import useTranslation from "next-translate/useTranslation";
+import Image from "next/image";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 
 import { OpenModelType } from "@/features/common/enums/OpenModelType";
+import { BookingTimeSlotStatusEnum, User } from "@prisma/client";
 import { useSession } from "next-auth/react";
-import { User, BookingTimeSlotStatusEnum } from "@prisma/client";
 
 import { ModalComponent } from "@/features/common/components/Modal";
 
-import { SKIP_NUMBER, TAKE_NUMBER } from "@/constants";
-import {
-  AddIcon,
-  CheckIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  MinusIcon,
-} from "@chakra-ui/icons";
-import { PageNumberDisplay } from "@/features/common/components/PageNumberDisplay";
-import { getTimeDuration } from "@/helpers/getTime";
-import { getDuration } from "@/helpers/getDuration";
 import { DatePicker } from "@/features/common/components/DatePicker";
+import { getDuration } from "@/helpers/getDuration";
+import { getTimeDuration } from "@/helpers/getTime";
+import { AddIcon, CheckIcon, MinusIcon } from "@chakra-ui/icons";
 
 import { CreateRequestedClassForm } from "@/features/common/components/form/CreateRequestedClassForm";
-import { trpc, RouterOutput } from "@/utils/trpc";
+import { PaginationSection } from "@/features/common/components/PaginationSection";
+import { RouterOutput, trpc } from "@/utils/trpc";
 
 type inferType = RouterOutput["bookingTimeSlotRouter"]["fetchForStudent"];
 type BookingTimeSlots = inferType["bookingTimeSlots"][0];
@@ -179,12 +171,17 @@ const ClassesPage = () => {
               bookingTimeSlot.userOnBookingTimeSlots.some(
                 (slot) => slot.userId === user.id
               );
-            const isInPast = isPast(
+
+            const dateOfClass =
               startOfDay(
                 !isRegular ? new Date(bookingTimeSlot.date) : new Date()
-              ).getTime() + startTime
-            );
+              ).getTime() + startTime;
+            const nowPlusHours = add(new Date(), {
+              hours: 12,
+            }).getTime();
 
+            const shouldDisabled =
+              isPast(dateOfClass) || nowPlusHours > dateOfClass;
             return (
               <div
                 key={slot.id}
@@ -275,12 +272,14 @@ const ClassesPage = () => {
                   <div className="self-end">
                     {isJoined ? (
                       <MinusIcon
-                        bg={!isInPast ? "red.600" : "gray.500"}
+                        bg={!shouldDisabled ? "red.600" : "gray.500"}
                         rounded="full"
                         p="1.5"
-                        className={`text-2xl ${!isInPast && "cursor-pointer"}`}
+                        className={`text-2xl ${
+                          !shouldDisabled && "cursor-pointer"
+                        }`}
                         onClick={async () => {
-                          if (isInPast) {
+                          if (shouldDisabled) {
                             return;
                           }
                           await leaveClass(slot as BookingTimeSlots);
@@ -288,12 +287,14 @@ const ClassesPage = () => {
                       />
                     ) : (
                       <AddIcon
-                        bg={!isInPast ? "green.600" : "gray.500"}
+                        bg={!shouldDisabled ? "green.600" : "gray.500"}
                         rounded="full"
                         p="1.5"
-                        className={`text-2xl ${!isInPast && "cursor-pointer"}`}
+                        className={`text-2xl ${
+                          !shouldDisabled && "cursor-pointer"
+                        }`}
                         onClick={async () => {
-                          if (isInPast) {
+                          if (shouldDisabled) {
                             return;
                           }
                           if (!lessonsData || lessonsData.length === 0) {
@@ -316,46 +317,11 @@ const ClassesPage = () => {
             );
           })}
           {data.bookingTimeSlots.length !== 0 ? (
-            <div className="flex justify-between">
-              <button
-                className={`flex space-x-1 items-center ${
-                  query.skip === 0 && " cursor-default opacity-40 "
-                }`}
-                onClick={() => {
-                  setQuery((prev) => ({
-                    ...prev,
-                    skip: prev.skip - SKIP_NUMBER,
-                  }));
-                }}
-                disabled={query.skip === 0}
-              >
-                <ChevronLeftIcon className="text-xl" />
-                <span>{t("common:action.previous")}</span>
-              </button>
-              <PageNumberDisplay
-                currentPage={query.skip / TAKE_NUMBER + 1}
-                totalPages={Math.ceil(data.totalClassesCount / TAKE_NUMBER)}
-                setQuery={
-                  setQuery as Dispatch<SetStateAction<{ skip: number }>>
-                }
-              />
-              <button
-                className={`flex space-x-1 items-center ${
-                  data.totalClassesCount > query.skip + SKIP_NUMBER &&
-                  " cursor-default opacity-40 "
-                }`}
-                onClick={() => {
-                  setQuery((prev) => ({
-                    ...prev,
-                    skip: prev.skip + SKIP_NUMBER,
-                  }));
-                }}
-                disabled={data.totalClassesCount > query.skip + SKIP_NUMBER}
-              >
-                <span>{t("common:action.next")}</span>
-                <ChevronRightIcon className="text-xl" />
-              </button>
-            </div>
+            <PaginationSection
+              setQuery={setQuery as Dispatch<SetStateAction<{ skip: number }>>}
+              query={query}
+              totalCount={data.totalClassesCount}
+            />
           ) : data.regularBookingSlot.length === 0 ? (
             <div>{t("admin:no_data")}</div>
           ) : (

@@ -34,7 +34,7 @@
     "duration": "時間",
     "please_select_class_type": "請選擇課堂",
     "please_select_a_coach": "請選擇教練",
-    "please_select_time_correctly": "請選擇正確時間",
+    "please_select_time_correctly": "請選擇正確時間 (開始時間不能在{{hours}}小時內)",
     "please_at_least_select_one_weekday": "請選擇最小一個星期天",
     "please_set_more_than_zero": "請正確填妥參加人數上限",
     "please_set_less_than_num_joined_people": "參加人數需要多過已參加人數",

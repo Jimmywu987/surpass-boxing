@@ -1,3 +1,7 @@
+import { ModalComponent } from "@/features/common/components/Modal";
+import { getDuration } from "@/helpers/getDuration";
+import { getTimeDuration } from "@/helpers/getTime";
+import { ArrowRightIcon, CheckIcon } from "@chakra-ui/icons";
 import {
   Button,
   ButtonGroup,
@@ -5,30 +9,20 @@ import {
   Stack,
   useDisclosure,
 } from "@chakra-ui/react";
-import { motion } from "framer-motion";
-import { ModalComponent } from "@/features/common/components/Modal";
-import { getDuration } from "@/helpers/getDuration";
-import { getTimeDuration } from "@/helpers/getTime";
-import {
-  ArrowRightIcon,
-  CheckIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from "@chakra-ui/icons";
 import { BookingTimeSlotStatusEnum } from "@prisma/client";
 import { endOfDay, format, subDays } from "date-fns";
+import { motion } from "framer-motion";
 import useTranslation from "next-translate/useTranslation";
 import { Dispatch, SetStateAction, useState } from "react";
 
 import { ViewRequestedClass } from "@/features/admin/components/ViewRequestedClass";
 
-import { PageNumberDisplay } from "@/features/common/components/PageNumberDisplay";
+import { DatePicker } from "@/features/common/components/DatePicker";
+import { PaginationSection } from "@/features/common/components/PaginationSection";
 import { timeSlotSelector, updateTimeSlot } from "@/redux/timeSlot";
+import { trpc } from "@/utils/trpc";
 import { useDispatch, useSelector } from "react-redux";
 import { AdminPeriodOptionsEnum } from "../enums/AdminOptionEnums";
-import { SKIP_NUMBER, TAKE_NUMBER } from "@/constants";
-import { DatePicker } from "@/features/common/components/DatePicker";
-import { trpc } from "@/utils/trpc";
 
 export const AdminInPastClass = () => {
   const { t, lang } = useTranslation("admin");
@@ -232,46 +226,13 @@ export const AdminInPastClass = () => {
               );
             })}
             {data.bookingTimeSlots.length !== 0 ? (
-              <div className="flex justify-between">
-                <button
-                  className={`flex space-x-1 items-center ${
-                    query.skip === 0 && " cursor-default opacity-40 "
-                  }`}
-                  onClick={() => {
-                    setQuery((prev) => ({
-                      ...prev,
-                      skip: prev.skip - SKIP_NUMBER,
-                    }));
-                  }}
-                  disabled={query.skip === 0}
-                >
-                  <ChevronLeftIcon className="text-xl" />
-                  <span>{t("common:action.previous")}</span>
-                </button>
-                <PageNumberDisplay
-                  currentPage={query.skip / TAKE_NUMBER + 1}
-                  totalPages={Math.ceil(data.totalClassesCount / TAKE_NUMBER)}
-                  setQuery={
-                    setQuery as Dispatch<SetStateAction<{ skip: number }>>
-                  }
-                />
-                <button
-                  className={`flex space-x-1 items-center ${
-                    data.totalClassesCount < query.skip + SKIP_NUMBER &&
-                    " cursor-default opacity-40 "
-                  }`}
-                  onClick={() => {
-                    setQuery((prev) => ({
-                      ...prev,
-                      skip: prev.skip + SKIP_NUMBER,
-                    }));
-                  }}
-                  disabled={data.totalClassesCount < query.skip + SKIP_NUMBER}
-                >
-                  <span>{t("common:action.next")}</span>
-                  <ChevronRightIcon className="text-xl" />
-                </button>
-              </div>
+              <PaginationSection
+                setQuery={
+                  setQuery as Dispatch<SetStateAction<{ skip: number }>>
+                }
+                query={query}
+                totalCount={data.totalClassesCount}
+              />
             ) : (
               <div>{t("admin:no_data")}</div>
             )}

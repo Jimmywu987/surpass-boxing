@@ -47,9 +47,10 @@ export const EditRequestedClassForm = ({
   const requestedClassInputFormMethods = useForm<
     z.infer<ReturnType<typeof requestedClassCreateSchema>>
   >({
-    resolver: useRequestedClassInputResolver(
-      timeSlot.userOnBookingTimeSlots.length
-    ),
+    resolver: useRequestedClassInputResolver({
+      joinedPeopleNum: timeSlot.userOnBookingTimeSlots.length,
+      withInHours: 12,
+    }),
     mode: "onSubmit",
     defaultValues: {
       id: timeSlot.id,

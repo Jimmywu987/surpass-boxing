@@ -2,17 +2,31 @@ import { requestedClassCreateSchema } from "@/schemas/class/requested/create";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useTranslation from "next-translate/useTranslation";
 import { z } from "zod";
-
-export const useRequestedClassInputResolver = (joinedPeopleNum?: number) => {
+import { isSameDay, startOfDay, add } from "date-fns";
+export const useRequestedClassInputResolver = ({
+  joinedPeopleNum,
+  withInHours,
+}: {
+  joinedPeopleNum?: number;
+  withInHours: number;
+}) => {
   const { t } = useTranslation("classes");
 
   return zodResolver(
     requestedClassCreateSchema()
       .refine(
-        ({ startTime, endTime }) => endTime > startTime,
+        ({ startTime, endTime, date }) => {
+          return (
+            endTime > startTime &&
+            add(new Date(), {
+              hours: withInHours,
+            }).getTime() <
+              startOfDay(new Date(date)).getTime() + startTime
+          );
+        },
 
         {
-          message: t("please_select_time_correctly"),
+          message: t("please_select_time_correctly", { hours: withInHours }),
           path: ["endTime"],
         }
       )
