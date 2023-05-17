@@ -26,6 +26,8 @@
     "idle_member": "冇堂學員",
     "classes_in_past": "已開課堂",
     "no_data": "未有課堂",
+    "join_lower_level": "加入低級課堂",
+    "join_higher_level": "加入高級課堂",
     "no_account": "未有學員",
     "in_total": "總課堂數",
     "total_confirmed": "已確認課堂數",
@@ -52,5 +54,6 @@
     "lesson_number": "堂數",
     "check": "查看",
     "edit": "更改",
-    "level": "級別"
+    "level": "級別",
+    "different_level_text": "{{levelFrom}}學員：{{username}}加入了{{levelTo}}的課堂。"
 }

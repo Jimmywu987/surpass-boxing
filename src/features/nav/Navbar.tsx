@@ -58,6 +58,7 @@ export const Navbar = () => {
             phoneNumber,
             profileImg,
             username,
+            id,
           })
         );
         if (!!id) {

@@ -93,8 +93,12 @@ export const authOptions: AuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, account, user }) {
-      if (account && user) {
+    async jwt({ token, account, user, session, trigger }) {
+      if (trigger === "update" && session?.user) {
+        // Note, that `session` can be any arbitrary object, remember to validate it!
+        return { ...token, ...session?.user };
+      }
+      if (account && user && trigger !== "update") {
         return {
           ...token,
           ...user,

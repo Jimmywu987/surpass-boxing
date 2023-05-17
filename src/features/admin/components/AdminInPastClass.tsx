@@ -22,10 +22,10 @@ import { PaginationSection } from "@/features/common/components/PaginationSectio
 import { timeSlotSelector, updateTimeSlot } from "@/redux/timeSlot";
 import { trpc } from "@/utils/trpc";
 import { useDispatch, useSelector } from "react-redux";
-import { AdminPeriodOptionsEnum } from "../enums/AdminOptionEnums";
+import { AdminPeriodOptionsEnum } from "@/features/admin/enums/AdminOptionEnums";
 
 export const AdminInPastClass = () => {
-  const { t, lang } = useTranslation("admin");
+  const { t } = useTranslation("admin");
   const [isOpen, setIsOpen] = useState(false);
   const modalDisclosure = useDisclosure();
   const dispatch = useDispatch();

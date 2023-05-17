@@ -12,7 +12,8 @@
       "auth",
       "classes",
       "admin",
-      "news"
+      "news",
+      "location"
     ]
   }
 }

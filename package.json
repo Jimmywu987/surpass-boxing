@@ -32,6 +32,7 @@
     "axios": "^1.2.0",
     "bcryptjs": "^2.4.3",
     "chakra-dayzed-datepicker": "^0.2.5",
+    "clsx": "^1.2.1",
     "date-fns": "^2.29.3",
     "dayzed": "^3.2.3",
     "framer-motion": "^10.11.5",
@@ -51,6 +52,7 @@
     "react-redux": "^8.0.5",
     "redux": "^4.2.0",
     "superjson": "^1.12.2",
+    "tailwind-merge": "^1.12.0",
     "yarn": "^1.22.19",
     "zod": "^3.20.2"
   },

@@ -32,3 +32,9 @@ export enum AdminViewAccountOptionEnums {
   VIEW_USED_CLASS = "VIEW_USED_CLASS",
   VIEW_CONFIRM_GRANT_AUTH = "VIEW_CONFIRM_GRANT_AUTH",
 }
+
+export enum AdminJoinLevelEnums {
+  ALL = "All",
+  JOIN_LOWER_LEVEL = "JOIN_LOWER_LEVEL",
+  JOIN_HIGHER_LEVEL = "JOIN_HIGHER_LEVEL",
+}
