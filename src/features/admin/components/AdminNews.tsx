@@ -1,5 +1,5 @@
 import { ModalComponent } from "@/features/common/components/Modal";
-import { AdminPageProps } from "@/pages/admin";
+
 import { useDisclosure, Button } from "@chakra-ui/react";
 import useTranslation from "next-translate/useTranslation";
 import { NewsForm } from "@/features/admin/components/form/NewsForm";

@@ -91,7 +91,7 @@ export const create = protectedProcedure
         data: {
           ...data,
           date: dateTime,
-          coachId: !!data.id ? data.id : null,
+          coachId: !!data.coachId ? data.coachId : null,
           numberOfParticipants: setLimit ? people : null,
           regularBookingTimeSlotId,
           ...addOneUserToClass,

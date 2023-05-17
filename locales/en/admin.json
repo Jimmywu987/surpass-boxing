@@ -28,6 +28,8 @@
     "idle_member": "Idle members",
     "no_data": "No class available",
     "no_account": "No account available",
+    "join_lower_level": "Join lower level",
+    "join_higher_level": "Join higher level",
     "in_total": "Total classes",
     "total_confirmed": "Confirmed classes",
     "total_canceled": "Canceled classes",
@@ -52,5 +54,6 @@
     "lesson_number": "Lesson Number",
     "check": "Check",
     "edit": "Edit",
-    "level": "Level"
+    "level": "Level",
+    "different_level_text": "{{levelFrom}} Student {{username}} has joined a {{levelTo}} class."
 }

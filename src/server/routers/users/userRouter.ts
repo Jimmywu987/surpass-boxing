@@ -5,6 +5,7 @@ import { prisma } from "@/services/prisma";
 import { BookingTimeSlotStatusEnum, User } from "@prisma/client";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { editAccountSchema } from "@/schemas/user/edit";
 
 export const userRouter = router({
   fetch: protectedProcedure
@@ -128,6 +129,45 @@ export const userRouter = router({
         },
         data: {
           admin,
+        },
+      });
+    }),
+
+  fetchUserById: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) => {
+      return prisma.user.findUnique({
+        where: {
+          id: input.id,
+        },
+        select: {
+          username: true,
+          profileImg: true,
+          email: true,
+          id: true,
+          admin: true,
+          phoneNumber: true,
+          createdAt: true,
+        },
+      });
+    }),
+
+  edit: protectedProcedure
+    .input(editAccountSchema())
+    .mutation(async ({ input, ctx }) => {
+      const user = ctx.session?.user as User;
+      const { id, ...rest } = input;
+      if (user.id !== input.id) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+        });
+      }
+      await prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          ...rest,
         },
       });
     }),

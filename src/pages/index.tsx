@@ -7,6 +7,7 @@ export default function HomePage() {
   return (
     <div>
       <h1 className="text-white">HI</h1>
+      {/* <button onClick={signOut}>Sign out</button> */}
     </div>
   );
 }
