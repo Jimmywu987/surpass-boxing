@@ -1,76 +1,57 @@
-import { NavButton } from "@/features/nav/components/button/NavButton";
-import LogoIcon from "@/../public/logo.png";
 import DefaultProfileImg from "@/../public/default-profile-img.png";
+import LogoIcon from "@/../public/logo.png";
 import { FacebookSvgIcon } from "@/features/common/components/buttons/svg/FacebookSvgIcon";
 import { InstagramSvgIcon } from "@/features/common/components/buttons/svg/InstagramSvgIcon";
+import { LanguageSvgIcon } from "@/features/common/components/buttons/svg/LanguageSvgIcon";
 import { WhatsappSvgIcon } from "@/features/common/components/buttons/svg/WhatsappSvgIcon";
-import { HamburgerIcon } from "@chakra-ui/icons";
+import { useOneSignal } from "@/features/common/hooks/useOneSignal";
 import { NavLink } from "@/features/nav/components/NavLink";
-import { clearUserInfo, updateUser, userSelector } from "@/redux/user";
-import { LanguageEnum, User } from "@prisma/client";
-import Image from "next/image";
-import { useSession, getSession } from "next-auth/react";
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import useTranslation from "next-translate/useTranslation";
+import { MobileNavbar } from "@/features/nav/MobileNavbar";
+import { trpc } from "@/utils/trpc";
+import { HamburgerIcon } from "@chakra-ui/icons";
 import {
+  Button,
   Drawer,
   DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
   DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Menu, MenuButton, MenuList, MenuItem, Button } from "@chakra-ui/react";
+import { LanguageEnum, User } from "@prisma/client";
+import { useSession } from "next-auth/react";
+import useTranslation from "next-translate/useTranslation";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
-import { LanguageSvgIcon } from "@/features/common/components/buttons/svg/LanguageSvgIcon";
-import { MobileNavbar } from "@/features/nav/MobileNavbar";
-import { useOneSignal } from "@/features/common/hooks/useOneSignal";
-import { trpc } from "@/utils/trpc";
+import { useEffect, useRef } from "react";
 
 export const Navbar = () => {
-  const dispatch = useDispatch();
   const { t, lang } = useTranslation("common");
 
   const router = useRouter();
   const { pathname, asPath, query } = router;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef(null);
-  const reduxUser = useSelector(userSelector);
   const session = useSession();
   const isAuthenticated = session.status === "authenticated";
   const user = session.data?.user as User;
   const { storeUserExternalId } = useOneSignal();
   const { mutateAsync } = trpc.userRouter.updateLang.useMutation();
   useEffect(() => {
-    const storeUserToRedux = async () => {
-      const session = await getSession();
-      if (session) {
-        const { email, admin, phoneNumber, profileImg, username, id } =
-          session?.user as Partial<User>;
-
-        dispatch(
-          updateUser({
-            admin,
-            email,
-            phoneNumber,
-            profileImg,
-            username,
-            id,
-          })
-        );
-        if (!!id) {
-          await storeUserExternalId(id);
-        }
-      } else {
-        dispatch(clearUserInfo());
+    const storeUserIdToOneSignal = async () => {
+      if (isAuthenticated) {
+        await storeUserExternalId(user.id);
       }
     };
 
-    storeUserToRedux();
+    storeUserIdToOneSignal();
   }, [isAuthenticated]);
 
   const onClickLanguageHandler = async (language: "zh-HK" | "en") => {
@@ -101,7 +82,9 @@ export const Navbar = () => {
           <div className="flex h-28">
             <div className="flex flex-col justify-between">
               <div className="my-1 mx-4 flex justify-end items-center">
-                {reduxUser.admin && <NavLink text={t("admin")} url="/admin" />}
+                {isAuthenticated && user.admin && (
+                  <NavLink text={t("admin")} url="/admin" />
+                )}
 
                 <Menu>
                   <MenuButton
@@ -166,18 +149,16 @@ export const Navbar = () => {
                     <div className="w-10 h-10 relative">
                       <Image
                         src={
-                          !!reduxUser.profileImg
-                            ? reduxUser.profileImg
+                          !!user.profileImg
+                            ? user.profileImg
                             : DefaultProfileImg
                         }
-                        alt={`${reduxUser.username} profile image`}
+                        alt={`${user.username} profile image`}
                         className="w-full h-full rounded-full object-cover"
                         fill
                       />
                     </div>
-                    <span className="truncate w-[4.5rem]">
-                      {reduxUser.username}
-                    </span>
+                    <span className="truncate w-[4.5rem]">{user.username}</span>
                   </Link>
                 </div>
               )}

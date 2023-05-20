@@ -4,7 +4,6 @@ import { getDuration } from "@/helpers/getDuration";
 import {
   Input,
   InputGroup,
-  Select,
   Skeleton,
   Stack,
   UseDisclosureReturn,
@@ -22,6 +21,7 @@ import { trpc } from "@/utils/trpc";
 import { z } from "zod";
 import { SelectClassType } from "@/features/classes/components/SelectClassType";
 import { useRouter } from "next/router";
+import { HOURS } from "@/constants";
 
 export const CreateRequestedClassForm = ({
   modalDisclosure,
@@ -52,7 +52,7 @@ export const CreateRequestedClassForm = ({
   const requestedClassInputFormMethods = useForm<
     z.infer<ReturnType<typeof requestedClassCreateSchema>>
   >({
-    resolver: useRequestedClassInputResolver({ withInHours: 12 }),
+    resolver: useRequestedClassInputResolver({ withInHours: HOURS }),
     mode: "onChange",
     defaultValues: {
       date: date.toString(),

@@ -17,12 +17,12 @@ import { Dispatch, SetStateAction, useState } from "react";
 
 import { ViewRequestedClass } from "@/features/admin/components/ViewRequestedClass";
 
+import { AdminPeriodOptionsEnum } from "@/features/admin/enums/AdminOptionEnums";
 import { DatePicker } from "@/features/common/components/DatePicker";
 import { PaginationSection } from "@/features/common/components/PaginationSection";
-import { timeSlotSelector, updateTimeSlot } from "@/redux/timeSlot";
+import { updateTimeSlot } from "@/redux/timeSlot";
 import { trpc } from "@/utils/trpc";
-import { useDispatch, useSelector } from "react-redux";
-import { AdminPeriodOptionsEnum } from "@/features/admin/enums/AdminOptionEnums";
+import { useDispatch } from "react-redux";
 
 export const AdminInPastClass = () => {
   const { t } = useTranslation("admin");
@@ -39,7 +39,6 @@ export const AdminInPastClass = () => {
     period: AdminPeriodOptionsEnum.ALL,
   });
   const dateTime = new Date(query.date);
-  const { timeSlot } = useSelector(timeSlotSelector);
 
   const { onOpen } = modalDisclosure;
   const { data, isLoading } =

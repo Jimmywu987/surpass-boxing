@@ -1,20 +1,14 @@
 import { UserType } from "@/types";
 import { UseDisclosureReturn } from "@chakra-ui/react";
 import useTranslation from "next-translate/useTranslation";
-import Image from "next/image";
-import DefaultProfileImg from "@/../public/default-profile-img.png";
 
-import Link from "next/link";
-
-import { useDispatch } from "react-redux";
-import { isAfter } from "date-fns";
-import { AdminViewAccountOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
-import { useState } from "react";
-import { ViewAccount } from "@/features/admin/components/AdminAccount/ViewAccount";
-import { ViewUsedClass } from "@/features/admin/components/AdminAccount/ViewUsedClass";
-import { ViewUnusedClass } from "@/features/admin/components/AdminAccount/ViewUnusedClass";
-import { trpc } from "@/utils/trpc";
 import { CoachConfirm } from "@/features/admin/components/AdminAccount/CoachConfirm";
+import { ViewAccount } from "@/features/admin/components/AdminAccount/ViewAccount";
+import { ViewUnusedClass } from "@/features/admin/components/AdminAccount/ViewUnusedClass";
+import { ViewUsedClass } from "@/features/admin/components/AdminAccount/ViewUsedClass";
+import { AdminViewAccountOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
+import { isAfter } from "date-fns";
+import { useState } from "react";
 
 export const AccountContent = ({
   account,
@@ -24,8 +18,6 @@ export const AccountContent = ({
   modalDisclosure: UseDisclosureReturn;
 }) => {
   const { t } = useTranslation("admin");
-  const dispatch = useDispatch();
-  const utils = trpc.useContext();
 
   const { onClose } = modalDisclosure;
 

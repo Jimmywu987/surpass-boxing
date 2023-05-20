@@ -7,7 +7,6 @@ import {
   endOfDay,
   format,
   isPast,
-  isSameDay,
   startOfDay,
   subDays,
   add,
@@ -32,6 +31,7 @@ import { CreateRequestedClassForm } from "@/features/common/components/form/Crea
 import { PaginationSection } from "@/features/common/components/PaginationSection";
 import { RouterOutput, trpc } from "@/utils/trpc";
 import { useRouter } from "next/router";
+import { HOURS } from "@/constants";
 
 type inferType = RouterOutput["bookingTimeSlotRouter"]["fetchForStudent"];
 type BookingTimeSlots = inferType["bookingTimeSlots"][0];
@@ -194,7 +194,7 @@ const ClassesPage = () => {
               startOfDay(new Date(query.date)).getTime() + startTime;
 
             const nowPlusHours = add(new Date(), {
-              hours: 12,
+              hours: HOURS,
             }).getTime();
 
             const shouldDisabled =

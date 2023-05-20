@@ -3,10 +3,9 @@ import useTranslation from "next-translate/useTranslation";
 
 import { AdminViewAccountOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
 import { useAddClassInputResolver } from "@/features/admin/schemas/useAddClassInputResolver";
-import { format, isAfter, add } from "date-fns";
+import { add, format, isAfter } from "date-fns";
 import { Dispatch, SetStateAction, useMemo } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
 
 import { AccountBasicInfo } from "@/features/admin/components/AdminAccount/AccountBasicInfo";
 import { trpc } from "@/utils/trpc";
@@ -22,7 +21,7 @@ export const ViewAccount = ({
   setViewAccount: Dispatch<SetStateAction<UserType>>;
 }) => {
   const { t } = useTranslation("classes");
-  const dispatch = useDispatch();
+
   const utils = trpc.useContext();
   const { mutateAsync } = trpc.lessonClassRouter.addLesson.useMutation();
   const addClassInputFormMethods = useForm({

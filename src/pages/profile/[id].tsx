@@ -4,7 +4,6 @@ import { signOut, useSession } from "next-auth/react";
 
 import DefaultProfileImg from "@/../public/default-profile-img.png";
 import { useEditAccountInputResolver } from "@/features/user/schema/useEditAccountInputResolver";
-import { userSelector } from "@/redux/user";
 import { editAccountSchema } from "@/schemas/user/edit";
 import { trpc } from "@/utils/trpc";
 import { ChevronLeftIcon, EditIcon } from "@chakra-ui/icons";

@@ -1,13 +1,11 @@
-import DefaultProfileImg from "@/../public/default-profile-img.png";
 import { FormTextInput } from "@/features/common/components/input/FormTextInput";
 
-import { updateUser, userSelector } from "@/redux/user";
 import { format } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
 import Image from "next/image";
-import { useDispatch, useSelector } from "react-redux";
+
 import { trpc, RouterOutput } from "@/utils/trpc";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import { EditIcon } from "@chakra-ui/icons";
 import { useFormContext } from "react-hook-form";
@@ -27,7 +25,6 @@ export const EditAccountInfo = ({
   setView: Dispatch<SetStateAction<ViewAccountEnums>>;
 }) => {
   const { t } = useTranslation("common");
-  const dispatch = useDispatch();
 
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [fileDisplay, setFileDisplay] = useState("");
@@ -62,7 +59,7 @@ export const EditAccountInfo = ({
         : data.profileImg,
     };
     await mutateAsync(updatedUser);
-    if (user.profileImg !== "/default-profile-img.png") {
+    if (uploadFile && user.profileImg !== "/default-profile-img.png") {
       await deleteFile(user.profileImg);
     }
     const { id, ...rest } = updatedUser;
@@ -70,13 +67,12 @@ export const EditAccountInfo = ({
       ...session,
       user: { ...session?.user, ...rest },
     });
-
-    dispatch(updateUser(rest));
   });
 
   const onClose = () => {
     setView(ViewAccountEnums.NORMAL);
     reset({
+      id: user.id,
       username: user.username,
       profileImg: user.profileImg,
       phoneNumber: user.phoneNumber,
