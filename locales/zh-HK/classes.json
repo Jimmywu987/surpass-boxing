@@ -45,6 +45,7 @@
     "canceled": "已取消",
     "coaches": "教練",
     "no_class": "沒有課堂",
+    "no_assigned_lesson": "沒有堂數",
     "request_class_message": "你的可參加堂數並不足夠，",
     "contact_coach": "請與教練聯絡。",
     "beginner": "初級",

@@ -1,10 +1,14 @@
 import { requestedClassCreateSchema } from "@/schemas/class/requested/create";
 import { protectedProcedure } from "@/server/trpc";
 import { prisma } from "@/services/prisma";
-import { Lessons, User } from "@prisma/client";
+import { LanguageEnum, Lessons, User } from "@prisma/client";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { format } from "date-fns";
+import { getTimeDuration } from "@/helpers/getTime";
+import { sendSingleNotification } from "@/services/notification/onesignal";
+import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
+import { getMessage } from "@/services/notification/getMessage";
 
 export const create = protectedProcedure
   .input(requestedClassCreateSchema())
@@ -73,7 +77,7 @@ export const create = protectedProcedure
         },
       };
     }
-    return await prisma.$transaction(async (txn) => {
+    const bookingTimeSlot = await prisma.$transaction(async (txn) => {
       if (!user.admin) {
         await txn.lessons.update({
           data: {
@@ -98,4 +102,46 @@ export const create = protectedProcedure
         },
       });
     });
+    if (!user.admin) {
+      const { startTime, date, endTime, id, className } = bookingTimeSlot;
+      const admins = await prisma.user.findMany({
+        where: {
+          admin: true,
+        },
+      });
+      const dateTime = format(new Date(date), "yyyy-MM-dd");
+      const time = getTimeDuration({ startTime, endTime });
+      const url = `admin?time_slot_id=${id}&date=${dateTime}`;
+
+      await Promise.all(
+        admins.map(async (admin, index) => {
+          const messageData = {
+            username: user.username,
+            dateTime,
+            time,
+            className,
+          };
+          const message = getMessage({
+            data: messageData,
+            messageKey: NotificationEnums.CLASS_CREATED,
+            lang: admin.lang,
+          });
+          await sendSingleNotification({
+            receiverIds: [admin.id],
+            url,
+            message,
+          });
+          if (index === 0) {
+            await prisma.notification.create({
+              data: {
+                url,
+                message,
+                adminId: null,
+              },
+            });
+          }
+        })
+      );
+    }
+    return bookingTimeSlot;
   });

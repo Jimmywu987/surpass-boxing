@@ -15,15 +15,16 @@ import { useS3Upload } from "next-s3-upload";
 import { editAccountSchema } from "@/schemas/user/edit";
 import { z } from "zod";
 import { deleteFile } from "@/utils/s3Uploader";
+import { ViewAccountEnums } from "@/features/common/enums/ViewAccountEnums";
 
 type inferType = RouterOutput["userRouter"]["fetchUserById"];
 
 export const EditAccountInfo = ({
   user,
-  setEdit,
+  setView,
 }: {
   user: Exclude<inferType, null>;
-  setEdit: Dispatch<SetStateAction<boolean>>;
+  setView: Dispatch<SetStateAction<ViewAccountEnums>>;
 }) => {
   const { t } = useTranslation("common");
   const dispatch = useDispatch();
@@ -74,7 +75,7 @@ export const EditAccountInfo = ({
   });
 
   const onClose = () => {
-    setEdit(false);
+    setView(ViewAccountEnums.NORMAL);
     reset({
       username: user.username,
       profileImg: user.profileImg,

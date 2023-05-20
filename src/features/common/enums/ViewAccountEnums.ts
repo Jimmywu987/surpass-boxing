@@ -1,0 +1,6 @@
+export enum ViewAccountEnums {
+  NORMAL = "NORMAL",
+  EDIT = "EDIT",
+  VIEW_UNUSED_CLASS = "VIEW_UNUSED_CLASS",
+  VIEW_USED_CLASS = "VIEW_USED_CLASS",
+}

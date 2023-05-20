@@ -41,7 +41,7 @@ export const AccountContent = ({
         lessons={viewAccount.lessons.filter((lesson) =>
           isAfter(new Date(lesson.expiryDate), new Date())
         )}
-        setView={setView}
+        onClick={() => setView(AdminViewAccountOptionEnums.VIEW_ACCOUNT)}
         setViewAccount={setViewAccount}
       />
     );
@@ -52,7 +52,7 @@ export const AccountContent = ({
         bookingTimeSlotIds={viewAccount.userOnBookingTimeSlots.map(
           (slot) => slot.bookingTimeSlotId
         )}
-        setView={setView}
+        onClick={() => setView(AdminViewAccountOptionEnums.VIEW_ACCOUNT)}
       />
     );
   }

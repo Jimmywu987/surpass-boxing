@@ -27,16 +27,14 @@ const configuration = OneSignal.createConfiguration({
 export const client = new OneSignal.DefaultApi(configuration);
 
 export const sendSingleNotification = async ({
-  receiver,
+  receiverIds,
   url,
   message,
 }: {
-  receiver: User;
+  receiverIds: string[];
   url: string;
   message: string;
 }) => {
-  const { id } = receiver;
-
   await client.createNotification({
     app_id: appId,
     contents: {
@@ -45,6 +43,6 @@ export const sendSingleNotification = async ({
     //@todo: get the user to the class
     url: `${process.env.VERCEL_URL}/${url}`,
     included_segments: ["Subscribed Users"],
-    include_external_user_ids: [id],
+    include_external_user_ids: receiverIds,
   });
 };

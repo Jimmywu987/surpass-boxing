@@ -13,10 +13,10 @@ import { ChevronLeftIcon } from "@chakra-ui/icons";
 
 export const ViewUsedClass = ({
   bookingTimeSlotIds,
-  setView,
+  onClick,
 }: {
   bookingTimeSlotIds: string[];
-  setView: Dispatch<SetStateAction<AdminViewAccountOptionEnums>>;
+  onClick: () => void;
 }) => {
   const { t } = useTranslation("classes");
 
@@ -29,13 +29,7 @@ export const ViewUsedClass = ({
   }
   return (
     <div>
-      <ChevronLeftIcon
-        fontSize="3xl"
-        cursor="pointer"
-        onClick={() => {
-          setView(AdminViewAccountOptionEnums.VIEW_ACCOUNT);
-        }}
-      />
+      <ChevronLeftIcon fontSize="3xl" cursor="pointer" onClick={onClick} />
       <div>
         {bookingTimeSlotIds.length > 0 ? (
           data.map((bookingTimeSlot, index) => {
