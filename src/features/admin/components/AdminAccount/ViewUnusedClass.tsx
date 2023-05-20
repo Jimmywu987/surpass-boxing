@@ -1,12 +1,9 @@
 import { UserType } from "@/types";
 import useTranslation from "next-translate/useTranslation";
 
-import { AdminViewAccountOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { Lessons } from "@prisma/client";
 import { format } from "date-fns";
 import { Dispatch, SetStateAction } from "react";
-import { useDispatch } from "react-redux";
 
 import { trpc } from "@/utils/trpc";
 
@@ -20,7 +17,6 @@ export const ViewUnusedClass = ({
   setViewAccount: Dispatch<SetStateAction<UserType>>;
 }) => {
   const { t } = useTranslation("classes");
-  const dispatch = useDispatch();
 
   const utils = trpc.useContext();
   const { mutateAsync, isLoading } = trpc.lessonClassRouter.remove.useMutation({

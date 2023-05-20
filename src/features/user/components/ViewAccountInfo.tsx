@@ -1,14 +1,13 @@
 import DefaultProfileImg from "@/../public/default-profile-img.png";
-import { userSelector } from "@/redux/user";
 import { format, isAfter } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
 import Image from "next/image";
-import { useSelector } from "react-redux";
 import { trpc, RouterOutput } from "@/utils/trpc";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { Dispatch, SetStateAction, useMemo } from "react";
 import { ViewAccountEnums } from "@/features/common/enums/ViewAccountEnums";
 import { useRouter } from "next/router";
+import { User } from "@prisma/client";
 
 type inferType = RouterOutput["userRouter"]["fetchUserById"];
 
@@ -19,12 +18,14 @@ export const ViewAccountInfo = ({
   user: Exclude<inferType, null>;
   setView: Dispatch<SetStateAction<ViewAccountEnums>>;
 }) => {
-  const reduxUser = useSelector(userSelector);
+  const session = useSession();
+  const currentUser = session.data?.user as User;
+
   const router = useRouter();
   const { t } = useTranslation("common");
   const util = trpc.useContext();
 
-  const isCurrentUser = reduxUser.id === user.id;
+  const isCurrentUser = currentUser.id === user.id;
   const unusedLessonNum = useMemo(
     () =>
       user.lessons
@@ -46,7 +47,7 @@ export const ViewAccountInfo = ({
         <p className=" text-gray-600">
           {t("account.username")}: {user.username}
         </p>
-        {reduxUser.admin && (
+        {currentUser.admin && (
           <p className=" text-gray-600">
             {t("account.email_address")}: {user.email}
           </p>
@@ -57,7 +58,7 @@ export const ViewAccountInfo = ({
             {!!user.phoneNumber ? user.phoneNumber : "/"}
           </p>
         ) : (
-          reduxUser.admin &&
+          currentUser.admin &&
           !!user.phoneNumber && (
             <p className=" text-gray-600">
               {t("account.phone_number")}: {user.phoneNumber}
@@ -94,8 +95,9 @@ export const ViewAccountInfo = ({
       {isCurrentUser && (
         <button
           onClick={async () => {
-            signOut();
-            router.push("/");
+            await signOut({
+              callbackUrl: "/",
+            });
           }}
           className="text-gray-600 self-end shadow border-2 border-gray-200 px-3 py-1 hover:text-gray-800 font-semibold"
         >

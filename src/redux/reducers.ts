@@ -1,6 +1,5 @@
 import { combineReducers } from "redux";
-import { loadingReducer } from "./loading";
-import { userReducer } from "./user";
+
 import { timeSlotReducer } from "./timeSlot";
 
 /**
@@ -8,8 +7,6 @@ import { timeSlotReducer } from "./timeSlot";
  * @see https://redux-toolkit.js.org/usage/usage-with-typescript
  */
 export const rootReducer = combineReducers({
-  loading: loadingReducer,
-  user: userReducer,
   timeSlot: timeSlotReducer,
 });
 
