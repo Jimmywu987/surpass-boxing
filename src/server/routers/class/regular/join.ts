@@ -150,7 +150,7 @@ export const join = protectedProcedure
           lang: admin.lang,
         });
         await sendSingleNotification({
-          receiver: admin,
+          receiverIds: [admin.id],
           url,
           message,
         });

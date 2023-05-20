@@ -19,6 +19,34 @@ export type NotificationDataType = {
     levelFrom: ClassLevelEnum;
     levelTo: ClassLevelEnum;
   };
+  [NotificationEnums.CLASS_CONFIRMED]: {
+    dateTime: string;
+    time: string;
+    className: string;
+  };
+  [NotificationEnums.CLASS_CANCELLED]: {
+    dateTime: string;
+    time: string;
+    className: string;
+  };
+  [NotificationEnums.CLASS_CREATED]: {
+    username: string;
+    dateTime: string;
+    time: string;
+    className: string;
+  };
+  [NotificationEnums.CLASS_UPDATED]: {
+    dateTime: string;
+    time: string;
+    className: string;
+    updatedTime: string;
+  };
+  [NotificationEnums.LEAVE_CLASS]: {
+    username: string;
+    dateTime: string;
+    time: string;
+    className: string;
+  };
 };
 
 export const getMessage = <TMessageKey extends keyof NotificationDataType>({

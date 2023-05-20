@@ -7,7 +7,7 @@ import { WhatsappSvgIcon } from "@/features/common/components/buttons/svg/Whatsa
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { NavLink } from "@/features/nav/components/NavLink";
 import { clearUserInfo, updateUser, userSelector } from "@/redux/user";
-import { User } from "@prisma/client";
+import { LanguageEnum, User } from "@prisma/client";
 import Image from "next/image";
 import { useSession, getSession } from "next-auth/react";
 import Link from "next/link";
@@ -29,6 +29,7 @@ import { useRouter } from "next/router";
 import { LanguageSvgIcon } from "@/features/common/components/buttons/svg/LanguageSvgIcon";
 import { MobileNavbar } from "@/features/nav/MobileNavbar";
 import { useOneSignal } from "@/features/common/hooks/useOneSignal";
+import { trpc } from "@/utils/trpc";
 
 export const Navbar = () => {
   const dispatch = useDispatch();
@@ -43,7 +44,7 @@ export const Navbar = () => {
   const isAuthenticated = session.status === "authenticated";
   const user = session.data?.user as User;
   const { storeUserExternalId } = useOneSignal();
-
+  const { mutateAsync } = trpc.userRouter.updateLang.useMutation();
   useEffect(() => {
     const storeUserToRedux = async () => {
       const session = await getSession();
@@ -72,8 +73,11 @@ export const Navbar = () => {
     storeUserToRedux();
   }, [isAuthenticated]);
 
-  const onClickLanguageHandler = (language: "zh-HK" | "en") => {
+  const onClickLanguageHandler = async (language: "zh-HK" | "en") => {
     router.push({ pathname, query }, asPath, { locale: language });
+    await mutateAsync({
+      lang: language === "en" ? LanguageEnum.EN : LanguageEnum.ZH,
+    });
   };
   const langIsHk = lang === "zh-HK";
   return (

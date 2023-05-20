@@ -12,11 +12,11 @@ import { trpc } from "@/utils/trpc";
 
 export const ViewUnusedClass = ({
   lessons,
-  setView,
+  onClick,
   setViewAccount,
 }: {
   lessons: UserType["lessons"];
-  setView: Dispatch<SetStateAction<AdminViewAccountOptionEnums>>;
+  onClick: () => void;
   setViewAccount: Dispatch<SetStateAction<UserType>>;
 }) => {
   const { t } = useTranslation("classes");
@@ -40,13 +40,7 @@ export const ViewUnusedClass = ({
   };
   return (
     <div className="space-y-2">
-      <ChevronLeftIcon
-        fontSize="3xl"
-        cursor={"pointer"}
-        onClick={() => {
-          setView(AdminViewAccountOptionEnums.VIEW_ACCOUNT);
-        }}
-      />
+      <ChevronLeftIcon fontSize="3xl" cursor={"pointer"} onClick={onClick} />
       <div className="space-y-2">
         {lessons.map(({ lesson, expiryDate, id, level }, index) => (
           <div key={index} className="flex justify-between items-end">

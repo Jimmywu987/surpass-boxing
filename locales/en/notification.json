@@ -5,5 +5,10 @@
         "advanced": "Advanced"
     },
     "join_class": "{{username}} has joined a {{className}} on {{dateTime}} | {{time}}",
-    "join_different_class": "{{username}} has joined a {{className}} on {{dateTime}} | {{time}}, Please be aware that this is a {{levelFrom}} student joined a {{levelTo}} class."
+    "join_different_class": "{{username}} has joined a {{className}} on {{dateTime}} | {{time}}, Please be aware that this is a {{levelFrom}} student joined a {{levelTo}} class.",
+    "class_cancelled": "{{dateTime}} | {{time}} - {{className}} class is cancelled",
+    "class_confirmed": "{{dateTime}} | {{time}} - {{className}} class is confirmed",
+    "class_updated": "{{dateTime}} | {{time}} - {{className}} class is updated to {{updatedTime}}",
+    "class_created": "{{username}} has created a {{className}} on {{dateTime}} | {{time}}",
+    "leave_class": "{{username}} has left {{dateTime}} | {{time}} - {{className}} class"
 }

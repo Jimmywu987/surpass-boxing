@@ -7,9 +7,9 @@ import { useEditAccountInputResolver } from "@/features/user/schema/useEditAccou
 import { userSelector } from "@/redux/user";
 import { editAccountSchema } from "@/schemas/user/edit";
 import { trpc } from "@/utils/trpc";
-import { EditIcon } from "@chakra-ui/icons";
+import { ChevronLeftIcon, EditIcon } from "@chakra-ui/icons";
 import { Skeleton, Stack } from "@chakra-ui/react";
-import { format } from "date-fns";
+import { format, isAfter } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -19,12 +19,15 @@ import { useSelector } from "react-redux";
 import { z } from "zod";
 import { ViewAccountInfo } from "@/features/user/components/ViewAccountInfo";
 import { EditAccountInfo } from "@/features/user/components/EditAccountInfo";
+import { ViewAccountEnums } from "@/features/common/enums/ViewAccountEnums";
+import { ViewUsedClass } from "@/features/admin/components/AdminAccount/ViewUsedClass";
+import { ViewUnusedLesson } from "@/features/user/components/ViewUnusedLesson";
 
 const ProfilePage = () => {
   const { t } = useTranslation("common");
   const router = useRouter();
   const { id } = router.query;
-  const [edit, setEdit] = useState(false);
+  const [view, setView] = useState(ViewAccountEnums.NORMAL);
   const session = useSession();
 
   const currentUser = session.data?.user as User;
@@ -70,18 +73,32 @@ const ProfilePage = () => {
   return (
     <div className="flex justify-center items-center my-12">
       <div className="w-full md:w-96 bg-white p-6 flex flex-col rounded space-y-6">
-        {!edit ? (
+        {view === ViewAccountEnums.EDIT ? (
+          <FormProvider {...editAccountInputFormMethod}>
+            <EditAccountInfo setView={setView} user={data} />
+          </FormProvider>
+        ) : view === ViewAccountEnums.VIEW_USED_CLASS ? (
+          <ViewUsedClass
+            bookingTimeSlotIds={data.userOnBookingTimeSlots.map(
+              (slot) => slot.bookingTimeSlotId
+            )}
+            onClick={() => setView(ViewAccountEnums.NORMAL)}
+          />
+        ) : view === ViewAccountEnums.VIEW_UNUSED_CLASS ? (
+          <ViewUnusedLesson
+            lessons={data.lessons.filter((lesson) =>
+              isAfter(new Date(lesson.expiryDate), new Date())
+            )}
+            onClick={() => setView(ViewAccountEnums.NORMAL)}
+          />
+        ) : (
           <div className="flex flex-col">
             <EditIcon
               className="cursor-pointer text-xl"
-              onClick={() => setEdit((edit) => !edit)}
+              onClick={() => setView(ViewAccountEnums.EDIT)}
             />
-            <ViewAccountInfo user={data} />
+            <ViewAccountInfo user={data} setView={setView} />
           </div>
-        ) : (
-          <FormProvider {...editAccountInputFormMethod}>
-            <EditAccountInfo setEdit={setEdit} user={data} />
-          </FormProvider>
         )}
       </div>
     </div>

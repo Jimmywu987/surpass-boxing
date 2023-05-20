@@ -2,7 +2,7 @@ import { TAKE_NUMBER } from "@/constants";
 import { AdminAccountFilterOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
 import { protectedProcedure, router } from "@/server/trpc";
 import { prisma } from "@/services/prisma";
-import { BookingTimeSlotStatusEnum, User } from "@prisma/client";
+import { BookingTimeSlotStatusEnum, LanguageEnum, User } from "@prisma/client";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { editAccountSchema } from "@/schemas/user/edit";
@@ -136,20 +136,33 @@ export const userRouter = router({
   fetchUserById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input }) => {
-      return prisma.user.findUnique({
+      let result = await prisma.user.findUnique({
         where: {
           id: input.id,
         },
-        select: {
-          username: true,
-          profileImg: true,
-          email: true,
-          id: true,
-          admin: true,
-          phoneNumber: true,
-          createdAt: true,
+        include: {
+          userOnBookingTimeSlots: {
+            where: {
+              bookingTimeSlots: {
+                status: BookingTimeSlotStatusEnum.CONFIRM,
+              },
+            },
+          },
+          lessons: {
+            select: {
+              createdAt: true,
+              lesson: true,
+              expiryDate: true,
+              id: true,
+              level: true,
+            },
+          },
         },
       });
+      if (result) {
+        result.password = "";
+      }
+      return result;
     }),
 
   edit: protectedProcedure
@@ -168,6 +181,24 @@ export const userRouter = router({
         },
         data: {
           ...rest,
+        },
+      });
+    }),
+  updateLang: protectedProcedure
+    .input(
+      z.object({
+        lang: z.enum([LanguageEnum.EN, LanguageEnum.ZH]),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const user = ctx.session?.user as User;
+      const { lang } = input;
+      await prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          lang,
         },
       });
     }),

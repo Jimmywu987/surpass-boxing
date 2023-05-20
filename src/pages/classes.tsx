@@ -3,7 +3,16 @@ import { Button, Skeleton, Stack, useDisclosure } from "@chakra-ui/react";
 import DefaultProfileImg from "@/../public/default-profile-img.png";
 import { LoginForm } from "@/features/login/components/LoginForm";
 import { SignUpForm } from "@/features/signUp/components/SignUpForm";
-import { endOfDay, format, isPast, startOfDay, subDays, add } from "date-fns";
+import {
+  endOfDay,
+  format,
+  isPast,
+  isSameDay,
+  startOfDay,
+  subDays,
+  add,
+  isBefore,
+} from "date-fns";
 import useTranslation from "next-translate/useTranslation";
 import Image from "next/image";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
@@ -22,6 +31,7 @@ import { AddIcon, CheckIcon, MinusIcon } from "@chakra-ui/icons";
 import { CreateRequestedClassForm } from "@/features/common/components/form/CreateRequestedClassForm";
 import { PaginationSection } from "@/features/common/components/PaginationSection";
 import { RouterOutput, trpc } from "@/utils/trpc";
+import { useRouter } from "next/router";
 
 type inferType = RouterOutput["bookingTimeSlotRouter"]["fetchForStudent"];
 type BookingTimeSlots = inferType["bookingTimeSlots"][0];
@@ -30,6 +40,14 @@ type RegularBookingTimeSlots = inferType["regularBookingSlot"][0];
 const ClassesPage = () => {
   const { t } = useTranslation("classes");
   const session = useSession();
+  const router = useRouter();
+  const { date: queryDate } = router.query;
+  const now = new Date();
+
+  const noSpecificDate =
+    !queryDate ||
+    isNaN(new Date(queryDate.toString()) as unknown as number) ||
+    isBefore(new Date(queryDate.toString()), startOfDay(now));
 
   const utils = trpc.useContext();
   const { bookingTimeSlotRouter, lessonClassRouter } = utils;
@@ -85,7 +103,7 @@ const ClassesPage = () => {
 
   const [query, setQuery] = useState({
     skip: 0,
-    date: new Date().toString(),
+    date: noSpecificDate ? now.toString() : queryDate.toString(),
   });
 
   const { data, isLoading } =
@@ -173,15 +191,15 @@ const ClassesPage = () => {
               );
 
             const dateOfClass =
-              startOfDay(
-                !isRegular ? new Date(bookingTimeSlot.date) : new Date()
-              ).getTime() + startTime;
+              startOfDay(new Date(query.date)).getTime() + startTime;
+
             const nowPlusHours = add(new Date(), {
               hours: 12,
             }).getTime();
 
             const shouldDisabled =
               isPast(dateOfClass) || nowPlusHours > dateOfClass;
+
             return (
               <div
                 key={slot.id}

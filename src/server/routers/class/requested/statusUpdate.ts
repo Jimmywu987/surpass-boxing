@@ -2,8 +2,18 @@ import { prisma } from "@/services/prisma";
 import { TRPCError } from "@trpc/server";
 
 import { protectedProcedure } from "@/server/trpc";
-import { BookingTimeSlotStatusEnum, Lessons, User } from "@prisma/client";
+import {
+  BookingTimeSlotStatusEnum,
+  LanguageEnum,
+  Lessons,
+  User,
+} from "@prisma/client";
 import { z } from "zod";
+import { sendSingleNotification } from "@/services/notification/onesignal";
+import { getMessage } from "@/services/notification/getMessage";
+import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
+import { format } from "date-fns";
+import { getTimeDuration } from "@/helpers/getTime";
 export const statusUpdate = protectedProcedure
   .input(
     z.object({
@@ -24,14 +34,14 @@ export const statusUpdate = protectedProcedure
       });
     }
     const lessonIds: string[] = [];
-
-    if (status === BookingTimeSlotStatusEnum.CANCELED) {
-      const timeSlots = await prisma.userOnBookingTimeSlots.findMany({
-        where: {
-          bookingTimeSlotId: id,
-        },
-      });
-      const userIds = timeSlots.map((timeSlot) => timeSlot.userId);
+    const timeSlots = await prisma.userOnBookingTimeSlots.findMany({
+      where: {
+        bookingTimeSlotId: id,
+      },
+    });
+    const userIds = timeSlots.map((timeSlot) => timeSlot.userId);
+    const isCancelled = status === BookingTimeSlotStatusEnum.CANCELED;
+    if (isCancelled) {
       const uniqueLessons: Lessons[] = [];
       const lessons = await prisma.lessons.findMany({
         where: {
@@ -54,8 +64,8 @@ export const statusUpdate = protectedProcedure
         }
       }
     }
-    //@TODO: send messages to users
-    return prisma.$transaction(async (txn) => {
+
+    const bookingTimeSlot = await prisma.$transaction(async (txn) => {
       if (lessonIds.length > 0) {
         await txn.lessons.updateMany({
           data: {
@@ -76,6 +86,61 @@ export const statusUpdate = protectedProcedure
         data: {
           status,
         },
+        include: {
+          userOnBookingTimeSlots: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  lang: true,
+                },
+              },
+            },
+          },
+        },
       });
     });
+
+    const { date, startTime, endTime, className, userOnBookingTimeSlots } =
+      bookingTimeSlot;
+    const userIdsForZh = userOnBookingTimeSlots
+      .filter((timeSlot) => timeSlot.user.lang === LanguageEnum.ZH)
+      .map((timeSlot) => timeSlot.user.id);
+    const userIdsForEn = userOnBookingTimeSlots
+      .filter((timeSlot) => timeSlot.user.lang === LanguageEnum.EN)
+      .map((timeSlot) => timeSlot.user.id);
+    const dateTime = format(new Date(date), "yyyy-MM-dd");
+    const time = getTimeDuration({ startTime, endTime });
+    const url = `classes?date=${dateTime}`;
+    const messageData = {
+      dateTime,
+      time,
+      className,
+    };
+    const messageInEn = getMessage({
+      data: messageData,
+      messageKey: isCancelled
+        ? NotificationEnums.CLASS_CANCELLED
+        : NotificationEnums.CLASS_CONFIRMED,
+      lang: LanguageEnum.EN,
+    });
+    const messageInZh = getMessage({
+      data: messageData,
+      messageKey: isCancelled
+        ? NotificationEnums.CLASS_CANCELLED
+        : NotificationEnums.CLASS_CONFIRMED,
+      lang: LanguageEnum.ZH,
+    });
+
+    await sendSingleNotification({
+      receiverIds: userIdsForZh,
+      url,
+      message: messageInZh,
+    });
+    await sendSingleNotification({
+      receiverIds: userIdsForEn,
+      url,
+      message: messageInEn,
+    });
+    return bookingTimeSlot;
   });
