@@ -152,7 +152,7 @@ const ClassesPage = () => {
 
   return (
     <>
-      <div className="space-y-2">
+      <div className="space-y-2 p-2 md:p-0">
         <h1 className="text-white text-3xl">{t("classes")}</h1>
         <div className="flex space-x-2 items-center">
           <div className="w-36">

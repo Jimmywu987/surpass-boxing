@@ -19,9 +19,20 @@ export const AdminClasses = () => {
       ? AdminClassesOptionEnums.REGULAR_CLASSES
       : AdminClassesOptionEnums.COMING_CLASSES
   );
+  const [viewClassType, setViewClassType] = useState(false);
   return (
-    <div className="flex justify-between flex-1 space-x-3">
-      <div className="flex flex-col space-y-3 w-9/12">
+    <div className="flex md:justify-between w-full md:space-x-3">
+      <div
+        className={`md:flex w-full flex-col space-y-3 md:w-9/12 ${
+          !viewClassType ? "inline" : "hidden"
+        }`}
+      >
+        <button
+          onClick={() => setViewClassType(true)}
+          className="flex text-xl border border-gray-100 rounded px-2 md:hidden"
+        >
+          {t("action.view_class_type")}
+        </button>
         <div className="border-b border-b-gray-600 py-3">
           <ButtonGroup gap="2">
             <OptionButton
@@ -62,7 +73,17 @@ export const AdminClasses = () => {
           )}
         </div>
       </div>
-      <div className="w-3/12 z-20">
+      <div
+        className={`w-full md:w-3/12 md:z-20 space-y-2 md:space-y-0 ${
+          viewClassType ? "block" : "hidden"
+        }`}
+      >
+        <button
+          onClick={() => setViewClassType(false)}
+          className="flex text-xl border border-gray-100 rounded px-2 md:hidden"
+        >
+          {t("common:action.back")}
+        </button>
         <AdminClassTypesSection />
       </div>
     </div>

@@ -178,13 +178,38 @@ export const Navbar = () => {
             <DrawerOverlay />
             <DrawerContent>
               <DrawerCloseButton fontSize="xl" my="8" mr="6" w="10" h="10" />
-              <DrawerHeader>Surpass Boxing</DrawerHeader>
-
+              {isAuthenticated ? (
+                <DrawerHeader>
+                  <Link
+                    href={`/profile/${user.id}`}
+                    passHref
+                    className="flex items-center rounded text-link-normal space-x-2 p-1 my-3"
+                    onClick={onClose}
+                  >
+                    <div className="w-14 h-14 relative">
+                      <Image
+                        src={
+                          !!user.profileImg
+                            ? user.profileImg
+                            : DefaultProfileImg
+                        }
+                        alt={`${user.username} profile image`}
+                        className="w-full h-full rounded-full object-cover"
+                        fill
+                      />
+                    </div>
+                    <span className="truncate w-[4.5rem]">{user.username}</span>
+                  </Link>
+                </DrawerHeader>
+              ) : (
+                <DrawerHeader my="6">Surpass Boxing</DrawerHeader>
+              )}
               <DrawerBody>
-                {/* @todo: Add all the navigation links */}
-                <MobileNavbar />
+                <MobileNavbar
+                  onClickLanguageHandler={onClickLanguageHandler}
+                  onClose={onClose}
+                />
               </DrawerBody>
-
               <DrawerFooter className="space-x-2">
                 <WhatsappSvgIcon className="fill-gray-800 hover:fill-green-600 hover:scale-110 duration-200" />
                 <FacebookSvgIcon className="fill-gray-800 hover:fill-blue-600 hover:scale-110 duration-200" />

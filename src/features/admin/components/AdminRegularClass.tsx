@@ -53,44 +53,13 @@ export const AdminRegularClass = () => {
             return (
               <div
                 key={timeSlot.id}
-                className="flex justify-between p-5 border border-gray-600 rounded-md shadow-lg"
+                className="flex flex-col p-3 md:p-5 border border-gray-600 rounded-md shadow-lg space-y-3"
               >
-                <div className="space-y-2">
+                <div className="flex justify-between items-center">
                   <div className="text-2xl font-semibold">
                     {timeSlot.className} (
                     {t(`classes:${timeSlot.level.toLowerCase()}`)})
                   </div>
-                  <div className="flex flex-wrap space-x-6">
-                    {Object.values(WeekEnums).map((weekDay, indx) => {
-                      return (
-                        <div key={indx} className="flex items-center space-x-2">
-                          <div
-                            className={`rounded-full w-1 h-1 ${
-                              timeSlot[weekDay] ? "bg-green-400" : "bg-red-400"
-                            }`}
-                          />
-                          <span>{t(`classes:${weekDay}`)}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <div>
-                    {getTimeDuration({
-                      startTime,
-                      endTime,
-                    })}
-                    <div>
-                      {t("classes:duration")}:{" "}
-                      {t(
-                        ...(getDuration({
-                          startTime,
-                          endTime,
-                        }) as [string])
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-col justify-between">
                   <SmallCloseIcon
                     onClick={() => handleRegularClassRemove(timeSlot.id)}
                     textColor="gray.800"
@@ -99,7 +68,46 @@ export const AdminRegularClass = () => {
                     alignSelf="end"
                     cursor="pointer"
                   />
-                  <div>
+                </div>
+                <div className="flex flex-col md:flex-row md:justify-between space-y-2 md:space-y-0">
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap gap-2 md:gap-4 ">
+                      {Object.values(WeekEnums).map((weekDay, indx) => {
+                        return (
+                          <div
+                            key={indx}
+                            className="flex items-center space-x-2"
+                          >
+                            <div
+                              className={`rounded-full w-1 h-1 ${
+                                timeSlot[weekDay]
+                                  ? "bg-green-400"
+                                  : "bg-red-400"
+                              }`}
+                            />
+                            <span>{t(`classes:${weekDay}`)}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div>
+                      {getTimeDuration({
+                        startTime,
+                        endTime,
+                      })}
+                      <div>
+                        {t("classes:duration")}:{" "}
+                        {t(
+                          ...(getDuration({
+                            startTime,
+                            endTime,
+                          }) as [string])
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="md:self-end">
                     <div className="">
                       {t("classes:coaches")}
                       {": "}

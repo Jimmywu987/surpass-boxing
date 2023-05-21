@@ -39,7 +39,9 @@
         "cancel": "Cancel",
         "search": "Search",
         "remove_authorization": "Remove authorization",
-        "grant_authorization": "Become coach"
+        "grant_authorization": "Become coach",
+        "view_option": "Options",
+        "view_class_type": "View class type"
     },
     "confirm_remove_authorization": "Are you sure you want to remove authorization from this coach?",
     "confirm_grant_authorization": "Are you sure you want to update this user to become a coach?",

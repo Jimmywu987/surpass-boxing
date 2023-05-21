@@ -51,18 +51,18 @@ export const AdminClassTypesSection = () => {
   };
   if (!data || isLoading) {
     return (
-      <Stack w="280px">
-        <Skeleton height="40px" />
+      <Stack className="w-full md:w-[280px]">
+        <Skeleton h="40px" />
         <div className="space-y-1">
-          <Skeleton height="35px" />
-          <Skeleton height="35px" />
+          <Skeleton h="35px" />
+          <Skeleton h="35px" />
         </div>
       </Stack>
     );
   }
   return (
-    <div className="space-y-2">
-      <div className="flex flex-col space-y-1">
+    <div className="space-y-3">
+      <div className="flex flex-col space-y-2">
         <div className="flex bg-white rounded ">
           <Input
             type="text"
@@ -97,7 +97,7 @@ export const AdminClassTypesSection = () => {
           {t("add_class_type")}
         </Button>
       </div>
-      <div className="mx-2">
+      <div className="md:mx-2">
         {data.map((type) => (
           <div
             key={type.id}

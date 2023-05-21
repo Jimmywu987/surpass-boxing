@@ -1,35 +1,26 @@
-import { User } from "@prisma/client";
 import { GetServerSideProps } from "next";
-import { signOut, useSession } from "next-auth/react";
 
-import DefaultProfileImg from "@/../public/default-profile-img.png";
+import { ViewUsedClass } from "@/features/admin/components/AdminAccount/ViewUsedClass";
+import { ViewAccountEnums } from "@/features/common/enums/ViewAccountEnums";
+import { EditAccountInfo } from "@/features/user/components/EditAccountInfo";
+import { ViewAccountInfo } from "@/features/user/components/ViewAccountInfo";
+import { ViewUnusedLesson } from "@/features/user/components/ViewUnusedLesson";
 import { useEditAccountInputResolver } from "@/features/user/schema/useEditAccountInputResolver";
 import { editAccountSchema } from "@/schemas/user/edit";
 import { trpc } from "@/utils/trpc";
-import { ChevronLeftIcon, EditIcon } from "@chakra-ui/icons";
+import { EditIcon } from "@chakra-ui/icons";
 import { Skeleton, Stack } from "@chakra-ui/react";
-import { format, isAfter } from "date-fns";
-import useTranslation from "next-translate/useTranslation";
-import Image from "next/image";
+import { isAfter } from "date-fns";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
 import { z } from "zod";
-import { ViewAccountInfo } from "@/features/user/components/ViewAccountInfo";
-import { EditAccountInfo } from "@/features/user/components/EditAccountInfo";
-import { ViewAccountEnums } from "@/features/common/enums/ViewAccountEnums";
-import { ViewUsedClass } from "@/features/admin/components/AdminAccount/ViewUsedClass";
-import { ViewUnusedLesson } from "@/features/user/components/ViewUnusedLesson";
 
 const ProfilePage = () => {
-  const { t } = useTranslation("common");
   const router = useRouter();
   const { id } = router.query;
   const [view, setView] = useState(ViewAccountEnums.NORMAL);
-  const session = useSession();
 
-  const currentUser = session.data?.user as User;
   const editAccountInputFormMethod = useForm<
     z.infer<ReturnType<typeof editAccountSchema>>
   >({

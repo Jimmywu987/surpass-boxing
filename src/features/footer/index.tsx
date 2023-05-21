@@ -4,7 +4,7 @@ import { WhatsappSvgIcon } from "@/features/common/components/buttons/svg/Whatsa
 
 export const Footer = () => {
   return (
-    <footer className="bg-gray-800 flex justify-between  p-2">
+    <footer className="bg-gray-800 flex flex-col md:flex-row md:justify-between p-2 space-y-2 md:space-y-0">
       <div className="flex space-x-2">
         <WhatsappSvgIcon
           className="fill-white hover:fill-green-600 hover:scale-110 duration-200"
