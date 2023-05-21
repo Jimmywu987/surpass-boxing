@@ -13,7 +13,8 @@
         "update": "Update",
         "delete": "Delete",
         "previous": "Previous",
-        "next": "Next"
+        "next": "Next",
+        "back": "Back"
     },
     "account": {
         "email_address": "Email Address",

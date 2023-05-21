@@ -26,7 +26,7 @@ const LocationPage = () => {
   const { t } = useTranslation("location");
 
   return (
-    <div className="space-y-2 text-white">
+    <div className="space-y-2 text-white p-2 md:p-0">
       <div className="space-y-4">
         <h1 className="text-3xl">{t("address")}</h1>
         <p className="text-xl">

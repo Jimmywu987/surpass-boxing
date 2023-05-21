@@ -34,7 +34,7 @@ export const ViewAccountInfo = ({
     [user.lessons]
   );
   return (
-    <div className="flex flex-col items-center space-y-6">
+    <div className="flex flex-col items-center space-y-6 ">
       <div className="w-32 h-32 relative">
         <Image
           src={user.profileImg ?? DefaultProfileImg}
@@ -43,17 +43,17 @@ export const ViewAccountInfo = ({
           fill
         />
       </div>
-      <div className="space-y-1">
+      <div className="space-y-1 w-full">
         <p className=" text-gray-600">
           {t("account.username")}: {user.username}
         </p>
-        {currentUser.admin && (
-          <p className=" text-gray-600">
+        {(isCurrentUser || currentUser.admin) && (
+          <p className=" text-gray-600 ">
             {t("account.email_address")}: {user.email}
           </p>
         )}
         {isCurrentUser ? (
-          <p className=" text-gray-600">
+          <p className=" text-gray-600 ">
             {t("account.phone_number")}:{" "}
             {!!user.phoneNumber ? user.phoneNumber : "/"}
           </p>

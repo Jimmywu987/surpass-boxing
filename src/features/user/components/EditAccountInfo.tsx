@@ -80,7 +80,7 @@ export const EditAccountInfo = ({
   };
   const disabled = formState.isSubmitting || isLoading;
   return (
-    <form className="flex flex-col items-center space-y-6">
+    <form className="flex flex-col items-center space-y-6 w-full">
       <div className="flex">
         <div className="w-32 h-32 relative">
           <Image
@@ -91,7 +91,7 @@ export const EditAccountInfo = ({
           />
         </div>
 
-        <label className="">
+        <label>
           <input
             onChange={onClickUploadImageHandler}
             accept="image/*"
@@ -102,7 +102,7 @@ export const EditAccountInfo = ({
         </label>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-2 w-full">
         <FormTextInput
           type="text"
           name="username"

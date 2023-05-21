@@ -15,47 +15,66 @@ const AdminPage = () => {
   const { t } = useTranslation("admin");
 
   const [option, setOption] = useState(AdminOptionEnums.CLASSES);
+  const [viewOption, setViewOption] = useState(true);
+  const setOptionHandler = (option: AdminOptionEnums) => {
+    setOption(option);
+    setViewOption(false);
+  };
   return (
     <div className="text-white flex my-6">
-      <div className="flex flex-col items-start space-y-1">
+      <div
+        className={`md:flex flex-col items-start space-y-2 px-4 md:px-0 ${
+          !viewOption ? "hidden" : "flex"
+        }`}
+      >
         <button
-          onClick={() => setOption(AdminOptionEnums.CLASSES)}
-          className="text-xl"
+          onClick={() => setOptionHandler(AdminOptionEnums.CLASSES)}
+          className="text-2xl"
         >
           {t("classes")}
         </button>
         <button
-          onClick={() => setOption(AdminOptionEnums.ACCOUNT)}
-          className="text-xl"
+          onClick={() => setOptionHandler(AdminOptionEnums.ACCOUNT)}
+          className="text-2xl"
         >
           {t("members")}
         </button>
         <button
-          onClick={() => setOption(AdminOptionEnums.COACHES)}
-          className="text-xl"
+          onClick={() => setOptionHandler(AdminOptionEnums.COACHES)}
+          className="text-2xl"
         >
           {t("coaches")}
         </button>
         <button
-          onClick={() => setOption(AdminOptionEnums.NEWS)}
-          className="text-xl"
+          onClick={() => setOptionHandler(AdminOptionEnums.NEWS)}
+          className="text-2xl"
         >
           {t("news_board")}
         </button>
         <button
-          onClick={() => setOption(AdminOptionEnums.NOTIFICATION)}
-          className="text-xl"
+          onClick={() => setOptionHandler(AdminOptionEnums.NOTIFICATION)}
+          className="text-2xl"
         >
           {t("notification")}
         </button>
         <button
-          onClick={() => setOption(AdminOptionEnums.CLASS_LEVEL_RECORD)}
-          className="text-xl"
+          onClick={() => setOptionHandler(AdminOptionEnums.CLASS_LEVEL_RECORD)}
+          className="text-2xl"
         >
           {t("class_level_record")}
         </button>
       </div>
-      <div className="flex flex-1 px-8">
+      <div
+        className={`w-full md:flex md:flex-1 space-y-2 md:space-y-0 px-2 md:px-8 ${
+          viewOption && "hidden"
+        }`}
+      >
+        <button
+          onClick={() => setViewOption(true)}
+          className="flex text-xl border border-gray-100 rounded px-2 md:hidden"
+        >
+          {t("action.view_option")}
+        </button>
         {option === AdminOptionEnums.CLASSES && <AdminClasses />}
         {option === AdminOptionEnums.ACCOUNT && <AdminAccounts />}
         {option === AdminOptionEnums.COACHES && <AdminCoaches />}
