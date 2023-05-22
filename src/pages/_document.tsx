@@ -117,7 +117,7 @@ export default function Document() {
 
         {/* <link rel="apple-touch-icon" href="/icon.png"></link> */}
       </Head>
-      <body>
+      <body className="bg-gray-800">
         <Main />
         <NextScript />
       </body>
