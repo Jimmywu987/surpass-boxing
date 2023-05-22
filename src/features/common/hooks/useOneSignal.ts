@@ -23,7 +23,7 @@ export const useOneSignal = () => {
           OneSignal.addListenerForNotificationOpened((notification) => {
             router.push({
               pathname: "/admin",
-              query: notification.data.on99,
+              query: notification.data,
             });
             console.info("Notification Opened", { notification });
           });
@@ -44,11 +44,12 @@ export const useOneSignal = () => {
   }, []);
 
   const storeUserExternalId = async (userId: string) => {
-    const id = await OneSignal.getExternalUserId();
-    if (userId === id) return;
-    if (!id) {
+    try {
+      const id = await OneSignal.getExternalUserId();
+
+      if (userId === id) return;
       await OneSignal.setExternalUserId(userId);
-    }
+    } catch (err) {}
   };
   const removeUserExternalId = async () => {
     await OneSignal.removeExternalUserId();
