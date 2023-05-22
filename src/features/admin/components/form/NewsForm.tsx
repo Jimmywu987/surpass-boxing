@@ -106,7 +106,7 @@ export const NewsForm = ({
         {!!fileDisplay && (
           <div
             onClick={removeImage}
-            className="relative h-56 w-56 cursor-pointer"
+            className="relative h-44 w-44 md:h-56 md:w-56 cursor-pointer"
           >
             <Image
               src={fileDisplay}

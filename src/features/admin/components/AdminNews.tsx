@@ -29,12 +29,7 @@ export const AdminNews = () => {
       } catch (error) {}
     }
   };
-  if (!data || data.length === 0)
-    return (
-      <div className="text-center w-full">
-        <p>{t("no_news")}</p>
-      </div>
-    );
+
   return (
     <>
       <div className="w-full space-y-2">
@@ -50,7 +45,7 @@ export const AdminNews = () => {
           </Button>
         </div>
         <div>
-          {data &&
+          {data && data.length > 0 ? (
             data.map((news, index) => (
               <div
                 key={index}
@@ -77,7 +72,12 @@ export const AdminNews = () => {
                 <h2 className="text-2xl font-semibold">{news.title}</h2>
                 <p className="whitespace-pre-wrap">{news.article}</p>
               </div>
-            ))}
+            ))
+          ) : (
+            <div className="text-center w-full">
+              <p>{t("no_news")}</p>
+            </div>
+          )}
         </div>
       </div>
       <ModalComponent

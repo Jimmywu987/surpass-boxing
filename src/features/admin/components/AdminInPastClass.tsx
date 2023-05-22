@@ -62,7 +62,7 @@ export const AdminInPastClass = () => {
     <div className="space-y-2">
       <div className="relative w-full">
         <motion.div
-          className={`absolute z-10 w-full  h-full bg-gray-800 pt-1 flex space-x-2`}
+          className={`absolute z-10 w-full  h-full bg-gray-800 pt-1 hidden md:flex space-x-2`}
           animate={isOpen ? "open" : "closed"}
           variants={variants}
           transition={{ duration: 0.4 }}
@@ -80,7 +80,7 @@ export const AdminInPastClass = () => {
             <p> {isOpen ? "CLOSE" : "OPEN"}</p>
           </div>
         </motion.div>
-        <ButtonGroup gap="2">
+        <ButtonGroup gap="2" flex="wrap" w="full">
           {Object.values(AdminPeriodOptionsEnum).map((period, index) => (
             <Button
               key={index}
@@ -130,8 +130,8 @@ export const AdminInPastClass = () => {
         </Stack>
       ) : (
         <>
-          <div className="flex space-x-2 items-center justify-between">
-            <div className="flex space-x-2 ">
+          <div className="flex flex-col md:flex-row md:space-x-2 md:items-center items-start md:justify-between space-y-3 md:space-y-0">
+            <div className="flex md:space-x-2 flex-wrap gap-3">
               <div>
                 <span>{t("admin:in_total")}: </span>
                 <span>{data.totalClassesCount}</span>
@@ -155,9 +155,9 @@ export const AdminInPastClass = () => {
             </div>
             <Button
               colorScheme="whiteAlpha"
-              variant={"solid"}
-              onClick={() => {
-                mutateAsync();
+              variant="solid"
+              onClick={async () => {
+                await mutateAsync();
               }}
             >
               {t("clear_unattended_class")}
