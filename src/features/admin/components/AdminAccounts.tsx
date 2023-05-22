@@ -78,8 +78,8 @@ export const AdminAccounts = () => {
 
   return (
     <div className="space-y-2 flex flex-col flex-1">
-      <div className="flex flex-col md:flex-row items-center space-x-2 border-b border-b-gray-600 py-3 w-4/6">
-        <InputGroup className="flex space-x-2 ">
+      <div className="flex flex-col md:flex-row md:items-center md:space-x-2 border-b border-b-gray-600 py-3 md:w-4/6 space-y-2 md:space-y-0">
+        <InputGroup className="flex md:space-x-2 ">
           <InputLeftElement pointerEvents="none">
             <SearchIcon color="gray.300" />
           </InputLeftElement>
@@ -92,7 +92,7 @@ export const AdminAccounts = () => {
             color="gray.700"
             variant="unstyle"
           />
-          <Button onClick={onSubmitSearchAccount} color="gray.700">
+          <Button onClick={onSubmitSearchAccount} color="gray.700" ml="2">
             {t("admin:action.search")}
           </Button>
         </InputGroup>

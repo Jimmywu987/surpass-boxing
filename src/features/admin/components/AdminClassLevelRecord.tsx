@@ -29,7 +29,7 @@ export const AdminClassLevelRecord = () => {
 
   return (
     <div className="w-full space-y-3">
-      <div className=" space-x-3">
+      <div className="md:space-x-3 flex flex-wrap space-x-2">
         <Button
           colorScheme="whiteAlpha"
           variant={
