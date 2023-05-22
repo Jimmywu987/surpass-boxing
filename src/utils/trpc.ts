@@ -12,8 +12,8 @@ function getBaseUrl() {
     return "";
   }
   // reference for vercel.com
-  if (process.env.VERCEL_URL) {
-    return process.env.VERCEL_URL;
+  if (process.env.BACKEND_URL_PRODUCTION) {
+    return process.env.BACKEND_URL_PRODUCTION;
   }
 
   // assume localhost

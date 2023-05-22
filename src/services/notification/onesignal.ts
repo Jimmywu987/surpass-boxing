@@ -1,8 +1,4 @@
-import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
 import * as OneSignal from "@onesignal/node-onesignal";
-import { LanguageEnum, User } from "@prisma/client";
-import { Replacements } from "i18n";
-import { i18n } from "@/services/notification/i18n/i18n.config";
 
 export const appId = process.env["NEXT_PUBLIC_ONESIGNAL_APP_ID"]!;
 
@@ -41,7 +37,11 @@ export const sendSingleNotification = async ({
       en: message,
     },
     //@todo: get the user to the class
-    url: `${process.env.VERCEL_URL}/${url}`,
+    url: `${
+      process.env.NODE_ENV === "development"
+        ? process.env.BACKEND_URL_DEVELOPMENT
+        : process.env.BACKEND_URL_PRODUCTION
+    }/${url}`,
     included_segments: ["Subscribed Users"],
     include_external_user_ids: receiverIds,
   });

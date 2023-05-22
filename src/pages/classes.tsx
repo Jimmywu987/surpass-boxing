@@ -144,9 +144,11 @@ const ClassesPage = () => {
 
   if (!data || isLoading) {
     return (
-      <Stack>
-        <Skeleton height="30px" />
-      </Stack>
+      <div className="mx-2">
+        <Stack>
+          <Skeleton height="30px" />
+        </Stack>
+      </div>
     );
   }
 
@@ -341,7 +343,7 @@ const ClassesPage = () => {
               totalCount={data.totalClassesCount}
             />
           ) : data.regularBookingSlot.length === 0 ? (
-            <div>{t("admin:no_data")}</div>
+            <div className="text-white text-center">{t("admin:no_data")}</div>
           ) : (
             <></>
           )}
