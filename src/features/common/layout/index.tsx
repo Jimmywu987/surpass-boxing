@@ -4,7 +4,7 @@ import { HeadHtml } from "@/features/head";
 
 const Layout = ({ children }: any) => {
   return (
-    <div className="bg-gray-800 ">
+    <div>
       <HeadHtml />
       <Navbar />
       <main className="min-h-[78vh] container mx-auto my-4">{children}</main>
