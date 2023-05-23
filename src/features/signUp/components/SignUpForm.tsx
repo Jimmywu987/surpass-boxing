@@ -18,8 +18,13 @@ import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 export const SignUpForm = ({
   LoginButton,
+  action,
 }: {
   LoginButton: React.ReactNode;
+  action: {
+    redirect?: boolean;
+    callbackUrl?: string;
+  };
 }) => {
   const { t, lang } = useTranslation("auth");
   const { mutateAsync, isLoading } = trpc.authRouter.signUp.useMutation();
@@ -70,15 +75,16 @@ export const SignUpForm = ({
           ? await handleFile(uploadFile as File)
           : data.profileImg,
       });
+
+      await signIn("credentials", {
+        ...data,
+        ...action,
+      });
       toast({
         title: t("sign_up.account_created"),
         status: "success",
         duration: 4000,
         isClosable: true,
-      });
-      await signIn("credentials", {
-        ...data,
-        redirect: false,
       });
     } catch (error) {
       toast({

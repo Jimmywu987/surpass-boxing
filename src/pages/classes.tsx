@@ -388,6 +388,9 @@ const ClassesPage = () => {
                       {t("auth:login.login")}
                     </button>
                   }
+                  action={{
+                    redirect: false,
+                  }}
                 />
               )}
               {modelType === OpenModelType.LOGIN && (
@@ -402,6 +405,9 @@ const ClassesPage = () => {
                       {t("auth:sign_up.sign_up")}
                     </button>
                   }
+                  action={{
+                    redirect: false,
+                  }}
                 />
               )}
             </>
