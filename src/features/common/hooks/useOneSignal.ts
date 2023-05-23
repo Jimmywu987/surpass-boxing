@@ -49,10 +49,7 @@ export const useOneSignal = () => {
 
       if (userId === id) return;
       await OneSignal.setExternalUserId(userId);
-    } catch (err) {
-      console.log("err", err);
-      await OneSignal.setExternalUserId(userId);
-    }
+    } catch (err) {}
   };
   const removeUserExternalId = async () => {
     await OneSignal.removeExternalUserId();
