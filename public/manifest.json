@@ -1,12 +1,12 @@
 {
-    "theme_color": "#f69435",
-    "background_color": "#f69435",
-    "display": "browser",
+    "theme_color": "#EE72B6",
+    "background_color": "#EE72B6",
+    "display": "standalone",
     "scope": "/",
-    "start_url": "https://surpass-boxing.vercel.app/",
+    "start_url": "/",
     "name": "Surpass Boxing",
-    "short_name": "Surpass",
-    "description": "A boxing gym in Hong Kong",
+    "short_name": "Surpass Boxing",
+    "description": "This is a boxing gym in Hong Kong",
     "icons": [
         {
             "src": "/icon-192x192.png",
