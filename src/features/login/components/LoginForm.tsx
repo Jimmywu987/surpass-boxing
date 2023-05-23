@@ -4,21 +4,27 @@ import { FormTextInput } from "@/features/common/components/input/FormTextInput"
 import { ShowPassword } from "@/features/common/components/ShowPassword";
 import { useLoginResolver } from "@/features/login/schemas/useLoginResolver";
 import { LoginInputTypes } from "@/features/login/types/loginInputTypes";
+import { createStandaloneToast } from "@chakra-ui/react";
 import { signIn } from "next-auth/react";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
+
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 export const LoginForm = ({
   SignUpButton,
+  action,
 }: {
   SignUpButton: React.ReactNode;
+  action: {
+    redirect?: boolean;
+    callbackUrl?: string;
+  };
 }) => {
   const { t } = useTranslation("auth");
-
+  const { toast } = createStandaloneToast();
   const router = useRouter();
-
   const [showPassword, setShowPassword] = useState(false);
 
   const loginFormMethods = useForm<LoginInputTypes>({
@@ -32,12 +38,28 @@ export const LoginForm = ({
   const onSubmit = loginFormMethods.handleSubmit(async (data) => {
     const res = await signIn("credentials", {
       ...data,
-      redirect: false,
+      ...action,
     });
+
     if (res && res.ok) {
-    } else {
-      // toast.error("Incorrect email or password, please try again.");
+      toast({
+        title: t("login.login_successfully"),
+        status: "success",
+        duration: 4000,
+        isClosable: true,
+      });
+      return;
     }
+    if (router.route === "/login") {
+      return;
+    }
+    toast({
+      title: t("login.login_fail"),
+      description: t("sign_up.create_account_fail_description"),
+      status: "error",
+      duration: 4000,
+      isClosable: true,
+    });
   });
   const { formState } = loginFormMethods;
   return (

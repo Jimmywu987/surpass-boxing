@@ -31,6 +31,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
+import { MobileNavLink } from "./components/MobileNavLink";
 
 export const Navbar = () => {
   const { t, lang } = useTranslation("common");
@@ -139,8 +140,9 @@ export const Navbar = () => {
                 <FacebookSvgIcon className="fill-white hover:fill-blue-600 hover:scale-110 duration-200" />
                 <InstagramSvgIcon className="fill-white hover:fill-pink-600 hover:scale-110 duration-200" />
               </div>
-              {isAuthenticated && (
-                <div className="flex self-end ">
+
+              <div className="flex self-end ">
+                {isAuthenticated ? (
                   <Link
                     href={`/profile/${user.id}`}
                     passHref
@@ -160,8 +162,10 @@ export const Navbar = () => {
                     </div>
                     <span className="truncate w-[4.5rem]">{user.username}</span>
                   </Link>
-                </div>
-              )}
+                ) : (
+                  <NavLink text={t("login")} url="/login" />
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -202,7 +206,14 @@ export const Navbar = () => {
                   </Link>
                 </DrawerHeader>
               ) : (
-                <DrawerHeader my="6">Surpass Boxing</DrawerHeader>
+                <DrawerHeader>
+                  <div>Surpass Boxing</div>
+                  <MobileNavLink
+                    text={t("login")}
+                    url="/login"
+                    onClose={onClose}
+                  />
+                </DrawerHeader>
               )}
               <DrawerBody>
                 <MobileNavbar
