@@ -36,3 +36,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+# pwa build
+# **/public/
+# **/public/
+# **/public/
+# **/public/
+# **/public/
+# **/public/
+
