@@ -55,7 +55,7 @@ const ClassesPage = () => {
   const user = session.data?.user as User;
   const [modelType, setModelType] = useState(OpenModelType.OPEN_CLASS);
 
-  const { mutateAsync: joinClassMutateAsync } =
+  const { mutateAsync: joinClassMutateAsync, isLoading: joinClassIsLoading } =
     trpc.classRouter.requestedClassRouter.join.useMutation({
       onSuccess: () => {
         bookingTimeSlotRouter.fetchForStudent.invalidate();
@@ -63,14 +63,16 @@ const ClassesPage = () => {
       },
     });
 
-  const { mutateAsync: joinRegularClassMutateAsync } =
-    trpc.classRouter.regularClassRouter.join.useMutation({
-      onSuccess: () => {
-        bookingTimeSlotRouter.fetchForStudent.invalidate();
-        lessonClassRouter.fetch.invalidate();
-      },
-    });
-  const { mutateAsync: leaveClassMutateAsync } =
+  const {
+    mutateAsync: joinRegularClassMutateAsync,
+    isLoading: joinRegularClassIsLoading,
+  } = trpc.classRouter.regularClassRouter.join.useMutation({
+    onSuccess: () => {
+      bookingTimeSlotRouter.fetchForStudent.invalidate();
+      lessonClassRouter.fetch.invalidate();
+    },
+  });
+  const { mutateAsync: leaveClassMutateAsync, isLoading: leaveClassIsLoading } =
     trpc.classRouter.requestedClassRouter.leave.useMutation({
       onSuccess: () => {
         bookingTimeSlotRouter.fetchForStudent.invalidate();
@@ -200,7 +202,11 @@ const ClassesPage = () => {
             }).getTime();
 
             const shouldDisabled =
-              isPast(dateOfClass) || nowPlusHours > dateOfClass;
+              isPast(dateOfClass) ||
+              nowPlusHours > dateOfClass ||
+              leaveClassIsLoading ||
+              joinClassIsLoading ||
+              joinRegularClassIsLoading;
 
             return (
               <div
