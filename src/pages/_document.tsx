@@ -5,6 +5,8 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="apple-touch-icon" href="/icon.png"></link>
         <meta name="surpass-boxing" content="PWA App" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -112,10 +114,6 @@ export default function Document() {
           href="/images/apple_splash_640.png"
           sizes="640x1136"
         /> */}
-
-        <link rel="manifest" href="/manifest.json" />
-
-        {/* <link rel="apple-touch-icon" href="/icon.png"></link> */}
       </Head>
       <body className="bg-gray-800">
         <Main />
