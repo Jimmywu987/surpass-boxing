@@ -9,6 +9,7 @@ import { protectedProcedure, publicProcedure, router } from "@/server/trpc";
 import { prisma } from "@/services/prisma";
 import { BookingTimeSlotStatusEnum, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { format } from "date-fns";
 import { z } from "zod";
 
 export const bookingTimeSlotRouter = router({
@@ -108,6 +109,11 @@ export const bookingTimeSlotRouter = router({
             regularBookingSlot,
             noChangeTime: new Date(),
             changeTime: getTimeZone(),
+            noChangeFormat: format(new Date(), "PPpp"),
+            changeFormat: getFormatTimeZone({
+              date: new Date(),
+              format: "PPpp",
+            }),
           };
         });
       } catch (error) {
