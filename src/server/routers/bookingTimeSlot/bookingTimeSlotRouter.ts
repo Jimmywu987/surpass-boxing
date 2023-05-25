@@ -3,9 +3,10 @@ import { BookingTimeSlotStatusEnum, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { TAKE_NUMBER } from "@/constants";
 import { prisma } from "@/services/prisma";
-import { endOfDay, format, startOfDay, add } from "date-fns";
+import { endOfDay, format, startOfDay, add, parseISO } from "date-fns";
 import { z } from "zod";
 import { getZonedStartOfDay, getZonedEndOfDay } from "@/helpers/getTimeZone";
+import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
 
 export const bookingTimeSlotRouter = router({
   fetchForStudent: publicProcedure
@@ -23,8 +24,8 @@ export const bookingTimeSlotRouter = router({
       try {
         return prisma.$transaction(async (txn) => {
           const whereQuery = {
-            gte: startOfDay(dateTime),
-            lte: endOfDay(dateTime),
+            gte: getZonedStartOfDay(dateTime),
+            lte: getZonedEndOfDay(dateTime),
           };
 
           const totalClasses = await txn.bookingTimeSlots.aggregate({
@@ -91,13 +92,29 @@ export const bookingTimeSlotRouter = router({
               },
             }
           );
+          const input = new Date(date);
+
+          // UTC: 09-27 21:00
+          // Browser (Germany/Berlin): 09-26 23:00
+          const inputZoned = utcToZonedTime(input, "Asia/Hong_Kong");
+
+          // UTC: 09-25 22:00
+          // Browser (Germany/Berlin): 09-26 00:00
+          const dayStartZoned = startOfDay(inputZoned);
+          const dayEndZoned = endOfDay(inputZoned);
+
+          // UTC: 09-26 04:00
+          // Browser (Germany/Berlin): 09-26 06:00
+          // Target (America/New_York): 09-26 00:00
+          const dayStart = zonedTimeToUtc(dayStartZoned, "Asia/Hong_Kong");
+          const dayEnd = zonedTimeToUtc(dayEndZoned, "Asia/Hong_Kong");
           return {
             totalClassesCount,
             bookingTimeSlots,
             regularBookingSlot,
-            dateTime,
-            startOfDay: startOfDay(dateTime),
-            endOfDay: endOfDay(dateTime),
+            dateTime: inputZoned,
+            startOfDay: dayStart,
+            endOfDay: dayEnd,
           };
         });
       } catch (error) {
