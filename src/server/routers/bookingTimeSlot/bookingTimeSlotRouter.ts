@@ -1,7 +1,6 @@
 import { TAKE_NUMBER } from "@/constants";
 import {
   getFormatTimeZone,
-  getTimeZone,
   getZonedEndOfDay,
   getZonedStartOfDay,
 } from "@/helpers/getTimeZone";
@@ -107,13 +106,6 @@ export const bookingTimeSlotRouter = router({
             totalClassesCount,
             bookingTimeSlots,
             regularBookingSlot,
-            noChangeTime: new Date(),
-            changeTime: getTimeZone(),
-            noChangeFormat: format(new Date(), "PPpp"),
-            changeFormat: getFormatTimeZone({
-              date: new Date(),
-              format: "PPpp",
-            }),
           };
         });
       } catch (error) {
@@ -167,7 +159,7 @@ export const bookingTimeSlotRouter = router({
     await prisma.bookingTimeSlots.deleteMany({
       where: {
         date: {
-          lt: getTimeZone(),
+          lt: new Date(),
         },
         status: BookingTimeSlotStatusEnum.PENDING,
         userOnBookingTimeSlots: {

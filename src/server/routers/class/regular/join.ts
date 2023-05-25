@@ -4,14 +4,14 @@ import { TRPCError } from "@trpc/server";
 
 import { LanguageEnum, User } from "@prisma/client";
 import { z } from "zod";
-import { format } from "date-fns";
+
 import { getTimeDuration } from "@/helpers/getTime";
 import { sendSingleNotification } from "@/services/notification/onesignal";
 import { getMessage } from "@/services/notification/getMessage";
 import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
 
 import { getTranslatedTerm } from "@/services/notification/getTranslatedTerm";
-import { getTimeZone, getFormatTimeZone } from "@/helpers/getTimeZone";
+import { getFormatTimeZone } from "@/helpers/getTimeZone";
 
 export const join = protectedProcedure
   .input(
@@ -41,7 +41,7 @@ export const join = protectedProcedure
       where: {
         userId: user.id,
         expiryDate: {
-          gte: getTimeZone(),
+          gte: new Date(),
         },
         lesson: {
           gt: 0,
@@ -83,7 +83,7 @@ export const join = protectedProcedure
 
       const result = await txn.bookingTimeSlots.create({
         data: {
-          date: getTimeZone(new Date(date)),
+          date: new Date(date),
           startTime,
           endTime,
           className,

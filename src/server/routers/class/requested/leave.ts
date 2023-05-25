@@ -1,15 +1,15 @@
 import { prisma } from "@/services/prisma";
 import { BookingTimeSlotStatusEnum, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { add, format, isAfter } from "date-fns";
+import { add, isAfter } from "date-fns";
 
-import { protectedProcedure } from "@/server/trpc";
-import { z } from "zod";
-import { getTimeDuration } from "@/helpers/getTime";
-import { getMessage } from "@/services/notification/getMessage";
 import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
+import { getTimeDuration } from "@/helpers/getTime";
+import { getFormatTimeZone } from "@/helpers/getTimeZone";
+import { protectedProcedure } from "@/server/trpc";
+import { getMessage } from "@/services/notification/getMessage";
 import { sendSingleNotification } from "@/services/notification/onesignal";
-import { getFormatTimeZone, getTimeZone } from "@/helpers/getTimeZone";
+import { z } from "zod";
 
 export const leave = protectedProcedure
   .input(
@@ -40,9 +40,9 @@ export const leave = protectedProcedure
         code: "UNAUTHORIZED",
       });
     }
-    const now = getTimeZone();
+    const now = new Date();
     if (status === BookingTimeSlotStatusEnum.CONFIRM) {
-      const joiningTime = getTimeZone(new Date(userBookingTimeSlot.createdAt));
+      const joiningTime = new Date(userBookingTimeSlot.createdAt);
 
       if (isAfter(now, add(joiningTime, { hours: 1 }))) {
         shouldAddBackLesson = false;

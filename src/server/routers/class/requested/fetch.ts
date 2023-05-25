@@ -4,7 +4,7 @@ import { prisma } from "@/services/prisma";
 import { SortedBookingTimeSlotsType } from "@/types/timeSlots";
 import { BookingTimeSlotStatusEnum } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { endOfDay, format, isAfter, startOfDay, subDays } from "date-fns";
+import { isAfter, subDays } from "date-fns";
 
 import {
   getFormatTimeZone,

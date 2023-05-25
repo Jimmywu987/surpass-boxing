@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 
 import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
 import { getTimeDuration } from "@/helpers/getTime";
-import { getFormatTimeZone, getTimeZone } from "@/helpers/getTimeZone";
+import { getFormatTimeZone } from "@/helpers/getTimeZone";
 import { protectedProcedure } from "@/server/trpc";
 import { getMessage } from "@/services/notification/getMessage";
 import { sendSingleNotification } from "@/services/notification/onesignal";
@@ -47,7 +47,7 @@ export const statusUpdate = protectedProcedure
         where: {
           userId: { in: userIds },
           expiryDate: {
-            gte: getTimeZone(),
+            gte: new Date(),
           },
         },
         orderBy: {

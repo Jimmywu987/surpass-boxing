@@ -6,7 +6,7 @@ import { LanguageEnum, User } from "@prisma/client";
 
 import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
 import { getTimeDuration } from "@/helpers/getTime";
-import { getFormatTimeZone, getTimeZone } from "@/helpers/getTimeZone";
+import { getFormatTimeZone } from "@/helpers/getTimeZone";
 import { protectedProcedure } from "@/server/trpc";
 import { getTranslatedTerm } from "@/services/notification/getTranslatedTerm";
 import { sendSingleNotification } from "@/services/notification/onesignal";
@@ -26,7 +26,7 @@ export const join = protectedProcedure
       where: {
         userId: user.id,
         expiryDate: {
-          gte: getTimeZone(),
+          gte: new Date(),
         },
         lesson: {
           gt: 0,

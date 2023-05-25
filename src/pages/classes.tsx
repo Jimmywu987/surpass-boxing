@@ -116,21 +116,8 @@ const ClassesPage = () => {
       return [];
     }
     const timeSlots: (BookingTimeSlots | RegularBookingTimeSlots)[] = [];
-    const {
-      bookingTimeSlots,
-      regularBookingSlot,
-      noChangeTime,
-      changeTime,
-      noChangeFormat,
-      changeFormat,
-    } = data;
-    console.log("--------------");
+    const { bookingTimeSlots, regularBookingSlot } = data;
 
-    console.log("noChangeTime", noChangeTime);
-    console.log("changeTime", changeTime);
-    console.log("noChangeFormat", noChangeFormat);
-    console.log("changeFormat", changeFormat);
-    console.log("--------------");
     timeSlots.push(...bookingTimeSlots);
     timeSlots.push(...regularBookingSlot);
     timeSlots.sort((a, b) => a.startTime - b.startTime);

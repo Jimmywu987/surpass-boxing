@@ -5,7 +5,6 @@ import { add } from "date-fns";
 
 import { protectedProcedure } from "@/server/trpc";
 import { addLessonSchema } from "@/schemas/lesson/add";
-import { getTimeZone } from "@/helpers/getTimeZone";
 
 export const addLesson = protectedProcedure
   .input(addLessonSchema())
@@ -23,7 +22,7 @@ export const addLesson = protectedProcedure
     return prisma.lessons.create({
       data: {
         lesson,
-        expiryDate: add(getTimeZone(), {
+        expiryDate: add(new Date(), {
           [durationUnit]: duration,
         }),
         userId,
