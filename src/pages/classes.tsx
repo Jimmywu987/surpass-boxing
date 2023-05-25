@@ -144,16 +144,6 @@ const ClassesPage = () => {
     });
   };
 
-  if (!data || isLoading) {
-    return (
-      <div className="mx-2">
-        <Stack>
-          <Skeleton height="30px" />
-        </Stack>
-      </div>
-    );
-  }
-
   return (
     <>
       <div className="space-y-2 p-2 md:p-0">
@@ -180,180 +170,191 @@ const ClassesPage = () => {
             <Button onClick={handleOpenModel}>{t("open_a_class")}</Button>
           </div>
         </div>
-        <div className="space-y-2">
-          {classes.map((slot) => {
-            const { startTime, endTime } = slot;
-            const bookingTimeSlot = slot as BookingTimeSlots;
-            const regularBookingTimeSlot = slot as RegularBookingTimeSlots;
-            const isRegular = !bookingTimeSlot.status;
+        {!data || isLoading ? (
+          <div className="mx-2">
+            <Stack>
+              <Skeleton height="120px" />
+            </Stack>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {classes.map((slot) => {
+              const { startTime, endTime } = slot;
+              const bookingTimeSlot = slot as BookingTimeSlots;
+              const regularBookingTimeSlot = slot as RegularBookingTimeSlots;
+              const isRegular = !bookingTimeSlot.status;
 
-            const isJoined =
-              isAuthenticated &&
-              !isRegular &&
-              bookingTimeSlot.userOnBookingTimeSlots.some(
-                (slot) => slot.userId === user.id
-              );
+              const isJoined =
+                isAuthenticated &&
+                !isRegular &&
+                bookingTimeSlot.userOnBookingTimeSlots.some(
+                  (slot) => slot.userId === user.id
+                );
 
-            const dateOfClass =
-              startOfDay(new Date(query.date)).getTime() + startTime;
+              const dateOfClass =
+                startOfDay(new Date(query.date)).getTime() + startTime;
 
-            const nowPlusHours = add(new Date(), {
-              hours: HOURS,
-            }).getTime();
+              const nowPlusHours = add(new Date(), {
+                hours: HOURS,
+              }).getTime();
 
-            const shouldDisabled =
-              isPast(dateOfClass) ||
-              nowPlusHours > dateOfClass ||
-              leaveClassIsLoading ||
-              joinClassIsLoading ||
-              joinRegularClassIsLoading;
+              const shouldDisabled =
+                isPast(dateOfClass) ||
+                nowPlusHours > dateOfClass ||
+                leaveClassIsLoading ||
+                joinClassIsLoading ||
+                joinRegularClassIsLoading;
 
-            return (
-              <div
-                key={slot.id}
-                className="flex justify-between p-5 border border-gray-600 rounded-md shadow-lg text-white"
-              >
-                <div className="space-y-2">
-                  <div className="text-2xl flex items-center space-x-2">
-                    {!isRegular &&
-                      bookingTimeSlot.status ===
-                        BookingTimeSlotStatusEnum.CONFIRM && (
-                        <CheckIcon bg="green.600" rounded="full" p="1" />
-                      )}
-                    <span className="font-semibold">{slot.className}</span>
-                  </div>
-                  <div>
-                    {getTimeDuration({
-                      startTime,
-                      endTime,
-                    })}
+              return (
+                <div
+                  key={slot.id}
+                  className="flex justify-between p-5 border border-gray-600 rounded-md shadow-lg text-white"
+                >
+                  <div className="space-y-2">
+                    <div className="text-2xl flex items-center space-x-2">
+                      {!isRegular &&
+                        bookingTimeSlot.status ===
+                          BookingTimeSlotStatusEnum.CONFIRM && (
+                          <CheckIcon bg="green.600" rounded="full" p="1" />
+                        )}
+                      <span className="font-semibold">{slot.className}</span>
+                    </div>
                     <div>
-                      {t("classes:duration")}:{" "}
-                      {t(
-                        ...(getDuration({
-                          startTime,
-                          endTime,
-                        }) as [string])
-                      )}
+                      {getTimeDuration({
+                        startTime,
+                        endTime,
+                      })}
+                      <div>
+                        {t("classes:duration")}:{" "}
+                        {t(
+                          ...(getDuration({
+                            startTime,
+                            endTime,
+                          }) as [string])
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  {!isRegular && (
-                    <div className="space-y-2">
-                      {!!slot.numberOfParticipants ? (
-                        <div>
-                          {t("classes:set_limit")}
-                          {": "}
-                          {`${bookingTimeSlot.userOnBookingTimeSlots.length} /${slot.numberOfParticipants}`}
-                        </div>
-                      ) : (
-                        <div>
-                          {t("classes:number_of_participants")}
-                          {": "}
-                          {`${bookingTimeSlot.userOnBookingTimeSlots.length}`}
-                        </div>
-                      )}
-                      {isAuthenticated && (
-                        <div className="flex gap-1 flex-wrap ">
-                          {bookingTimeSlot.userOnBookingTimeSlots.map(
-                            (slot, index) => (
-                              <div key={index}>
-                                <div className="w-10 h-10 relative">
-                                  <Image
-                                    src={
-                                      slot.user.profileImg ?? DefaultProfileImg
-                                    }
-                                    alt={`${slot.user.username} profile image`}
-                                    className="w-full h-full rounded-full object-cover"
-                                    fill
-                                  />
+                    {!isRegular && (
+                      <div className="space-y-2">
+                        {!!slot.numberOfParticipants ? (
+                          <div>
+                            {t("classes:set_limit")}
+                            {": "}
+                            {`${bookingTimeSlot.userOnBookingTimeSlots.length} /${slot.numberOfParticipants}`}
+                          </div>
+                        ) : (
+                          <div>
+                            {t("classes:number_of_participants")}
+                            {": "}
+                            {`${bookingTimeSlot.userOnBookingTimeSlots.length}`}
+                          </div>
+                        )}
+                        {isAuthenticated && (
+                          <div className="flex gap-1 flex-wrap ">
+                            {bookingTimeSlot.userOnBookingTimeSlots.map(
+                              (slot, index) => (
+                                <div key={index}>
+                                  <div className="w-10 h-10 relative">
+                                    <Image
+                                      src={
+                                        slot.user.profileImg ??
+                                        DefaultProfileImg
+                                      }
+                                      alt={`${slot.user.username} profile image`}
+                                      className="w-full h-full rounded-full object-cover"
+                                      fill
+                                    />
+                                  </div>
+                                  <div>{slot.user.username}</div>
                                 </div>
-                                <div>{slot.user.username}</div>
-                              </div>
-                            )
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-                <div className="flex flex-col justify-between">
-                  <div>
-                    {!isRegular && !!bookingTimeSlot.coach && (
-                      <div className="">
-                        {t("classes:coaches")}
-                        {": "}
-                        {bookingTimeSlot.coach.username}
+                              )
+                            )}
+                          </div>
+                        )}
                       </div>
                     )}
-                    {isRegular &&
-                      regularBookingTimeSlot.coach &&
-                      !!regularBookingTimeSlot.coach.username && (
+                  </div>
+                  <div className="flex flex-col justify-between">
+                    <div>
+                      {!isRegular && !!bookingTimeSlot.coach && (
                         <div className="">
                           {t("classes:coaches")}
                           {": "}
-                          {regularBookingTimeSlot.coach.username}
+                          {bookingTimeSlot.coach.username}
                         </div>
                       )}
-                  </div>
-                  <div className="self-end">
-                    {isJoined ? (
-                      <MinusIcon
-                        bg={!shouldDisabled ? "red.600" : "gray.500"}
-                        rounded="full"
-                        p="1.5"
-                        className={`text-2xl ${
-                          !shouldDisabled && "cursor-pointer"
-                        }`}
-                        onClick={async () => {
-                          if (shouldDisabled) {
-                            return;
-                          }
-                          await leaveClass(slot as BookingTimeSlots);
-                        }}
-                      />
-                    ) : (
-                      <AddIcon
-                        bg={!shouldDisabled ? "green.600" : "gray.500"}
-                        rounded="full"
-                        p="1.5"
-                        className={`text-2xl ${
-                          !shouldDisabled && "cursor-pointer"
-                        }`}
-                        onClick={async () => {
-                          if (shouldDisabled) {
-                            return;
-                          }
-                          if (!lessonsData || lessonsData.length === 0) {
-                            handleOpenModel();
-                            return;
-                          }
-                          if (isRegular) {
-                            await joinRegularClass(
-                              slot as RegularBookingTimeSlots
-                            );
-                            return;
-                          }
-                          await joinClass(slot as BookingTimeSlots);
-                        }}
-                      />
-                    )}
+                      {isRegular &&
+                        regularBookingTimeSlot.coach &&
+                        !!regularBookingTimeSlot.coach.username && (
+                          <div className="">
+                            {t("classes:coaches")}
+                            {": "}
+                            {regularBookingTimeSlot.coach.username}
+                          </div>
+                        )}
+                    </div>
+                    <div className="self-end">
+                      {isJoined ? (
+                        <MinusIcon
+                          bg={!shouldDisabled ? "red.600" : "gray.500"}
+                          rounded="full"
+                          p="1.5"
+                          className={`text-2xl ${
+                            !shouldDisabled && "cursor-pointer"
+                          }`}
+                          onClick={async () => {
+                            if (shouldDisabled) {
+                              return;
+                            }
+                            await leaveClass(slot as BookingTimeSlots);
+                          }}
+                        />
+                      ) : (
+                        <AddIcon
+                          bg={!shouldDisabled ? "green.600" : "gray.500"}
+                          rounded="full"
+                          p="1.5"
+                          className={`text-2xl ${
+                            !shouldDisabled && "cursor-pointer"
+                          }`}
+                          onClick={async () => {
+                            if (shouldDisabled) {
+                              return;
+                            }
+                            if (!lessonsData || lessonsData.length === 0) {
+                              handleOpenModel();
+                              return;
+                            }
+                            if (isRegular) {
+                              await joinRegularClass(
+                                slot as RegularBookingTimeSlots
+                              );
+                              return;
+                            }
+                            await joinClass(slot as BookingTimeSlots);
+                          }}
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-          {data.bookingTimeSlots.length !== 0 ? (
-            <PaginationSection
-              setQuery={setQuery as Dispatch<SetStateAction<{ skip: number }>>}
-              query={query}
-              totalCount={data.totalClassesCount}
-            />
-          ) : data.regularBookingSlot.length === 0 ? (
-            <div className="text-white text-center">{t("admin:no_data")}</div>
-          ) : (
-            <></>
-          )}
-        </div>
+              );
+            })}
+            {data.bookingTimeSlots.length !== 0 ? (
+              <PaginationSection
+                setQuery={
+                  setQuery as Dispatch<SetStateAction<{ skip: number }>>
+                }
+                query={query}
+                totalCount={data.totalClassesCount}
+              />
+            ) : data.regularBookingSlot.length === 0 ? (
+              <div className="text-white text-center">{t("admin:no_data")}</div>
+            ) : (
+              <></>
+            )}
+          </div>
+        )}
       </div>
       <ModalComponent
         modalDisclosure={modalDisclosure}

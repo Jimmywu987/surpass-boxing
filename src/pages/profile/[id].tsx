@@ -98,6 +98,7 @@ const ProfilePage = () => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context;
   const { id } = query;
+
   if (!id || Array.isArray(id)) {
     return {
       redirect: {

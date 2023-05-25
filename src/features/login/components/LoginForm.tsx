@@ -90,7 +90,7 @@ export const LoginForm = ({
       <GoogleButton loading={formState.isSubmitting} />
       <div className="border-b border-b-gray-200 my-2" />
       <div className="flex justify-center">
-        <span>{t("join_already")}</span>
+        <span>{t("not_yet_join")}</span>
         {SignUpButton}
       </div>
     </FormProvider>
