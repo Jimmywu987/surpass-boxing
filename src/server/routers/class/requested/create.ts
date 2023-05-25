@@ -1,7 +1,7 @@
 import { requestedClassCreateSchema } from "@/schemas/class/requested/create";
 import { protectedProcedure } from "@/server/trpc";
 import { prisma } from "@/services/prisma";
-import { LanguageEnum, Lessons, User } from "@prisma/client";
+import { Lessons, User } from "@prisma/client";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { format } from "date-fns";
@@ -9,6 +9,7 @@ import { getTimeDuration } from "@/helpers/getTime";
 import { sendSingleNotification } from "@/services/notification/onesignal";
 import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
 import { getMessage } from "@/services/notification/getMessage";
+import { getFormatTimeZone, getTimeZone } from "@/helpers/getTimeZone";
 
 export const create = protectedProcedure
   .input(requestedClassCreateSchema())
@@ -16,7 +17,7 @@ export const create = protectedProcedure
     const { setLimit, people, date, ...data } = input as z.infer<
       ReturnType<typeof requestedClassCreateSchema>
     >;
-    const dateTime = new Date(date);
+    const dateTime = getTimeZone(new Date(date));
     const user = ctx.session.user as User;
     let lessons: Lessons[] = [];
     if (!user.admin) {
@@ -24,7 +25,7 @@ export const create = protectedProcedure
         where: {
           userId: user.id,
           expiryDate: {
-            gte: new Date(),
+            gte: getTimeZone(),
           },
           lesson: {
             gt: 0,
@@ -109,7 +110,9 @@ export const create = protectedProcedure
           admin: true,
         },
       });
-      const dateTime = format(new Date(date), "yyyy-MM-dd");
+      const dateTime = getFormatTimeZone({
+        date: new Date(date),
+      });
       const time = getTimeDuration({ startTime, endTime });
       const url = `admin?time_slot_id=${id}&date=${dateTime}`;
 

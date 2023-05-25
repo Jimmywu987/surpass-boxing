@@ -1,5 +1,6 @@
 import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
 import { getTimeDuration } from "@/helpers/getTime";
+import { getFormatTimeZone, getTimeZone } from "@/helpers/getTimeZone";
 import { requestedClassCreateSchema } from "@/schemas/class/requested/create";
 import { protectedProcedure } from "@/server/trpc";
 import { getMessage } from "@/services/notification/getMessage";
@@ -22,7 +23,10 @@ export const update = protectedProcedure
     }
     let regularBookingTimeSlotId = null;
 
-    const weekday = format(dateTime, "EEEE").toLowerCase();
+    const weekday = getFormatTimeZone({
+      date: dateTime,
+      format: "EEEE",
+    }).toLowerCase();
 
     let hasCoachName = {};
     if (data.coachId) {
@@ -61,7 +65,7 @@ export const update = protectedProcedure
         id: data.id,
       },
       data: {
-        date: dateTime,
+        date: getTimeZone(dateTime),
         startTime: data.startTime,
         endTime: data.endTime,
         className: data.className,

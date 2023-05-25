@@ -1,17 +1,15 @@
-import { publicProcedure, router, protectedProcedure } from "@/server/trpc";
+import { TAKE_NUMBER } from "@/constants";
+import {
+  getFormatTimeZone,
+  getTimeZone,
+  getZonedEndOfDay,
+  getZonedStartOfDay,
+} from "@/helpers/getTimeZone";
+import { protectedProcedure, publicProcedure, router } from "@/server/trpc";
+import { prisma } from "@/services/prisma";
 import { BookingTimeSlotStatusEnum, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { TAKE_NUMBER } from "@/constants";
-import { prisma } from "@/services/prisma";
-import { endOfDay, format, startOfDay, add, parseISO } from "date-fns";
 import { z } from "zod";
-import {
-  getZonedStartOfDay,
-  getZonedEndOfDay,
-  getTimeZone,
-  getFormatTimeZone,
-} from "@/helpers/getTimeZone";
-import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
 
 export const bookingTimeSlotRouter = router({
   fetchForStudent: publicProcedure
@@ -24,10 +22,12 @@ export const bookingTimeSlotRouter = router({
     .query(async ({ input }) => {
       const { skip, date } = input;
       const dateTime = new Date(date);
+
       const weekday = getFormatTimeZone({
         date: dateTime,
         format: "EEEE",
       }).toLowerCase();
+
       const startDay = getZonedStartOfDay(dateTime);
       const endDay = getZonedEndOfDay(dateTime);
       try {
@@ -106,10 +106,8 @@ export const bookingTimeSlotRouter = router({
             totalClassesCount,
             bookingTimeSlots,
             regularBookingSlot,
-            dateTime: dateTime,
-            weekday,
-            startOfDay: startDay,
-            endOfDay: endDay,
+            noChangeTime: new Date(),
+            changeTime: getTimeZone(),
           };
         });
       } catch (error) {
@@ -163,7 +161,7 @@ export const bookingTimeSlotRouter = router({
     await prisma.bookingTimeSlots.deleteMany({
       where: {
         date: {
-          lt: new Date(),
+          lt: getTimeZone(),
         },
         status: BookingTimeSlotStatusEnum.PENDING,
         userOnBookingTimeSlots: {

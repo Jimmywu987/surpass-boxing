@@ -1,7 +1,12 @@
 import { prisma } from "@/services/prisma";
 import { TRPCError } from "@trpc/server";
 
+import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
+import { getTimeDuration } from "@/helpers/getTime";
+import { getFormatTimeZone, getTimeZone } from "@/helpers/getTimeZone";
 import { protectedProcedure } from "@/server/trpc";
+import { getMessage } from "@/services/notification/getMessage";
+import { sendSingleNotification } from "@/services/notification/onesignal";
 import {
   BookingTimeSlotStatusEnum,
   LanguageEnum,
@@ -9,11 +14,6 @@ import {
   User,
 } from "@prisma/client";
 import { z } from "zod";
-import { sendSingleNotification } from "@/services/notification/onesignal";
-import { getMessage } from "@/services/notification/getMessage";
-import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
-import { format } from "date-fns";
-import { getTimeDuration } from "@/helpers/getTime";
 export const statusUpdate = protectedProcedure
   .input(
     z.object({
@@ -47,7 +47,7 @@ export const statusUpdate = protectedProcedure
         where: {
           userId: { in: userIds },
           expiryDate: {
-            gte: new Date(),
+            gte: getTimeZone(),
           },
         },
         orderBy: {
@@ -109,7 +109,9 @@ export const statusUpdate = protectedProcedure
     const userIdsForEn = userOnBookingTimeSlots
       .filter((timeSlot) => timeSlot.user.lang === LanguageEnum.EN)
       .map((timeSlot) => timeSlot.user.id);
-    const dateTime = format(new Date(date), "yyyy-MM-dd");
+    const dateTime = getFormatTimeZone({
+      date: new Date(date),
+    });
     const time = getTimeDuration({ startTime, endTime });
     const url = `classes?date=${dateTime}`;
     const messageData = {

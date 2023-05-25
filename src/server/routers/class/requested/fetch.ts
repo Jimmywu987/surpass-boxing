@@ -4,45 +4,44 @@ import { prisma } from "@/services/prisma";
 import { SortedBookingTimeSlotsType } from "@/types/timeSlots";
 import { BookingTimeSlotStatusEnum } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import {
-  endOfDay,
-  endOfMonth,
-  endOfWeek,
-  endOfYear,
-  format,
-  isAfter,
-  startOfDay,
-  startOfMonth,
-  startOfWeek,
-  startOfYear,
-  subDays,
-} from "date-fns";
+import { endOfDay, format, isAfter, startOfDay, subDays } from "date-fns";
 
+import {
+  getFormatTimeZone,
+  getZonedEndOfDay,
+  getZonedEndOfMonth,
+  getZonedEndOfWeek,
+  getZonedEndOfYear,
+  getZonedStartOfDay,
+  getZonedStartOfMonth,
+  getZonedStartOfWeek,
+  getZonedStartOfYear,
+} from "@/helpers/getTimeZone";
 import { publicProcedure } from "@/server/trpc";
 import { z } from "zod";
 const getStartDuration = (period: AdminPeriodOptionsEnum) => {
   switch (period) {
     case AdminPeriodOptionsEnum.ONE_DAY:
-      return startOfDay;
+      return getZonedStartOfDay;
     case AdminPeriodOptionsEnum.ONE_WEEK:
-      return startOfWeek;
+      return getZonedStartOfWeek;
     case AdminPeriodOptionsEnum.ONE_MONTH:
-      return startOfMonth;
+      return getZonedStartOfMonth;
     default:
-      return startOfYear;
+      return getZonedStartOfYear;
   }
 };
 
 const getEndDuration = (period: AdminPeriodOptionsEnum) => {
   switch (period) {
     case AdminPeriodOptionsEnum.ONE_DAY:
-      return endOfDay;
+      return getZonedEndOfDay;
     case AdminPeriodOptionsEnum.ONE_WEEK:
-      return endOfWeek;
+      return getZonedEndOfWeek;
     case AdminPeriodOptionsEnum.ONE_MONTH:
-      return endOfMonth;
+      return getZonedEndOfMonth;
     default:
-      return endOfYear;
+      return getZonedEndOfYear;
   }
 };
 
@@ -58,15 +57,15 @@ const getDurationWhereQuery = ({
   const dateTime = new Date(date);
   if (!isPast || !period) {
     return {
-      gte: startOfDay(dateTime),
+      gte: getZonedStartOfDay(dateTime),
     };
   }
   if (period === AdminPeriodOptionsEnum.ALL) {
     return {
-      lte: endOfDay(dateTime),
+      lte: getZonedEndOfDay(dateTime),
     };
   }
-  const yesterday = endOfDay(subDays(new Date(), 1));
+  const yesterday = getZonedEndOfDay(subDays(new Date(), 1));
   const endDateTime = getEndDuration(period)(dateTime);
   return {
     gte: getStartDuration(period)(dateTime),
@@ -173,7 +172,9 @@ export const fetch = publicProcedure
       const sortedBookingTimeSlots: SortedBookingTimeSlotsType = [];
 
       result.bookingTimeSlots.map((timeSlot) => {
-        const date = format(timeSlot.date, "yyyy-MM-dd");
+        const date = getFormatTimeZone({
+          date: timeSlot.date,
+        });
         const checkIfExist = sortedBookingTimeSlots.findIndex(
           (slot) => slot.date === date
         );

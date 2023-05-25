@@ -11,6 +11,7 @@ import { getMessage } from "@/services/notification/getMessage";
 import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
 
 import { getTranslatedTerm } from "@/services/notification/getTranslatedTerm";
+import { getTimeZone, getFormatTimeZone } from "@/helpers/getTimeZone";
 
 export const join = protectedProcedure
   .input(
@@ -40,7 +41,7 @@ export const join = protectedProcedure
       where: {
         userId: user.id,
         expiryDate: {
-          gte: new Date(),
+          gte: getTimeZone(),
         },
         lesson: {
           gt: 0,
@@ -82,7 +83,7 @@ export const join = protectedProcedure
 
       const result = await txn.bookingTimeSlots.create({
         data: {
-          date: new Date(date),
+          date: getTimeZone(new Date(date)),
           startTime,
           endTime,
           className,
@@ -120,7 +121,9 @@ export const join = protectedProcedure
             admin: true,
           },
     });
-    const dateTime = format(new Date(date), "yyyy-MM-dd");
+    const dateTime = getFormatTimeZone({
+      date: new Date(date),
+    });
     const time = getTimeDuration({ startTime, endTime });
     const url = `admin?time_slot_id=${result.id}&date=${dateTime}`;
 

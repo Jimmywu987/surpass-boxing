@@ -1,16 +1,16 @@
 import { prisma } from "@/services/prisma";
 import { TRPCError } from "@trpc/server";
 
-import { LanguageEnum, User } from "@prisma/client";
 import { getMessage } from "@/services/notification/getMessage";
+import { LanguageEnum, User } from "@prisma/client";
 
-import { protectedProcedure } from "@/server/trpc";
-import { z } from "zod";
-import { sendSingleNotification } from "@/services/notification/onesignal";
-import { format } from "date-fns";
-import { getTimeDuration } from "@/helpers/getTime";
 import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
+import { getTimeDuration } from "@/helpers/getTime";
+import { getFormatTimeZone, getTimeZone } from "@/helpers/getTimeZone";
+import { protectedProcedure } from "@/server/trpc";
 import { getTranslatedTerm } from "@/services/notification/getTranslatedTerm";
+import { sendSingleNotification } from "@/services/notification/onesignal";
+import { z } from "zod";
 export const join = protectedProcedure
   .input(
     z.object({
@@ -26,7 +26,7 @@ export const join = protectedProcedure
       where: {
         userId: user.id,
         expiryDate: {
-          gte: new Date(),
+          gte: getTimeZone(),
         },
         lesson: {
           gt: 0,
@@ -96,7 +96,7 @@ export const join = protectedProcedure
             admin: true,
           },
     });
-    const dateTime = format(date, "yyyy-MM-dd");
+    const dateTime = getFormatTimeZone({ date: date });
     const time = getTimeDuration({ startTime, endTime });
 
     const url = `admin?time_slot_id=${id}&date=${dateTime}`;

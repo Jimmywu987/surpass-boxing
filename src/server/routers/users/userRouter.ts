@@ -6,6 +6,7 @@ import { BookingTimeSlotStatusEnum, LanguageEnum, User } from "@prisma/client";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { editAccountSchema } from "@/schemas/user/edit";
+import { getTimeZone } from "@/helpers/getTimeZone";
 
 export const userRouter = router({
   fetch: protectedProcedure
@@ -52,7 +53,7 @@ export const userRouter = router({
               lessons: {
                 some: {
                   expiryDate: {
-                    gte: new Date(),
+                    gte: getTimeZone(),
                   },
                 },
               },
@@ -62,7 +63,7 @@ export const userRouter = router({
                 every: {
                   NOT: {
                     expiryDate: {
-                      gte: new Date(),
+                      gte: getTimeZone(),
                     },
                   },
                 },
