@@ -21,9 +21,6 @@ export const getFormatTimeZone = ({
 }) => {
   return formatInTimeZone(date, tz, format);
 };
-export const getTimeZone = (date = new Date(), tz = HONG_KONG_TIME_ZONE) => {
-  return utcToZonedTime(date, tz);
-};
 
 const calcZonedDate = (
   date: Date,
