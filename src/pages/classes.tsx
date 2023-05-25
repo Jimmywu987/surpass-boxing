@@ -116,7 +116,9 @@ const ClassesPage = () => {
       return [];
     }
     const timeSlots: (BookingTimeSlots | RegularBookingTimeSlots)[] = [];
-    const { bookingTimeSlots, regularBookingSlot } = data;
+    const { bookingTimeSlots, regularBookingSlot, dateTime } = data;
+    console.log("abcfeuishiushfeiugfis", dateTime);
+
     timeSlots.push(...bookingTimeSlots);
     timeSlots.push(...regularBookingSlot);
     timeSlots.sort((a, b) => a.startTime - b.startTime);

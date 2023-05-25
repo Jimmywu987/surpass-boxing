@@ -94,6 +94,7 @@ export const bookingTimeSlotRouter = router({
             totalClassesCount,
             bookingTimeSlots,
             regularBookingSlot,
+            dateTime,
           };
         });
       } catch (error) {
