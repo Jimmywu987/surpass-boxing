@@ -5,6 +5,7 @@ import { TAKE_NUMBER } from "@/constants";
 import { prisma } from "@/services/prisma";
 import { endOfDay, format, startOfDay, add } from "date-fns";
 import { z } from "zod";
+import { getZonedStartOfDay, getZonedEndOfDay } from "@/helpers/getTimeZone";
 
 export const bookingTimeSlotRouter = router({
   fetchForStudent: publicProcedure
@@ -22,8 +23,8 @@ export const bookingTimeSlotRouter = router({
       try {
         return prisma.$transaction(async (txn) => {
           const whereQuery = {
-            gte: startOfDay(dateTime),
-            lte: endOfDay(dateTime),
+            gte: getZonedStartOfDay(dateTime),
+            lte: getZonedEndOfDay(dateTime),
           };
 
           const totalClasses = await txn.bookingTimeSlots.aggregate({
