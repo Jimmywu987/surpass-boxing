@@ -107,7 +107,7 @@ const ClassesPage = () => {
     skip: 0,
     date: noSpecificDate ? now.toString() : queryDate.toString(),
   });
-  console.log("uirhrighiuhsgiuhs", now);
+
   const { data, isLoading } =
     trpc.bookingTimeSlotRouter.fetchForStudent.useQuery(query);
 
@@ -116,8 +116,18 @@ const ClassesPage = () => {
       return [];
     }
     const timeSlots: (BookingTimeSlots | RegularBookingTimeSlots)[] = [];
-    const { bookingTimeSlots, regularBookingSlot, dateTime } = data;
-    console.log("abcfeuishiushfeiugfis", dateTime);
+    const {
+      bookingTimeSlots,
+      regularBookingSlot,
+      dateTime,
+      startOfDay,
+      endOfDay,
+    } = data;
+    console.log("------------------");
+    console.log("dateTime", dateTime);
+    console.log("startOfDay", startOfDay);
+    console.log("endOfDay", endOfDay);
+    console.log("------------------");
 
     timeSlots.push(...bookingTimeSlots);
     timeSlots.push(...regularBookingSlot);
@@ -156,7 +166,6 @@ const ClassesPage = () => {
               datePickerProps={{
                 date,
                 onDateChange: (value) => {
-                  console.log("fheufyugsufgyeyugfu", value.toString());
                   setQuery(() => ({
                     skip: 0,
                     date: value.toString(),

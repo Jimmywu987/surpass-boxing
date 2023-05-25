@@ -95,6 +95,8 @@ export const bookingTimeSlotRouter = router({
             bookingTimeSlots,
             regularBookingSlot,
             dateTime,
+            startOfDay: startOfDay(dateTime),
+            endOfDay: endOfDay(dateTime),
           };
         });
       } catch (error) {
