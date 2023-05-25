@@ -3,8 +3,9 @@ import { BookingTimeSlotStatusEnum, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { TAKE_NUMBER } from "@/constants";
 import { prisma } from "@/services/prisma";
-import { endOfDay, format, startOfDay } from "date-fns";
+import { endOfDay, format, startOfDay, add } from "date-fns";
 import { z } from "zod";
+import { getZonedStartOfDay, getZonedEndOfDay } from "@/helpers/getTimeZone";
 
 export const bookingTimeSlotRouter = router({
   fetchForStudent: publicProcedure
@@ -94,6 +95,9 @@ export const bookingTimeSlotRouter = router({
             totalClassesCount,
             bookingTimeSlots,
             regularBookingSlot,
+            dateTime,
+            startOfDay: startOfDay(dateTime),
+            endOfDay: endOfDay(dateTime),
           };
         });
       } catch (error) {
