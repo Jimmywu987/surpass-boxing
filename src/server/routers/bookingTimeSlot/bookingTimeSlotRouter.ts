@@ -17,14 +17,14 @@ export const bookingTimeSlotRouter = router({
     )
     .query(async ({ input }) => {
       const { skip, date } = input;
-      const dateTime = add(new Date(date), { hours: 1 });
+      const dateTime = add(new Date(date), { hours: 20 });
       const weekday = format(dateTime, "EEEE").toLowerCase();
 
       try {
         return prisma.$transaction(async (txn) => {
           const whereQuery = {
-            gte: getZonedStartOfDay(dateTime),
-            lte: getZonedEndOfDay(dateTime),
+            gte: startOfDay(dateTime),
+            lte: endOfDay(dateTime),
           };
 
           const totalClasses = await txn.bookingTimeSlots.aggregate({
