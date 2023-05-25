@@ -8,7 +8,6 @@ import { protectedProcedure, publicProcedure, router } from "@/server/trpc";
 import { prisma } from "@/services/prisma";
 import { BookingTimeSlotStatusEnum, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { format } from "date-fns";
 import { z } from "zod";
 
 export const bookingTimeSlotRouter = router({
