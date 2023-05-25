@@ -1,11 +1,15 @@
-import { publicProcedure, router, protectedProcedure } from "@/server/trpc";
+import { TAKE_NUMBER } from "@/constants";
+import {
+  getFormatTimeZone,
+  getZonedEndOfDay,
+  getZonedStartOfDay,
+} from "@/helpers/getTimeZone";
+import { protectedProcedure, publicProcedure, router } from "@/server/trpc";
+import { prisma } from "@/services/prisma";
 import { BookingTimeSlotStatusEnum, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { TAKE_NUMBER } from "@/constants";
-import { prisma } from "@/services/prisma";
-import { endOfDay, format, startOfDay, add } from "date-fns";
+import { format } from "date-fns";
 import { z } from "zod";
-import { getZonedStartOfDay, getZonedEndOfDay } from "@/helpers/getTimeZone";
 
 export const bookingTimeSlotRouter = router({
   fetchForStudent: publicProcedure
@@ -18,13 +22,19 @@ export const bookingTimeSlotRouter = router({
     .query(async ({ input }) => {
       const { skip, date } = input;
       const dateTime = new Date(date);
-      const weekday = format(dateTime, "EEEE").toLowerCase();
 
+      const weekday = getFormatTimeZone({
+        date: dateTime,
+        format: "EEEE",
+      }).toLowerCase();
+
+      const startDay = getZonedStartOfDay(dateTime);
+      const endDay = getZonedEndOfDay(dateTime);
       try {
         return prisma.$transaction(async (txn) => {
           const whereQuery = {
-            gte: startOfDay(dateTime),
-            lte: endOfDay(dateTime),
+            gte: startDay,
+            lte: endDay,
           };
 
           const totalClasses = await txn.bookingTimeSlots.aggregate({
@@ -91,13 +101,11 @@ export const bookingTimeSlotRouter = router({
               },
             }
           );
+
           return {
             totalClassesCount,
             bookingTimeSlots,
             regularBookingSlot,
-            dateTime,
-            startOfDay: startOfDay(dateTime),
-            endOfDay: endOfDay(dateTime),
           };
         });
       } catch (error) {

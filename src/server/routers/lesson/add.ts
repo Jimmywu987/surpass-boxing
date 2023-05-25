@@ -22,7 +22,9 @@ export const addLesson = protectedProcedure
     return prisma.lessons.create({
       data: {
         lesson,
-        expiryDate: add(new Date(), { [durationUnit]: duration }),
+        expiryDate: add(new Date(), {
+          [durationUnit]: duration,
+        }),
         userId,
         level,
       },

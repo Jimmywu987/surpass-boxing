@@ -1,5 +1,6 @@
 import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
 import { getTimeDuration } from "@/helpers/getTime";
+import { getFormatTimeZone } from "@/helpers/getTimeZone";
 import { requestedClassCreateSchema } from "@/schemas/class/requested/create";
 import { protectedProcedure } from "@/server/trpc";
 import { getMessage } from "@/services/notification/getMessage";
@@ -7,7 +8,6 @@ import { sendSingleNotification } from "@/services/notification/onesignal";
 import { prisma } from "@/services/prisma";
 import { LanguageEnum, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { format } from "date-fns";
 
 export const update = protectedProcedure
   .input(requestedClassCreateSchema())
@@ -22,7 +22,10 @@ export const update = protectedProcedure
     }
     let regularBookingTimeSlotId = null;
 
-    const weekday = format(dateTime, "EEEE").toLowerCase();
+    const weekday = getFormatTimeZone({
+      date: dateTime,
+      format: "EEEE",
+    }).toLowerCase();
 
     let hasCoachName = {};
     if (data.coachId) {
@@ -102,7 +105,10 @@ export const update = protectedProcedure
         className,
       } = bookingTimeSlot;
 
-      const formattedDateTime = format(new Date(timeSlotDate), "yyyy-MM-dd");
+      const formattedDateTime = getFormatTimeZone({
+        date: new Date(timeSlotDate),
+        format: "yyyy-MM-dd",
+      });
       const time = getTimeDuration({ startTime, endTime });
       const updatedTime = getTimeDuration({
         startTime: data.startTime,

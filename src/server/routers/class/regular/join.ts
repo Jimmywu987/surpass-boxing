@@ -4,13 +4,14 @@ import { TRPCError } from "@trpc/server";
 
 import { LanguageEnum, User } from "@prisma/client";
 import { z } from "zod";
-import { format } from "date-fns";
+
 import { getTimeDuration } from "@/helpers/getTime";
 import { sendSingleNotification } from "@/services/notification/onesignal";
 import { getMessage } from "@/services/notification/getMessage";
 import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
 
 import { getTranslatedTerm } from "@/services/notification/getTranslatedTerm";
+import { getFormatTimeZone } from "@/helpers/getTimeZone";
 
 export const join = protectedProcedure
   .input(
@@ -120,7 +121,9 @@ export const join = protectedProcedure
             admin: true,
           },
     });
-    const dateTime = format(new Date(date), "yyyy-MM-dd");
+    const dateTime = getFormatTimeZone({
+      date: new Date(date),
+    });
     const time = getTimeDuration({ startTime, endTime });
     const url = `admin?time_slot_id=${result.id}&date=${dateTime}`;
 

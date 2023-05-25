@@ -1,14 +1,14 @@
+import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
+import { getTimeDuration } from "@/helpers/getTime";
+import { getFormatTimeZone } from "@/helpers/getTimeZone";
 import { requestedClassCreateSchema } from "@/schemas/class/requested/create";
 import { protectedProcedure } from "@/server/trpc";
-import { prisma } from "@/services/prisma";
-import { LanguageEnum, Lessons, User } from "@prisma/client";
-import { z } from "zod";
-import { TRPCError } from "@trpc/server";
-import { format } from "date-fns";
-import { getTimeDuration } from "@/helpers/getTime";
-import { sendSingleNotification } from "@/services/notification/onesignal";
-import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
 import { getMessage } from "@/services/notification/getMessage";
+import { sendSingleNotification } from "@/services/notification/onesignal";
+import { prisma } from "@/services/prisma";
+import { Lessons, User } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 
 export const create = protectedProcedure
   .input(requestedClassCreateSchema())
@@ -43,7 +43,10 @@ export const create = protectedProcedure
     }
     let regularBookingTimeSlotId: string | null = null;
 
-    const weekday = format(dateTime, "EEEE").toLowerCase();
+    const weekday = getFormatTimeZone({
+      date: dateTime,
+      format: "EEEE",
+    }).toLowerCase();
 
     let hasCoachName = {};
     if (data.coachId) {
@@ -109,7 +112,9 @@ export const create = protectedProcedure
           admin: true,
         },
       });
-      const dateTime = format(new Date(date), "yyyy-MM-dd");
+      const dateTime = getFormatTimeZone({
+        date: new Date(date),
+      });
       const time = getTimeDuration({ startTime, endTime });
       const url = `admin?time_slot_id=${id}&date=${dateTime}`;
 
