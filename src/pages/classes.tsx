@@ -107,7 +107,7 @@ const ClassesPage = () => {
     skip: 0,
     date: noSpecificDate ? now.toString() : queryDate.toString(),
   });
-
+  console.log("uirhrighiuhsgiuhs", now);
   const { data, isLoading } =
     trpc.bookingTimeSlotRouter.fetchForStudent.useQuery(query);
 
@@ -154,6 +154,7 @@ const ClassesPage = () => {
               datePickerProps={{
                 date,
                 onDateChange: (value) => {
+                  console.log("fheufyugsufgyeyugfu", value.toString());
                   setQuery(() => ({
                     skip: 0,
                     date: value.toString(),
