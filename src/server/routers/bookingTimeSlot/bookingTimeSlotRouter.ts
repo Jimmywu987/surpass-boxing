@@ -3,7 +3,7 @@ import { BookingTimeSlotStatusEnum, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { TAKE_NUMBER } from "@/constants";
 import { prisma } from "@/services/prisma";
-import { endOfDay, format, startOfDay } from "date-fns";
+import { endOfDay, format, startOfDay, add } from "date-fns";
 import { z } from "zod";
 
 export const bookingTimeSlotRouter = router({
@@ -16,7 +16,7 @@ export const bookingTimeSlotRouter = router({
     )
     .query(async ({ input }) => {
       const { skip, date } = input;
-      const dateTime = new Date(date);
+      const dateTime = add(new Date(date), { hours: 1 });
       const weekday = format(dateTime, "EEEE").toLowerCase();
 
       try {
