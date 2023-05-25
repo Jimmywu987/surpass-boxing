@@ -17,7 +17,7 @@ export const bookingTimeSlotRouter = router({
     )
     .query(async ({ input }) => {
       const { skip, date } = input;
-      const dateTime = add(new Date(date), { hours: 20 });
+      const dateTime = new Date(date);
       const weekday = format(dateTime, "EEEE").toLowerCase();
 
       try {
