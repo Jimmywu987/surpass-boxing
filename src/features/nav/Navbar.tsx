@@ -180,8 +180,14 @@ export const Navbar = () => {
             finalFocusRef={btnRef}
           >
             <DrawerOverlay />
+
             <DrawerContent>
               <DrawerCloseButton fontSize="xl" my="8" mr="6" w="10" h="10" />
+              <div className="flex space-x-2 px-6 py-2">
+                <WhatsappSvgIcon className="fill-gray-800 hover:fill-green-600 hover:scale-110 duration-200" />
+                <FacebookSvgIcon className="fill-gray-800 hover:fill-blue-600 hover:scale-110 duration-200" />
+                <InstagramSvgIcon className="fill-gray-800 hover:fill-pink-600 hover:scale-110 duration-200" />
+              </div>
               {isAuthenticated ? (
                 <DrawerHeader>
                   <Link
@@ -215,17 +221,13 @@ export const Navbar = () => {
                   />
                 </DrawerHeader>
               )}
+
               <DrawerBody>
                 <MobileNavbar
                   onClickLanguageHandler={onClickLanguageHandler}
                   onClose={onClose}
                 />
               </DrawerBody>
-              <DrawerFooter className="space-x-2">
-                <WhatsappSvgIcon className="fill-gray-800 hover:fill-green-600 hover:scale-110 duration-200" />
-                <FacebookSvgIcon className="fill-gray-800 hover:fill-blue-600 hover:scale-110 duration-200" />
-                <InstagramSvgIcon className="fill-gray-800 hover:fill-pink-600 hover:scale-110 duration-200" />
-              </DrawerFooter>
             </DrawerContent>
           </Drawer>
         </div>

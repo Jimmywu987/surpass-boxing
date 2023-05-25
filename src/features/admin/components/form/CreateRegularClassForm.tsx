@@ -171,7 +171,7 @@ export const CreateRegularClassForm = ({
                     }
                   )
                 }
-                w="full "
+                w="full"
                 disabled={!watch("setLimit")}
               />
             </div>
