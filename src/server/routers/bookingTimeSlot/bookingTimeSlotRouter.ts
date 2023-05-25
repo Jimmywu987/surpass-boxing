@@ -5,7 +5,12 @@ import { TAKE_NUMBER } from "@/constants";
 import { prisma } from "@/services/prisma";
 import { endOfDay, format, startOfDay, add, parseISO } from "date-fns";
 import { z } from "zod";
-import { getZonedStartOfDay, getZonedEndOfDay } from "@/helpers/getTimeZone";
+import {
+  getZonedStartOfDay,
+  getZonedEndOfDay,
+  getTimeZone,
+  getFormatTimeZone,
+} from "@/helpers/getTimeZone";
 import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
 
 export const bookingTimeSlotRouter = router({
@@ -19,13 +24,17 @@ export const bookingTimeSlotRouter = router({
     .query(async ({ input }) => {
       const { skip, date } = input;
       const dateTime = new Date(date);
-      const weekday = format(dateTime, "EEEE").toLowerCase();
-
+      const weekday = getFormatTimeZone({
+        date: dateTime,
+        format: "EEEE",
+      }).toLowerCase();
+      const startDay = getZonedStartOfDay(dateTime);
+      const endDay = getZonedEndOfDay(dateTime);
       try {
         return prisma.$transaction(async (txn) => {
           const whereQuery = {
-            gte: getZonedStartOfDay(dateTime),
-            lte: getZonedEndOfDay(dateTime),
+            gte: startDay,
+            lte: endDay,
           };
 
           const totalClasses = await txn.bookingTimeSlots.aggregate({
@@ -92,29 +101,15 @@ export const bookingTimeSlotRouter = router({
               },
             }
           );
-          const input = new Date(date);
 
-          // UTC: 09-27 21:00
-          // Browser (Germany/Berlin): 09-26 23:00
-          const inputZoned = utcToZonedTime(input, "Asia/Hong_Kong");
-
-          // UTC: 09-25 22:00
-          // Browser (Germany/Berlin): 09-26 00:00
-          const dayStartZoned = startOfDay(inputZoned);
-          const dayEndZoned = endOfDay(inputZoned);
-
-          // UTC: 09-26 04:00
-          // Browser (Germany/Berlin): 09-26 06:00
-          // Target (America/New_York): 09-26 00:00
-          const dayStart = zonedTimeToUtc(dayStartZoned, "Asia/Hong_Kong");
-          const dayEnd = zonedTimeToUtc(dayEndZoned, "Asia/Hong_Kong");
           return {
             totalClassesCount,
             bookingTimeSlots,
             regularBookingSlot,
-            dateTime: inputZoned,
-            startOfDay: dayStart,
-            endOfDay: dayEnd,
+            dateTime: dateTime,
+            weekday,
+            startOfDay: startDay,
+            endOfDay: endDay,
           };
         });
       } catch (error) {
