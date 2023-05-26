@@ -1,4 +1,4 @@
-import { UserType } from "@/types";
+import { UserType } from "types";
 import { UseDisclosureReturn } from "@chakra-ui/react";
 import useTranslation from "next-translate/useTranslation";
 
