@@ -15,10 +15,6 @@ export default function Document() {
         <meta name="theme-color" content="#fff" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta
-          name="apple-mobile-web-app-status-bar-style"
-          content="black-translucent"
-        />
-        <meta
           name="viewport"
           content="initial-scale=1, viewport-fit=cover, width=device-width"
         />
