@@ -1,7 +1,7 @@
-import { TimeSlotsType } from "@/types/timeSlots";
+import { TimeSlotsType } from "types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { FeatureKey } from "../featureKey";
-import { RootState } from "../reducers";
+import { FeatureKey } from "@/redux/featureKey";
+import { RootState } from "@/redux/reducers";
 
 /**
  * Payload

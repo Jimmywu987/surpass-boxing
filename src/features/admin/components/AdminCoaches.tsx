@@ -3,7 +3,7 @@ import { Skeleton, Stack, useDisclosure } from "@chakra-ui/react";
 import { ModalComponent } from "@/features/common/components/Modal";
 import useTranslation from "next-translate/useTranslation";
 import { useState } from "react";
-// import { UserType } from "@/types";
+
 import { trpc } from "@/utils/trpc";
 import { User } from "@prisma/client";
 

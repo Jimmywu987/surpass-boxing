@@ -17,7 +17,7 @@ import { SelectCoach } from "@/features/admin/components/form/SelectCoach";
 import { useRequestedClassInputResolver } from "@/features/admin/schemas/useRequestedClassInputResolver";
 import { format, intervalToDuration } from "date-fns";
 import { WeekSelectionCheckBox } from "./WeekSelectionCheckBox";
-import { TimeSlotsType } from "@/types/timeSlots";
+import { TimeSlotsType } from "types";
 import { getTimeDisplay } from "@/helpers/getTime";
 import { requestedClassCreateSchema } from "@/schemas/class/requested/create";
 import { z } from "zod";
