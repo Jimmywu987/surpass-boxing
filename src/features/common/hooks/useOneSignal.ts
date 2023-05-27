@@ -26,6 +26,7 @@ export const useOneSignal = () => {
       } finally {
         onesignalInitializingRef.current = false;
       }
+      console.log("fysuegfuysgfyeugsfugsgfe", safari_web_id);
     };
 
     init();
