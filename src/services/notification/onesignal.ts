@@ -4,8 +4,7 @@ export const appId = process.env["NEXT_PUBLIC_ONESIGNAL_APP_ID"]!;
 
 const userAuthKey = process.env["NEXT_PUBLIC_ONESIGNAL_API_AUTH_KEY"]!;
 const userApiKey = process.env["NEXT_PUBLIC_ONESIGNAL_API_KEY"]!;
-export const safariWebId =
-  process.env["NEXT_PUBLIC_ONESIGNAL_API_SAFARI_WEB_ID"]!;
+
 const configuration = OneSignal.createConfiguration({
   authMethods: {
     default: {
