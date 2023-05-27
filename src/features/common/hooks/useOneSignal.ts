@@ -19,18 +19,6 @@ export const useOneSignal = () => {
               enable: true,
             },
           });
-
-          OneSignal.addListenerForNotificationOpened((notification) => {
-            router.push({
-              pathname: "/admin",
-              query: notification.data,
-            });
-            console.info("Notification Opened", { notification });
-          });
-
-          OneSignal.on("notificationDisplay", (event) => {
-            console.info("Notification Display", { event });
-          });
         }
       } catch (e) {
         console.error("OneSignal init error", e);
