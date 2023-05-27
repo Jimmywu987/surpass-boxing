@@ -1,5 +1,6 @@
 import { AdminJoinLevelEnums } from "@/features/admin/enums/AdminOptionEnums";
 import { useGetClassLevelRecord } from "@/features/admin/hooks/useGetClassLevelRecord";
+import { cn } from "@/utils/cn";
 import { trpc } from "@/utils/trpc";
 import { SmallCloseIcon } from "@chakra-ui/icons";
 import { Button } from "@chakra-ui/react";
@@ -101,11 +102,12 @@ export const AdminClassLevelRecord = () => {
                           </p>
                         </div>
                         <SmallCloseIcon
-                          className={`${
+                          className={cn(
+                            "text-2xl ",
                             isLoading
                               ? "bg-gray-300"
                               : "cursor-pointer bg-black"
-                          } text-2xl `}
+                          )}
                           onClick={async () => {
                             await removeRecord({ id: record.id });
                           }}
@@ -114,9 +116,7 @@ export const AdminClassLevelRecord = () => {
                       <div>
                         {levelFrom} {"->"} {levelTo}
                       </div>
-                      <p className="">
-                        {format(record.createdAt, "yyyy-MM-dd, HH:mm:ss")}
-                      </p>
+                      <p>{format(record.createdAt, "yyyy-MM-dd, HH:mm:ss")}</p>
                     </div>
                   );
                 })}

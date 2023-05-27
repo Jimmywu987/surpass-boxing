@@ -9,6 +9,7 @@ import { AdminRegularClass } from "@/features/admin/components/AdminRegularClass
 import { AdminRequestedClass } from "@/features/admin/components/AdminRequestedClass";
 import { OptionButton } from "@/features/common/components/buttons/OptionButton";
 import { useRouter } from "next/router";
+import { cn } from "@/utils/cn";
 
 export const AdminClasses = () => {
   const { t } = useTranslation("admin");
@@ -23,9 +24,10 @@ export const AdminClasses = () => {
   return (
     <div className="flex md:justify-between w-full md:space-x-3">
       <div
-        className={`md:flex w-full flex-col space-y-3 md:w-9/12 ${
+        className={cn(
+          "md:flex w-full flex-col space-y-3 md:w-9/12 ",
           !viewClassType ? "inline" : "hidden"
-        }`}
+        )}
       >
         <button
           onClick={() => setViewClassType(true)}
@@ -74,9 +76,10 @@ export const AdminClasses = () => {
         </div>
       </div>
       <div
-        className={`w-full md:w-3/12 md:z-20 space-y-2 md:space-y-0 ${
+        className={cn(
+          "w-full md:w-3/12 md:z-20 space-y-2 md:space-y-0 ",
           viewClassType ? "block" : "hidden"
-        }`}
+        )}
       >
         <button
           onClick={() => setViewClassType(false)}

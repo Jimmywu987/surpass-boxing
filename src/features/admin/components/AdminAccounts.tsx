@@ -79,7 +79,7 @@ export const AdminAccounts = () => {
   return (
     <div className="space-y-2 flex flex-col flex-1">
       <div className="flex flex-col md:flex-row md:items-center md:space-x-2 border-b border-b-gray-600 py-3 md:w-4/6 space-y-2 md:space-y-0">
-        <InputGroup className="flex md:space-x-2 ">
+        <InputGroup className="flex md:space-x-2">
           <InputLeftElement pointerEvents="none">
             <SearchIcon color="gray.300" />
           </InputLeftElement>

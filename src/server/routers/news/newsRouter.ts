@@ -10,7 +10,7 @@ export const newsRouter = router({
     return prisma.news.findMany();
   }),
   add: protectedProcedure
-    .input(addNewsSchema())
+    .input(addNewsSchema)
     .mutation(async ({ input, ctx }) => {
       if (!ctx.session || !ctx.session.user) {
         throw new TRPCError({ code: "UNAUTHORIZED" });

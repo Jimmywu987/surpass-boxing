@@ -48,24 +48,24 @@ export const ViewAccountInfo = ({
           {t("account.username")}: {user.username}
         </p>
         {(isCurrentUser || currentUser.admin) && (
-          <p className=" text-gray-600 ">
+          <p className="text-gray-600 ">
             {t("account.email_address")}: {user.email}
           </p>
         )}
         {isCurrentUser ? (
-          <p className=" text-gray-600 ">
+          <p className="text-gray-600 ">
             {t("account.phone_number")}:{" "}
             {!!user.phoneNumber ? user.phoneNumber : "/"}
           </p>
         ) : (
           currentUser.admin &&
           !!user.phoneNumber && (
-            <p className=" text-gray-600">
+            <p className="text-gray-600">
               {t("account.phone_number")}: {user.phoneNumber}
             </p>
           )
         )}
-        <p className=" text-gray-600">
+        <p className="text-gray-600">
           {t("account.created_at")}:{" "}
           {format(new Date(user.createdAt), "yyyy-MM-dd")}
         </p>

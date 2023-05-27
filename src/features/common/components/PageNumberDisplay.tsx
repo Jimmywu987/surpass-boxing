@@ -136,9 +136,9 @@ export const PageNumberDisplay = ({
             {page === currentPage && <span className="opacity-40">,</span>}
             <button
               disabled={isCurrentPage}
-              className={`${
+              className={
                 isCurrentPage ? "text-white cursor-default" : "opacity-40"
-              }`}
+              }
               onClick={() => {
                 setQuery((pre) => ({ ...pre, skip: page * 10 - 10 }));
               }}

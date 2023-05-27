@@ -17,6 +17,9 @@ export const notificationRouter = router({
       where: {
         OR: [{ adminId: user.id }, { adminId: null }],
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
   }),
   remove: protectedProcedure

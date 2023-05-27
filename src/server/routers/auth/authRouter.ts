@@ -8,7 +8,7 @@ import { hashPassword } from "@/utils/hash";
 import { signUpSchema } from "@/schemas/auth/signUp";
 
 export const authRouter = router({
-  signUp: publicProcedure.input(signUpSchema()).mutation(async ({ input }) => {
+  signUp: publicProcedure.input(signUpSchema).mutation(async ({ input }) => {
     const {
       confirmPassword,
       password,

@@ -6,7 +6,7 @@ export const useRegularClassInputResolver = () => {
   const { t } = useTranslation("classes");
 
   return zodResolver(
-    regularClassCreateSchema()
+    regularClassCreateSchema
       .refine(
         ({ startTime, endTime }) => endTime > startTime,
 

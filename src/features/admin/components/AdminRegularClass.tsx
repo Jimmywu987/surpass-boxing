@@ -108,7 +108,7 @@ export const AdminRegularClass = () => {
                   </div>
 
                   <div className="md:self-end">
-                    <div className="">
+                    <div>
                       {t("classes:coaches")}
                       {": "}
                       {timeSlot.coach.username}

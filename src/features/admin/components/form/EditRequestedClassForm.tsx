@@ -23,6 +23,7 @@ import { requestedClassCreateSchema } from "@/schemas/class/requested/create";
 import { z } from "zod";
 import { trpc } from "@/utils/trpc";
 import { SelectClassType } from "@/features/classes/components/SelectClassType";
+import { cn } from "@/utils/cn";
 
 export const EditRequestedClassForm = ({
   modalDisclosure,
@@ -45,7 +46,7 @@ export const EditRequestedClassForm = ({
   const { onClose } = modalDisclosure;
 
   const requestedClassInputFormMethods = useForm<
-    z.infer<ReturnType<typeof requestedClassCreateSchema>>
+    z.infer<typeof requestedClassCreateSchema>
   >({
     resolver: useRequestedClassInputResolver({
       joinedPeopleNum: timeSlot.userOnBookingTimeSlots.length,
@@ -185,9 +186,10 @@ export const EditRequestedClassForm = ({
               <WeekSelectionCheckBox text={t("set_limit")} name="setLimit" />
               <InputGroup>
                 <div
-                  className={`flex flex-col w-full space-y-2 ${
+                  className={cn(
+                    "flex flex-col w-full space-y-2",
                     !watch("setLimit") && "opacity-60"
-                  }`}
+                  )}
                 >
                   <div>{t("number_of_people_can_join")}:</div>
 

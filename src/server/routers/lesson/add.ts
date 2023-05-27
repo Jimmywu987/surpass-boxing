@@ -7,7 +7,7 @@ import { protectedProcedure } from "@/server/trpc";
 import { addLessonSchema } from "@/schemas/lesson/add";
 
 export const addLesson = protectedProcedure
-  .input(addLessonSchema())
+  .input(addLessonSchema)
   .mutation(async ({ ctx, input }) => {
     const data = input;
     const user = ctx.session?.user as User;

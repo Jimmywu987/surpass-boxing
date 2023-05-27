@@ -5,6 +5,7 @@ import { AdminCoaches } from "@/features/admin/components/AdminCoaches";
 import { AdminNews } from "@/features/admin/components/AdminNews";
 import { AdminNotification } from "@/features/admin/components/AdminNotification";
 import { AdminOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
+import { cn } from "@/utils/cn";
 import { User } from "@prisma/client";
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
@@ -23,9 +24,10 @@ const AdminPage = () => {
   return (
     <div className="text-white flex my-6">
       <div
-        className={`md:flex flex-col items-start space-y-2 px-4 md:px-0 ${
+        className={cn(
+          "md:flex flex-col items-start space-y-2 px-4 md:px-0 ",
           !viewOption ? "hidden" : "flex"
-        }`}
+        )}
       >
         <button
           onClick={() => setOptionHandler(AdminOptionEnums.CLASSES)}
@@ -65,9 +67,10 @@ const AdminPage = () => {
         </button>
       </div>
       <div
-        className={`w-full md:flex md:flex-1 space-y-2 md:space-y-0 px-2 md:px-8 ${
+        className={cn(
+          "w-full md:flex md:flex-1 space-y-2 md:space-y-0 px-2 md:px-8 ",
           viewOption && "hidden"
-        }`}
+        )}
       >
         <button
           onClick={() => setViewOption(true)}

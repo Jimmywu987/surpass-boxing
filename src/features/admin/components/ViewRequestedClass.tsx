@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { EditRequestedClassForm } from "@/features/admin/components/form/EditRequestedClassForm";
 
 import { trpc } from "@/utils/trpc";
+import { cn } from "@/utils/cn";
 
 export const ViewRequestedClass = ({
   modalDisclosure,
@@ -56,9 +57,10 @@ export const ViewRequestedClass = ({
             onClick={() => {
               setIsEdit((e) => !e);
             }}
-            className={`px-2 py-1 ${
+            className={cn(
+              "px-2 py-1 rounded text-white",
               isEdit ? "bg-gray-400" : "bg-gray-700"
-            } rounded text-white`}
+            )}
           >
             {t("common:action.update")}
           </button>
@@ -107,7 +109,7 @@ export const ViewRequestedClass = ({
           </div>
           <div className="flex flex-col justify-between space-y-3">
             {!!timeSlot.coach && (
-              <div className="">
+              <div>
                 {t("classes:coaches")}
                 {": "}
                 {timeSlot.coach.username}
@@ -152,11 +154,12 @@ export const ViewRequestedClass = ({
           {!isPast && (
             <div className="space-x-2 self-end">
               <button
-                className={`px-4 py-1 ${
+                className={cn(
+                  "px-4 py-1 rounded text-white",
                   timeSlot.status !== BookingTimeSlotStatusEnum.PENDING
                     ? "bg-gray-300"
                     : "bg-green-500"
-                }  rounded text-white`}
+                )}
                 disabled={
                   timeSlot.status !== BookingTimeSlotStatusEnum.PENDING ||
                   isLoading
@@ -168,11 +171,12 @@ export const ViewRequestedClass = ({
                 {t("admin:action.confirm")}
               </button>
               <button
-                className={`px-4 py-1 ${
+                className={cn(
+                  "rounded text-white px-4 py-1",
                   timeSlot.status === BookingTimeSlotStatusEnum.CANCELED
                     ? "bg-gray-300"
                     : "bg-red-500"
-                } rounded text-white`}
+                )}
                 disabled={
                   timeSlot.status === BookingTimeSlotStatusEnum.CANCELED ||
                   isLoading

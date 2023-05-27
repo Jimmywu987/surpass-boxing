@@ -1,15 +1,16 @@
+import { cn } from "@/utils/cn";
 import { trpc } from "@/utils/trpc";
 import { SmallCloseIcon } from "@chakra-ui/icons";
 import { format } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
-import Image from "next/image";
+import { useGetNotificationRecord } from "@/features/admin/hooks/useGetNotificationRecord";
 
 export const AdminNotification = () => {
   const { t } = useTranslation("admin");
 
   const utils = trpc.useContext();
 
-  const { data } = trpc.notificationRouter.fetch.useQuery();
+  const { records } = useGetNotificationRecord();
   const { mutateAsync, isLoading } = trpc.notificationRouter.remove.useMutation(
     {
       onSuccess: () => {
@@ -24,34 +25,45 @@ export const AdminNotification = () => {
       } catch (error) {}
     }
   };
-  if (!data || data.length === 0)
+  if (!records || records.length === 0)
     return (
       <div className="text-center w-full">
         <p>{t("no_notification")}</p>
       </div>
     );
   return (
-    <div className="w-full">
-      {data.map((notification, index) => (
-        <div key={index} className="border-b border-b-gray-600 py-2 ">
-          <div className="flex justify-between">
-            <p className="whitespace-pre-wrap text-xl">
-              {notification.message}
-            </p>
-            <SmallCloseIcon
-              className={`${
-                isLoading ? "bg-gray-300" : "cursor-pointer bg-black"
-              } text-2xl `}
-              onClick={async () => {
-                await removeNotification({ id: notification.id });
-              }}
-            />
+    <div className="w-full space-y-3">
+      {records.map((each, index) => {
+        const { date, records } = each;
+        return (
+          <div key={index}>
+            <div className="text-lg font-semibold p-3 border border-gray-600">
+              {`${date} ${t(
+                `classes:${format(new Date(date), "EEEE").toLowerCase()}`
+              )}`}
+            </div>
+            {records.map((notification, index) => (
+              <div key={index} className="border-b border-b-gray-600 p-2 ">
+                <div className="flex justify-between">
+                  <p className="whitespace-pre-wrap text-xl">
+                    {notification.message}
+                  </p>
+                  <SmallCloseIcon
+                    className={cn(
+                      "text-2xl ",
+                      isLoading ? "bg-gray-300" : "cursor-pointer bg-black"
+                    )}
+                    onClick={async () => {
+                      await removeNotification({ id: notification.id });
+                    }}
+                  />
+                </div>
+                <p>{format(notification.createdAt, "yyyy-MM-dd, HH:mm:ss")}</p>
+              </div>
+            ))}
           </div>
-          <p className="">
-            {format(notification.createdAt, "yyyy-MM-dd, HH:mm:ss")}
-          </p>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
