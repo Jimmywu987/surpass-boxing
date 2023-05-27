@@ -14,10 +14,6 @@ export default function Document() {
         <meta name="format-detection" content="telephone=no" />
         <meta name="theme-color" content="#fff" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta
-          name="viewport"
-          content="initial-scale=1, viewport-fit=cover, width=device-width"
-        />
       </Head>
       <body className="bg-gray-800">
         <Main />

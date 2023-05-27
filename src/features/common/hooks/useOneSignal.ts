@@ -1,4 +1,4 @@
-import { appId, safari_web_id } from "@/services/notification/onesignal";
+import { appId, safariWebId } from "@/services/notification/onesignal";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import OneSignal from "react-onesignal";
@@ -14,7 +14,7 @@ export const useOneSignal = () => {
           onesignalInitializingRef.current = true;
           await OneSignal.init({
             appId,
-            safari_web_id,
+            safariWebId,
             allowLocalhostAsSecureOrigin: true,
             notifyButton: {
               enable: true,
@@ -26,7 +26,6 @@ export const useOneSignal = () => {
       } finally {
         onesignalInitializingRef.current = false;
       }
-      console.log("fysuegfuysgfyeugsfugsgfe", safari_web_id);
     };
 
     init();
