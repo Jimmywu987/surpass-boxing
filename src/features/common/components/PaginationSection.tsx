@@ -4,6 +4,7 @@ import { Dispatch, SetStateAction } from "react";
 import { SKIP_NUMBER, TAKE_NUMBER } from "@/constants";
 import { PageNumberDisplay } from "@/features/common/components/PageNumberDisplay";
 import useTranslation from "next-translate/useTranslation";
+import { cn } from "@/utils/cn";
 
 export const PaginationSection = ({
   setQuery,
@@ -23,9 +24,10 @@ export const PaginationSection = ({
   return (
     <div className="flex justify-between">
       <button
-        className={`flex space-x-1 items-center ${
+        className={cn(
+          "flex space-x-1 items-center",
           query.skip === 0 && " cursor-default opacity-40 "
-        }`}
+        )}
         onClick={() => {
           setQuery((prev) => ({
             ...prev,
@@ -43,9 +45,10 @@ export const PaginationSection = ({
         setQuery={setQuery as Dispatch<SetStateAction<{ skip: number }>>}
       />
       <button
-        className={`flex space-x-1 items-center ${
+        className={cn(
+          "flex space-x-1 items-center",
           totalCount < query.skip + SKIP_NUMBER && " cursor-default opacity-40 "
-        }`}
+        )}
         onClick={() => {
           setQuery((prev) => ({
             ...prev,

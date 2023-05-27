@@ -10,6 +10,7 @@ import { User } from "@prisma/client";
 import { AccountBasicInfo } from "@/features/admin/components/AdminAccount/AccountBasicInfo";
 import { useSession } from "next-auth/react";
 import { CoachConfirm } from "@/features/admin/components/AdminAccount/CoachConfirm";
+import { cn } from "@/utils/cn";
 
 export const AdminCoaches = () => {
   const utils = trpc.useContext();
@@ -64,11 +65,12 @@ export const AdminCoaches = () => {
               <div className="space-y-2 flex flex-col">
                 <AccountBasicInfo account={account as User} />
                 <button
-                  className={`${
+                  className={cn(
+                    "px-3 py-1 rounded-md text-white self-end ",
                     user.id === account?.id
                       ? " bg-gray-300"
                       : "hover:bg-red-400 bg-red-500 "
-                  } px-3 py-1 rounded-md text-white self-end`}
+                  )}
                   onClick={() => setConfirmView(true)}
                   disabled={user.id === account?.id}
                 >

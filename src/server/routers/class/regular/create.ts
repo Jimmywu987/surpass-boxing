@@ -4,7 +4,7 @@ import { protectedProcedure } from "@/server/trpc";
 import { regularClassCreateSchema } from "@/schemas/class/regular/create";
 
 export const create = protectedProcedure
-  .input(regularClassCreateSchema())
+  .input(regularClassCreateSchema)
   .mutation(async ({ input }) => {
     const { setLimit, people, ...data } = input;
 

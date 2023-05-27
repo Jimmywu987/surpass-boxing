@@ -1,3 +1,4 @@
+import { cn } from "@/utils/cn";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -18,9 +19,11 @@ export const NavLink = ({
     <Link
       href={url}
       passHref
-      className={`text-xl font-semibold  text-link-normal transition hover:bg-link-bgHover hover:scale-110 hover:text-theme-color py-2 px-2.5 rounded ${className} ${
-        currentPath ? "text-theme-color" : "text-white"
-      }`}
+      className={cn(
+        "text-xl font-semibold  text-link-normal transition hover:bg-link-bgHover hover:scale-110 hover:text-theme-color py-2 px-2.5 rounded",
+        currentPath ? "text-theme-color" : "text-white",
+        className
+      )}
     >
       {text}
     </Link>

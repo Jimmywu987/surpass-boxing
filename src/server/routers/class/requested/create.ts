@@ -11,10 +11,10 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 export const create = protectedProcedure
-  .input(requestedClassCreateSchema())
+  .input(requestedClassCreateSchema)
   .mutation(async ({ ctx, input }) => {
     const { setLimit, people, date, ...data } = input as z.infer<
-      ReturnType<typeof requestedClassCreateSchema>
+      typeof requestedClassCreateSchema
     >;
     const dateTime = new Date(date);
     const user = ctx.session.user as User;

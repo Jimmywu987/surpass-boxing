@@ -22,6 +22,7 @@ import { z } from "zod";
 import { SelectClassType } from "@/features/classes/components/SelectClassType";
 import { useRouter } from "next/router";
 import { HOURS } from "@/constants";
+import { cn } from "@/utils/cn";
 
 export const CreateRequestedClassForm = ({
   modalDisclosure,
@@ -50,7 +51,7 @@ export const CreateRequestedClassForm = ({
   const { onClose } = modalDisclosure;
 
   const requestedClassInputFormMethods = useForm<
-    z.infer<ReturnType<typeof requestedClassCreateSchema>>
+    z.infer<typeof requestedClassCreateSchema>
   >({
     resolver: useRequestedClassInputResolver({ withInHours: HOURS }),
     mode: "onChange",
@@ -161,9 +162,10 @@ export const CreateRequestedClassForm = ({
                 <WeekSelectionCheckBox text={t("set_limit")} name="setLimit" />
                 <InputGroup>
                   <div
-                    className={`flex flex-col w-full space-y-2 ${
+                    className={cn(
+                      "flex flex-col w-full space-y-2 ",
                       !watch("setLimit") && "opacity-60"
-                    }`}
+                    )}
                   >
                     <div>{t("number_of_people_can_join")}:</div>
                     <Input

@@ -13,7 +13,7 @@ export const useRequestedClassInputResolver = ({
   const { t } = useTranslation("classes");
 
   return zodResolver(
-    requestedClassCreateSchema()
+    requestedClassCreateSchema
       .refine(
         ({ startTime, endTime, date }) => {
           return (

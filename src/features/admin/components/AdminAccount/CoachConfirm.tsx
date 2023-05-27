@@ -1,3 +1,4 @@
+import { cn } from "@/utils/cn";
 import { trpc } from "@/utils/trpc";
 import { User } from "@prisma/client";
 import useTranslation from "next-translate/useTranslation";
@@ -41,9 +42,10 @@ export const CoachConfirm = ({
           {t("action.cancel")}
         </button>
         <button
-          className={`${
+          className={cn(
+            " px-3 py-1 rounded-md text-white self-end",
             disabled ? "bg-gray-400" : "hover:bg-red-400 bg-red-500"
-          } px-3 py-1 rounded-md text-white self-end`}
+          )}
           onClick={onConfirm}
           disabled={disabled}
         >

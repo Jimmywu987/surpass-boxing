@@ -37,8 +37,8 @@ export const SignUpForm = ({
   const { uploadToS3 } = useS3Upload();
 
   const { executeRecaptcha } = useGoogleReCaptcha();
-  const signUpFormMethods = useForm<z.infer<ReturnType<typeof signUpSchema>>>({
-    resolver: zodResolver(signUpSchema()),
+  const signUpFormMethods = useForm<z.infer<typeof signUpSchema>>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
       username: "",
       email: "",

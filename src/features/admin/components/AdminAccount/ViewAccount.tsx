@@ -10,6 +10,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { AccountBasicInfo } from "@/features/admin/components/AdminAccount/AccountBasicInfo";
 import { trpc } from "@/utils/trpc";
 import { ClassLevelEnum } from "@prisma/client";
+import { cn } from "@/utils/cn";
 
 export const ViewAccount = ({
   account,
@@ -139,11 +140,12 @@ export const ViewAccount = ({
             </div>
           </div>
           <button
-            className={`${
+            className={cn(
+              " px-3 rounded-md text-white",
               formState.isValid
                 ? "hover:bg-green-400 bg-green-500"
                 : "bg-gray-300"
-            }  px-3 rounded-md text-white`}
+            )}
             onClick={AddClass}
             disabled={!formState.isValid}
           >

@@ -162,7 +162,7 @@ export const AdminRequestedClass = () => {
                     <div className="flex flex-col justify-between">
                       <div>
                         {!!timeSlot.coach && (
-                          <div className="">
+                          <div>
                             {t("classes:coaches")}
                             {": "}
                             {timeSlot.coach.username}

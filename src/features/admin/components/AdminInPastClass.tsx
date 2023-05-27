@@ -23,6 +23,7 @@ import { PaginationSection } from "@/features/common/components/PaginationSectio
 import { updateTimeSlot } from "@/redux/timeSlot";
 import { trpc } from "@/utils/trpc";
 import { useDispatch } from "react-redux";
+import { cn } from "@/utils/cn";
 
 export const AdminInPastClass = () => {
   const { t } = useTranslation("admin");
@@ -68,9 +69,10 @@ export const AdminInPastClass = () => {
           transition={{ duration: 0.4 }}
         >
           <ArrowRightIcon
-            className={`p-1 text-3xl border-2 rounded-full cursor-pointer transition duration-100 transform ${
+            className={cn(
+              "p-1 text-3xl border-2 rounded-full cursor-pointer transition duration-100 transform ",
               isOpen && "rotate-180"
-            }`}
+            )}
             onClick={() => setIsOpen((isOpen) => !isOpen)}
           />
           <div
@@ -100,9 +102,10 @@ export const AdminInPastClass = () => {
         </ButtonGroup>
       </div>
       <div
-        className={`flex space-x-2 pt-2 border-t border-t-gray-600 items-center ${
+        className={cn(
+          "flex space-x-2 pt-2 border-t border-t-gray-600 items-center",
           query.period === AdminPeriodOptionsEnum.ALL && "opacity-30"
-        }`}
+        )}
       >
         <div className="w-36">
           <DatePicker
@@ -215,7 +218,7 @@ export const AdminInPastClass = () => {
                         <div className="flex flex-col justify-between">
                           <div>
                             {!!timeSlot.coach && (
-                              <div className="">
+                              <div>
                                 {t("classes:coaches")}
                                 {": "}
                                 {timeSlot.coach.username}

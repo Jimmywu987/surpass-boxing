@@ -23,9 +23,7 @@ export const NewsForm = ({
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [fileDisplay, setFileDisplay] = useState("");
   const { onClose } = modalDisclosure;
-  const newsInputFormMethods = useForm<
-    z.infer<ReturnType<typeof addNewsSchema>>
-  >({
+  const newsInputFormMethods = useForm<z.infer<typeof addNewsSchema>>({
     resolver: useNewsInputResolver(),
     mode: "onChange",
     defaultValues: {

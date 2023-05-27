@@ -21,6 +21,7 @@ import { z } from "zod";
 import { SelectCoach } from "@/features/admin/components/form/SelectCoach";
 
 import { WeekSelectionCheckBox } from "@/features/admin/components/form/WeekSelectionCheckBox";
+import { cn } from "@/utils/cn";
 
 export const CreateRegularClassForm = ({
   modalDisclosure,
@@ -38,7 +39,7 @@ export const CreateRegularClassForm = ({
   const { onClose } = modalDisclosure;
 
   const regularClassInputFormMethods = useForm<
-    z.infer<ReturnType<typeof regularClassCreateSchema>>
+    z.infer<typeof regularClassCreateSchema>
   >({
     resolver: useRegularClassInputResolver(),
     mode: "onChange",
@@ -154,9 +155,10 @@ export const CreateRegularClassForm = ({
           <WeekSelectionCheckBox text={t("set_limit")} name="setLimit" />
           <InputGroup>
             <div
-              className={`flex flex-col w-full space-y-2 ${
+              className={cn(
+                "flex flex-col w-full space-y-2 ",
                 !watch("setLimit") && "opacity-60"
-              }`}
+              )}
             >
               <div>{t("number_of_people_can_join")}:</div>
               <Input

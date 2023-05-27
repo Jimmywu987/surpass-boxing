@@ -1,3 +1,4 @@
+import { cn } from "@/utils/cn";
 import { FC, InputHTMLAttributes } from "react";
 import { useFormContext } from "react-hook-form";
 
@@ -34,7 +35,7 @@ export const FormTextInput: FC<FormTextInputProps> = ({
         {...inputProps}
         name={name}
         type={type}
-        className={`outline-none border-2 rounded p-1 ${className}`}
+        className={cn("outline-none border-2 rounded p-1 ", className)}
         onChange={
           onChange
             ? onChange

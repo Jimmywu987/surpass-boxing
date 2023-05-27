@@ -10,7 +10,7 @@ import { LanguageEnum, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 
 export const update = protectedProcedure
-  .input(requestedClassCreateSchema())
+  .input(requestedClassCreateSchema)
   .mutation(async ({ ctx, input }) => {
     const { setLimit, people, date, ...data } = input;
     const dateTime = new Date(date);

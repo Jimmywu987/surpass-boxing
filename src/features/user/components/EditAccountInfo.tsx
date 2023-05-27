@@ -14,6 +14,7 @@ import { editAccountSchema } from "@/schemas/user/edit";
 import { z } from "zod";
 import { deleteFile } from "@/utils/s3Uploader";
 import { ViewAccountEnums } from "@/features/common/enums/ViewAccountEnums";
+import { cn } from "@/utils/cn";
 
 type inferType = RouterOutput["userRouter"]["fetchUserById"];
 
@@ -131,9 +132,10 @@ export const EditAccountInfo = ({
           {t("admin:action.cancel")}
         </button>
         <button
-          className={`${
+          className={cn(
+            "px-3 py-1 rounded-md text-white self-end",
             disabled ? "bg-gray-400" : "hover:bg-green-400 bg-green-500"
-          } px-3 py-1 rounded-md text-white self-end`}
+          )}
           onClick={onSubmit}
           disabled={disabled}
         >

@@ -32,6 +32,7 @@ import { PaginationSection } from "@/features/common/components/PaginationSectio
 import { RouterOutput, trpc } from "@/utils/trpc";
 import { useRouter } from "next/router";
 import { HOURS } from "@/constants";
+import { cn } from "@/utils/cn";
 
 type inferType = RouterOutput["bookingTimeSlotRouter"]["fetchForStudent"];
 type BookingTimeSlots = inferType["bookingTimeSlots"][0];
@@ -278,7 +279,7 @@ const ClassesPage = () => {
                   <div className="flex flex-col justify-between">
                     <div>
                       {!isRegular && !!bookingTimeSlot.coach && (
-                        <div className="">
+                        <div>
                           {t("classes:coaches")}
                           {": "}
                           {bookingTimeSlot.coach.username}
@@ -287,7 +288,7 @@ const ClassesPage = () => {
                       {isRegular &&
                         regularBookingTimeSlot.coach &&
                         !!regularBookingTimeSlot.coach.username && (
-                          <div className="">
+                          <div>
                             {t("classes:coaches")}
                             {": "}
                             {regularBookingTimeSlot.coach.username}
@@ -300,9 +301,10 @@ const ClassesPage = () => {
                           bg={!shouldDisabled ? "red.600" : "gray.500"}
                           rounded="full"
                           p="1.5"
-                          className={`text-2xl ${
+                          className={cn(
+                            "text-2xl",
                             !shouldDisabled && "cursor-pointer"
-                          }`}
+                          )}
                           onClick={async () => {
                             if (shouldDisabled) {
                               return;
@@ -315,9 +317,10 @@ const ClassesPage = () => {
                           bg={!shouldDisabled ? "green.600" : "gray.500"}
                           rounded="full"
                           p="1.5"
-                          className={`text-2xl ${
+                          className={cn(
+                            "text-2xl",
                             !shouldDisabled && "cursor-pointer"
-                          }`}
+                          )}
                           onClick={async () => {
                             if (shouldDisabled) {
                               return;
