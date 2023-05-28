@@ -1,49 +1,38 @@
 import { appId } from "@/services/notification/onesignal";
 import { useRouter } from "next/router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import OneSignal from "react-onesignal";
+import { useSession } from "next-auth/react";
+import { User } from "@prisma/client";
 
 export const useOneSignal = () => {
-  const onesignalInitializingRef = useRef(false);
-  const router = useRouter();
+  const [oneSignalInitialized, setOneSignalInitialized] =
+    useState<boolean>(false);
+  const session = useSession();
+  const isAuthenticated = session.status === "authenticated";
+  const user = session.data?.user as User;
 
+  const initializeOneSignal = async (uid: string) => {
+    if (oneSignalInitialized) {
+      return;
+    }
+    setOneSignalInitialized(true);
+    await OneSignal.init({
+      appId,
+      notifyButton: {
+        enable: true,
+      },
+
+      allowLocalhostAsSecureOrigin: true,
+    });
+
+    await OneSignal.setExternalUserId(uid);
+  };
   useEffect(() => {
-    const init = async () => {
-      try {
-        if (!onesignalInitializingRef.current) {
-          onesignalInitializingRef.current = true;
-          await OneSignal.init({
-            appId,
-            allowLocalhostAsSecureOrigin: true,
-            notifyButton: {
-              enable: true,
-            },
-          });
-        }
-      } catch (e) {
-        console.error("OneSignal init error", e);
-      } finally {
-        onesignalInitializingRef.current = false;
-      }
-    };
+    if (user) {
+      initializeOneSignal(user.id);
+    }
 
-    init();
     return () => {};
-  }, []);
-
-  const storeUserExternalId = async (userId: string) => {
-    try {
-      const id = await OneSignal.getExternalUserId();
-
-      if (userId === id) return;
-      await OneSignal.setExternalUserId(userId);
-    } catch (err) {}
-  };
-  const removeUserExternalId = async () => {
-    await OneSignal.removeExternalUserId();
-  };
-  return {
-    storeUserExternalId,
-    removeUserExternalId,
-  };
+  }, [user]);
 };

@@ -30,7 +30,7 @@ import useTranslation from "next-translate/useTranslation";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { MobileNavLink } from "./components/MobileNavLink";
 
 export const Navbar = () => {
@@ -43,17 +43,8 @@ export const Navbar = () => {
   const session = useSession();
   const isAuthenticated = session.status === "authenticated";
   const user = session.data?.user as User;
-  const { storeUserExternalId } = useOneSignal();
+  useOneSignal();
   const { mutateAsync } = trpc.userRouter.updateLang.useMutation();
-  useEffect(() => {
-    const storeUserIdToOneSignal = async () => {
-      if (isAuthenticated) {
-        await storeUserExternalId(user.id);
-      }
-    };
-
-    storeUserIdToOneSignal();
-  }, [isAuthenticated]);
 
   const onClickLanguageHandler = async (language: "zh-HK" | "en") => {
     router.push({ pathname, query }, asPath, { locale: language });
