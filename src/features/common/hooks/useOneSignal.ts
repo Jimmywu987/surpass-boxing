@@ -23,10 +23,7 @@ export const useOneSignal = () => {
         allowLocalhostAsSecureOrigin: true,
       });
       const externalId = await OneSignal.getExternalUserId();
-      await OneSignal.addListenerForNotificationOpened((callback) => {
-        console.log("callbackfisebfisbfiuesbfiusbe", callback);
-      });
-      await OneSignal.showNativePrompt();
+
       if (externalId === uid) {
         return;
       }
@@ -39,7 +36,6 @@ export const useOneSignal = () => {
     }
   };
   useEffect(() => {
-    console.log("on999999999999????");
     if (user) {
       initializeOneSignal(user.id);
     }
