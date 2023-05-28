@@ -31,6 +31,7 @@ export const DatePicker = ({
           color: "white",
           size: "sm",
           cursor: "pointer",
+          ...datePickerProps?.propsConfigs?.inputProps,
         },
         popoverCompProps: {
           popoverContentProps: {

@@ -10,6 +10,7 @@ import { AdminRequestedClass } from "@/features/admin/components/AdminRequestedC
 import { OptionButton } from "@/features/common/components/buttons/OptionButton";
 import { useRouter } from "next/router";
 import { cn } from "@/utils/cn";
+import { AdminSetOffDay } from "@/features/admin/components/AdminSetOffDay";
 
 export const AdminClasses = () => {
   const { t } = useTranslation("admin");
@@ -61,6 +62,14 @@ export const AdminClasses = () => {
                 setClassOptions(AdminClassesOptionEnums.CLASSES_IN_PAST)
               }
             />
+            <OptionButton
+              buttonText={t("set_day_off")}
+              currentValue={classOptions}
+              optionValue={AdminClassesOptionEnums.SET_DAY_OFF}
+              onClick={() =>
+                setClassOptions(AdminClassesOptionEnums.SET_DAY_OFF)
+              }
+            />
           </ButtonGroup>
         </div>
         <div>
@@ -73,12 +82,15 @@ export const AdminClasses = () => {
           {classOptions === AdminClassesOptionEnums.CLASSES_IN_PAST && (
             <AdminInPastClass />
           )}
+          {classOptions === AdminClassesOptionEnums.SET_DAY_OFF && (
+            <AdminSetOffDay />
+          )}
         </div>
       </div>
       <div
         className={cn(
           "w-full md:w-3/12 md:z-20 space-y-2 md:space-y-0 ",
-          viewClassType ? "block" : "hidden"
+          viewClassType ? "block" : "hidden md:block"
         )}
       >
         <button
