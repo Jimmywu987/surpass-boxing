@@ -4,7 +4,6 @@ import { FacebookSvgIcon } from "@/features/common/components/buttons/svg/Facebo
 import { InstagramSvgIcon } from "@/features/common/components/buttons/svg/InstagramSvgIcon";
 import { LanguageSvgIcon } from "@/features/common/components/buttons/svg/LanguageSvgIcon";
 import { WhatsappSvgIcon } from "@/features/common/components/buttons/svg/WhatsappSvgIcon";
-import { useOneSignal } from "@/features/common/hooks/useOneSignal";
 import { NavLink } from "@/features/nav/components/NavLink";
 import { MobileNavbar } from "@/features/nav/MobileNavbar";
 import { trpc } from "@/utils/trpc";
@@ -15,14 +14,14 @@ import {
   DrawerBody,
   DrawerCloseButton,
   DrawerContent,
-  DrawerFooter,
+
   DrawerHeader,
   DrawerOverlay,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
-  useDisclosure,
+  useDisclosure
 } from "@chakra-ui/react";
 import { LanguageEnum, User } from "@prisma/client";
 import { useSession } from "next-auth/react";
@@ -31,7 +30,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useRef } from "react";
-import { MobileNavLink } from "./components/MobileNavLink";
+
+import { MobileNavLink } from "@/features/nav/components/MobileNavLink";
 
 export const Navbar = () => {
   const { t, lang } = useTranslation("common");
@@ -43,7 +43,7 @@ export const Navbar = () => {
   const session = useSession();
   const isAuthenticated = session.status === "authenticated";
   const user = session.data?.user as User;
-  useOneSignal();
+
   const { mutateAsync } = trpc.userRouter.updateLang.useMutation();
 
   const onClickLanguageHandler = async (language: "zh-HK" | "en") => {
