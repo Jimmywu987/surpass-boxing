@@ -173,3 +173,11 @@ model ClassLevelDifferentRecord {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+model OffDay {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reason    String?
+  date      DateTime
+}

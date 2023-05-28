@@ -145,7 +145,6 @@ const ClassesPage = () => {
       status,
     });
   };
-
   return (
     <>
       <div className="space-y-2 p-2 md:p-0">
@@ -169,7 +168,9 @@ const ClassesPage = () => {
             {t(format(date, "EEEE").toLowerCase())}
           </div>
           <div>
-            <Button onClick={handleOpenModel}>{t("open_a_class")}</Button>
+            <Button onClick={handleOpenModel} isDisabled={data?.isDayOff}>
+              {t("open_a_class")}
+            </Button>
           </div>
         </div>
         {!data || isLoading ? (
@@ -353,7 +354,9 @@ const ClassesPage = () => {
                 totalCount={data.totalClassesCount}
               />
             ) : data.regularBookingSlot.length === 0 ? (
-              <div className="text-white text-center">{t("admin:no_data")}</div>
+              <div className="text-white text-center">
+                {data?.dayOffReason ? data?.dayOffReason : t("admin:no_data")}
+              </div>
             ) : (
               <></>
             )}

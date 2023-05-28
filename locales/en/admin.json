@@ -14,11 +14,16 @@
     "clear_unattended_class": "Delete unattended class in the past",
     "add_class": "Add class",
     "add_news": "Add news",
+    "no_day_off": "Currently no day off",
+    "add_day_off": "Add day off",
+    "remove_all_notification": "Remove all",
+    "are_you_sure_remove_all": "Are you sure you want to remove all notification?",
     "class_type": "Class type",
     "add_class_type": "Add class type",
     "not_limited": "Not limited",
     "seven_days": "In seven Days",
     "classes_in_past": "Classes in the past",
+    "set_day_off": "Set day off",
     "one_day": "This day only",
     "one_week": "This week only",
     "one_month": "This month only",
@@ -57,5 +62,7 @@
     "check": "Check",
     "edit": "Edit",
     "level": "Level",
-    "different_level_text": "{{levelFrom}} Student {{username}} has joined a {{levelTo}} class."
+    "different_level_text": "{{levelFrom}} Student {{username}} has joined a {{levelTo}} class.",
+    "reason": "Reason",
+    "off_day": "Off Day"
 }

@@ -11,6 +11,7 @@ export enum AdminClassesOptionEnums {
   REGULAR_CLASSES = "REGULAR_CLASSES",
   COMING_CLASSES = "COMING_CLASSES",
   CLASSES_IN_PAST = "CLASSES_IN_PAST",
+  SET_DAY_OFF = "SET_DAY_OFF",
 }
 export enum AdminAccountFilterOptionEnums {
   ALL = "All",

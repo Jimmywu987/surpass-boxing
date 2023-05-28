@@ -21,7 +21,20 @@ export const bookingTimeSlotRouter = router({
     .query(async ({ input }) => {
       const { skip, date } = input;
       const dateTime = new Date(date);
-
+      const isDayOff = await prisma.offDay.findFirst({
+        where: {
+          date: getZonedStartOfDay(dateTime),
+        },
+      });
+      if (isDayOff) {
+        return {
+          totalClassesCount: 0,
+          bookingTimeSlots: [],
+          regularBookingSlot: [],
+          dayOffReason: isDayOff.reason,
+          isDayOff: true,
+        };
+      }
       const weekday = getFormatTimeZone({
         date: dateTime,
         format: "EEEE",
@@ -105,6 +118,8 @@ export const bookingTimeSlotRouter = router({
             totalClassesCount,
             bookingTimeSlots,
             regularBookingSlot,
+            dayOffReason: null,
+            isDayOff: false,
           };
         });
       } catch (error) {
