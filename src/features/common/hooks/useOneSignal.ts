@@ -21,7 +21,6 @@ export const useOneSignal = () => {
         enable: true,
       },
       allowLocalhostAsSecureOrigin: true,
-      persistNotification: true,
     });
     const externalId = await OneSignal.getExternalUserId();
     if (externalId === uid) {
