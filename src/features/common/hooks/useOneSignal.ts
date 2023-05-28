@@ -28,12 +28,7 @@ export const useOneSignal = () => {
         return;
       }
       await OneSignal.setExternalUserId(uid);
-    } catch (err) {
-      console.log(
-        "error initializing one signal onesignal is really on99999999",
-        err
-      );
-    }
+    } catch (err) {}
   };
   useEffect(() => {
     if (user) {
