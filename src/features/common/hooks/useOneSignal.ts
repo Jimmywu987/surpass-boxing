@@ -23,14 +23,14 @@ export const useOneSignal = () => {
         allowLocalhostAsSecureOrigin: true,
       });
       const externalId = await OneSignal.getExternalUserId();
-      if (externalId === uid) {
-        return;
-      }
-      await OneSignal.setExternalUserId(uid);
       await OneSignal.addListenerForNotificationOpened((callback) => {
         console.log("callbackfisebfisbfiuesbfiusbe", callback);
       });
       await OneSignal.showNativePrompt();
+      if (externalId === uid) {
+        return;
+      }
+      await OneSignal.setExternalUserId(uid);
     } catch (err) {
       console.log(
         "error initializing one signal onesignal is really on99999999",
