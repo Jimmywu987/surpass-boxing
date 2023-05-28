@@ -1,8 +1,12 @@
 import { Navbar } from "@/features/nav/Navbar";
 import { Footer } from "@/features/footer";
 import { HeadHtml } from "@/features/head";
+import { useOneSignal } from "@/features/common/hooks/useOneSignal";
+import { FC } from "react";
 
-const Layout = ({ children }: any) => {
+const Layout: FC<{ children: React.ReactNode }> = ({ children }) => {
+  useOneSignal();
+
   return (
     <div>
       <HeadHtml />
