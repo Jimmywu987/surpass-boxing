@@ -20,7 +20,6 @@ export const useOneSignal = () => {
       notifyButton: {
         enable: true,
       },
-
       allowLocalhostAsSecureOrigin: true,
     });
 
