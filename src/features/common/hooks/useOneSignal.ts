@@ -14,21 +14,32 @@ export const useOneSignal = () => {
       return;
     }
     setOneSignalInitialized(true);
-
-    await OneSignal.init({
-      appId,
-      notifyButton: {
-        enable: true,
-      },
-      allowLocalhostAsSecureOrigin: true,
-    });
-    const externalId = await OneSignal.getExternalUserId();
-    if (externalId === uid) {
-      return;
+    try {
+      await OneSignal.init({
+        appId,
+        notifyButton: {
+          enable: true,
+        },
+        allowLocalhostAsSecureOrigin: true,
+      });
+      const externalId = await OneSignal.getExternalUserId();
+      if (externalId === uid) {
+        return;
+      }
+      await OneSignal.setExternalUserId(uid);
+      await OneSignal.addListenerForNotificationOpened((callback) => {
+        console.log("callbackfisebfisbfiuesbfiusbe", callback);
+      });
+      await OneSignal.showNativePrompt();
+    } catch (err) {
+      console.log(
+        "error initializing one signal onesignal is really on99999999",
+        err
+      );
     }
-    await OneSignal.setExternalUserId(uid);
   };
   useEffect(() => {
+    console.log("on999999999999????");
     if (user) {
       initializeOneSignal(user.id);
     }
