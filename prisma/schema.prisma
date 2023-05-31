@@ -144,10 +144,8 @@ model News {
   updatedAt DateTime @updatedAt
 
   title   String
-  article String @db.Text
+  content Json?
   img     String
-
-  url String?
 }
 
 model Notification {

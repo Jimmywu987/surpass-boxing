@@ -62,6 +62,11 @@ export const MobileNavbar = ({
         <MobileNavLink text={t("home")} url="/" onClose={onClose} />
         <MobileNavLink text={t("classes")} url="/classes" onClose={onClose} />
         <MobileNavLink text={t("coaches")} url="/coaches" onClose={onClose} />
+        <MobileNavLink
+          text={t("bulletin_board")}
+          url="/bulletin-board"
+          onClose={onClose}
+        />
         <MobileNavLink text={t("location")} url="/location" onClose={onClose} />
         {isAuthenticated && user.admin && (
           <MobileNavLink text={t("admin")} url="/admin" onClose={onClose} />

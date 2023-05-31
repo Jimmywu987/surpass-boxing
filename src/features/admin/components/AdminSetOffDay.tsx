@@ -1,30 +1,11 @@
 import { ModalComponent } from "@/features/common/components/Modal";
-import { getDuration } from "@/helpers/getDuration";
-import { getTimeDuration } from "@/helpers/getTime";
-import { ArrowRightIcon, CheckIcon, SmallCloseIcon } from "@chakra-ui/icons";
-import {
-  Button,
-  ButtonGroup,
-  Skeleton,
-  Stack,
-  useDisclosure,
-} from "@chakra-ui/react";
-import { BookingTimeSlotStatusEnum } from "@prisma/client";
-import { endOfDay, format, subDays } from "date-fns";
-import { motion } from "framer-motion";
+import { SmallCloseIcon } from "@chakra-ui/icons";
+import { Button, useDisclosure } from "@chakra-ui/react";
+import { format } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
-import { Dispatch, SetStateAction, useState } from "react";
 
-import { ViewRequestedClass } from "@/features/admin/components/ViewRequestedClass";
-
-import { AdminPeriodOptionsEnum } from "@/features/admin/enums/AdminOptionEnums";
-import { DatePicker } from "@/features/common/components/DatePicker";
-import { PaginationSection } from "@/features/common/components/PaginationSection";
-import { updateTimeSlot } from "@/redux/timeSlot";
-import { trpc } from "@/utils/trpc";
-import { useDispatch } from "react-redux";
-import { cn } from "@/utils/cn";
 import { SetOffDayForm } from "@/features/admin/components/form/SetOffDayForm";
+import { trpc } from "@/utils/trpc";
 
 export const AdminSetOffDay = () => {
   const { t } = useTranslation("admin");
@@ -35,19 +16,24 @@ export const AdminSetOffDay = () => {
 
   const { onOpen } = modalDisclosure;
   const { data, isLoading } = trpc.offDayRouter.fetch.useQuery();
-  const { mutateAsync } = trpc.offDayRouter.remove.useMutation({
-    onSuccess: () => {
-      utils.offDayRouter.fetch.invalidate();
-    },
-  });
+  const {
+    mutateAsync: mutateAsyncRemoveAllPast,
+    isLoading: isLoadingRemoveAllPast,
+  } = trpc.offDayRouter.removeAllPast.useMutation();
+  const { mutateAsync, isLoading: isLoadingRemoveOne } =
+    trpc.offDayRouter.remove.useMutation({
+      onSuccess: () => {
+        utils.offDayRouter.fetch.invalidate();
+      },
+    });
   const handleOpenModel = () => {
     onOpen();
   };
-
+  const disabled = isLoading || isLoadingRemoveOne || isLoadingRemoveAllPast;
   return (
     <>
       <div className="w-full space-y-2">
-        <div className="border-b border-b-gray-600 py-2 ">
+        <div className="border-b border-b-gray-600 py-2 flex space-x-2">
           <Button
             onClick={() => {
               handleOpenModel();
@@ -56,6 +42,16 @@ export const AdminSetOffDay = () => {
             variant="solid"
           >
             {t("add_day_off")}
+          </Button>
+          <Button
+            onClick={() => {
+              mutateAsyncRemoveAllPast();
+            }}
+            colorScheme="whiteAlpha"
+            variant="solid"
+            disabled={disabled}
+          >
+            {t("delete_past_off_day")}
           </Button>
         </div>
         <div>

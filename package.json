@@ -14,6 +14,10 @@
   "dependencies": {
     "@chakra-ui/icons": "^2.0.18",
     "@chakra-ui/react": "^2.5.5",
+    "@editorjs/editorjs": "^2.27.0",
+    "@editorjs/header": "^2.7.0",
+    "@editorjs/link": "^2.5.0",
+    "@editorjs/paragraph": "^2.9.0",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@heroicons/react": "^2.0.17",
@@ -37,6 +41,7 @@
     "date-fns": "^2.29.3",
     "date-fns-tz": "^2.0.0",
     "dayzed": "^3.2.3",
+    "editorjs-html": "^3.4.2",
     "framer-motion": "^10.11.5",
     "i18n": "^0.15.1",
     "next": "^13.4.1",
@@ -59,6 +64,7 @@
     "zod": "^3.20.2"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.9",
     "@types/bcryptjs": "^2.4.2",
     "@types/i18n": "^0.13.6",
     "@types/next-redux-wrapper": "^3.0.0",

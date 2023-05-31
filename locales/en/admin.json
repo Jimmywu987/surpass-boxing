@@ -64,5 +64,6 @@
     "level": "Level",
     "different_level_text": "{{levelFrom}} Student {{username}} has joined a {{levelTo}} class.",
     "reason": "Reason",
-    "off_day": "Off Day"
+    "off_day": "Off Day",
+    "delete_past_off_day": "Delete past off day"
 }
