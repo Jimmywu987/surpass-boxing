@@ -64,5 +64,6 @@
     "level": "級別",
     "different_level_text": "{{levelFrom}}學員：{{username}}加入了{{levelTo}}的課堂。",
     "reason": "原因",
-    "off_day": "休息日"
+    "off_day": "休息日",
+    "delete_past_off_day": "刪除過去休息日"
 }

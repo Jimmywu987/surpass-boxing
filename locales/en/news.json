@@ -1,5 +1,6 @@
 {
     "title": "Title",
     "article": "Article",
-    "url": "Url (Optional)"
+    "no_news": "Currently there are no news.",
+    "published_date": "Published date"
 }

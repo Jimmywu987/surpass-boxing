@@ -7,6 +7,8 @@ import { trpc } from "@/utils/trpc";
 import Image from "next/image";
 import { SmallCloseIcon } from "@chakra-ui/icons";
 import { deleteFile } from "@/utils/s3Uploader";
+import { ContentRenderer } from "@/features/common/components/ContentRenderer";
+import { OutputData } from "@editorjs/editorjs";
 
 export const AdminNews = () => {
   const { t } = useTranslation("admin");
@@ -52,14 +54,7 @@ export const AdminNews = () => {
                 className="space-y-2 border-b border-b-gray-600 py-2"
               >
                 <div className="flex justify-between">
-                  <div className="relative h-72 w-72">
-                    <Image
-                      fill
-                      src={news.img}
-                      alt={`${news.title} - image`}
-                      className="object-contain"
-                    />
-                  </div>
+                  <h2 className="text-4xl font-semibold">{news.title}</h2>{" "}
                   <SmallCloseIcon
                     className={`${
                       isLoading ? "bg-gray-300" : "cursor-pointer bg-black"
@@ -69,8 +64,23 @@ export const AdminNews = () => {
                     }}
                   />
                 </div>
-                <h2 className="text-2xl font-semibold">{news.title}</h2>
-                <p className="whitespace-pre-wrap">{news.article}</p>
+
+                <div className="relative h-72 w-72">
+                  <Image
+                    fill
+                    src={news.img}
+                    alt={`${news.title} - image`}
+                    className="object-contain"
+                  />
+                </div>
+
+                {news.content && (
+                  <div>
+                    <ContentRenderer
+                      content={news.content as unknown as OutputData}
+                    />
+                  </div>
+                )}
               </div>
             ))
           ) : (

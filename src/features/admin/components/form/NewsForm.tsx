@@ -11,6 +11,14 @@ import { ChangeEvent, useState } from "react";
 import Image from "next/image";
 import { SubmitButton } from "@/features/common/components/buttons/SubmitButton";
 import { UseDisclosureReturn } from "@chakra-ui/react";
+import dynamic from "next/dynamic";
+
+const EditorBlock = dynamic(
+  () => import("@/features/admin/components/editor/EditorBlock"),
+  {
+    ssr: false,
+  }
+);
 
 export const NewsForm = ({
   modalDisclosure,
@@ -28,9 +36,8 @@ export const NewsForm = ({
     mode: "onChange",
     defaultValues: {
       title: "",
-      article: "",
+      content: undefined,
       img: "image",
-      url: "",
     },
   });
   const { mutateAsync, isLoading } = trpc.newsRouter.add.useMutation({
@@ -42,7 +49,7 @@ export const NewsForm = ({
     },
   });
 
-  const { setValue, formState } = newsInputFormMethods;
+  const { formState } = newsInputFormMethods;
   const onClickUploadImageHandler = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const imageFile = event.target.files[0];
@@ -70,22 +77,9 @@ export const NewsForm = ({
           {t("admin:add_news")}
         </h1>
         <FormTextInput type="text" name="title" label={t("title")} />
-        <div className="flex flex-col">
-          <label htmlFor="article" className="text-gray-700">
-            {t("article")}:
-          </label>
-          <textarea
-            id="article"
-            name="article"
-            className="outline-none border-2 rounded p-1 "
-            onChange={(event) => {
-              const { value } = event.target;
-              setValue("article", value, { shouldValidate: true });
-            }}
-            rows={6}
-          />
+        <div className="border-2 border-gray-200 p-2 rounded">
+          <EditorBlock name="content" />
         </div>
-        <FormTextInput type="text" name="url" label={t("url")} />
         <label className=" bg-gray-300 text-gray-700 rounded w-32 py-1 cursor-pointer ">
           <input
             onChange={onClickUploadImageHandler}

@@ -14,14 +14,13 @@ import {
   DrawerBody,
   DrawerCloseButton,
   DrawerContent,
-
   DrawerHeader,
   DrawerOverlay,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
-  useDisclosure
+  useDisclosure,
 } from "@chakra-ui/react";
 import { LanguageEnum, User } from "@prisma/client";
 import { useSession } from "next-auth/react";
@@ -121,6 +120,7 @@ export const Navbar = () => {
                 <NavLink text={t("home")} url="/" />
                 <NavLink text={t("classes")} url="/classes" />
                 <NavLink text={t("coaches")} url="/coaches" />
+                <NavLink text={t("bulletin_board")} url="/bulletin-board" />
                 <NavLink text={t("location")} url="/location" />
               </div>
             </div>

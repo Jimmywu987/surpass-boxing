@@ -1,7 +1,6 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
-  "i18n-ally.localesPaths": [
-    "locales"
-  ]
+  "i18n-ally.localesPaths": ["locales"],
+  "cSpell.words": ["editorjs"]
 }

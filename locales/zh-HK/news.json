@@ -1,5 +1,6 @@
 {
     "title": "標題",
     "article": "文章",
-    "url": "連結網址 (可不填)"
+    "no_news": "暫時沒有資訊",
+    "published_date": "發佈日期"
 }

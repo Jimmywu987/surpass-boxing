@@ -354,7 +354,7 @@ const ClassesPage = () => {
                 totalCount={data.totalClassesCount}
               />
             ) : data.regularBookingSlot.length === 0 ? (
-              <div className="text-white text-center">
+              <div className="flex justify-center text-white text-xl my-12">
                 {data?.dayOffReason ? data?.dayOffReason : t("admin:no_data")}
               </div>
             ) : (
