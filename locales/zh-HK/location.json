@@ -1,5 +1,6 @@
 {
     "address": "地址",
-    "boxing_address": "拳館地址",
+    "boxing_address": "位置",
+    "phone": "聯絡電話",
     "boxing_gym_address": "屯門新合里5號美基工業大廈9樓"
 }

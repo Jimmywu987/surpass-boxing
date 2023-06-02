@@ -3,15 +3,26 @@ import { Footer } from "@/features/footer";
 import { HeadHtml } from "@/features/head";
 import { useOneSignal } from "@/features/common/hooks/useOneSignal";
 import { FC } from "react";
+import { useRouter } from "next/router";
+import { cn } from "@/utils/cn";
 
 const Layout: FC<{ children: React.ReactNode }> = ({ children }) => {
   useOneSignal();
+  const router = useRouter();
+  const { route } = router;
 
   return (
     <div>
       <HeadHtml />
       <Navbar />
-      <main className="min-h-[78vh] container mx-auto my-4">{children}</main>
+      <main
+        className={cn(
+          "min-h-[78vh] ",
+          route !== "/location" && "container mx-auto"
+        )}
+      >
+        {children}
+      </main>
       <Footer />
     </div>
   );
