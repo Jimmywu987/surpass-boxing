@@ -47,4 +47,20 @@
     .shadow-theme {
         box-shadow: 0 0 5px #BF4186, 0   0 10px #BF4186, 0 0 20px #BF4186, 0 0 40px #BF4186;
     }
+    .pricing-table::after {
+        @apply content-[''] absolute inset-[-3px] -z-[2];
+        background: linear-gradient(45deg, #BF4186, #0e1538,#0e1538,#BF4186 );
+        box-shadow: 0 0 0 20px #070c23;
+    }
+    .pricing-table::before {
+        @apply content-[''] absolute inset-[-3px] -z-[1];
+        background: linear-gradient(45deg, #BF4186, #0e1538,#0e1538,#BF4186 );
+        filter: blur(10px);
+    }
+    .pricing-table-head::after {
+        @apply content-[''] absolute bg-gradient-to-r from-theme-color to-gray-900 h-[3px] w-full top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 rotate-[18deg]   sm:rotate-[16deg] md:rotate-[14deg] lg:rotate-[10deg] xl:rotate-[9deg]; 
+
+        
+    }
+
 }
