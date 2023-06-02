@@ -20,8 +20,8 @@ export const NavLink = ({
       href={url}
       passHref
       className={cn(
-        "text-xl font-semibold  text-link-normal transition hover:bg-link-bgHover hover:scale-110 hover:text-theme-color py-2 px-2.5 rounded",
-        currentPath ? "text-theme-color" : "text-white",
+        "nav-link text-link-normal",
+        currentPath ? "text-theme-color" : "text-gray-400 hover:text-white",
         className
       )}
     >

@@ -63,7 +63,7 @@ export const AdminInPastClass = () => {
     <div className="space-y-2">
       <div className="relative w-full">
         <motion.div
-          className={`absolute z-10 w-full  h-full bg-gray-800 pt-1 hidden md:flex space-x-2`}
+          className="absolute z-10 w-full  h-full bg-gray-900 pt-1 hidden md:flex space-x-2"
           animate={isOpen ? "open" : "closed"}
           variants={variants}
           transition={{ duration: 0.4 }}

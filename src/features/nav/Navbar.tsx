@@ -7,12 +7,10 @@ import { WhatsappSvgIcon } from "@/features/common/components/buttons/svg/Whatsa
 import { NavLink } from "@/features/nav/components/NavLink";
 import { MobileNavbar } from "@/features/nav/MobileNavbar";
 import { trpc } from "@/utils/trpc";
-import { HamburgerIcon } from "@chakra-ui/icons";
 import {
   Button,
   Drawer,
   DrawerBody,
-  DrawerCloseButton,
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
@@ -31,6 +29,7 @@ import { useRouter } from "next/router";
 import { useRef } from "react";
 
 import { MobileNavLink } from "@/features/nav/components/MobileNavLink";
+import { cn } from "@/utils/cn";
 
 export const Navbar = () => {
   const { t, lang } = useTranslation("common");
@@ -59,7 +58,7 @@ export const Navbar = () => {
           <Link
             href="/"
             passHref
-            className="relative w-24 h-24 border-2 border-white rounded-full duration-200"
+            className="relative w-24 h-24 border-2 border-white rounded-full duration-200 shadow-theme"
           >
             <Image
               src={LogoIcon}
@@ -71,8 +70,8 @@ export const Navbar = () => {
         </div>
         <div className="hidden md:flex flex-col justify-start">
           <div className="flex h-28">
-            <div className="flex flex-col justify-between">
-              <div className="my-1 mx-4 flex justify-end items-center">
+            <div className="flex flex-col justify-between items-center ">
+              <div className="my-1 mx-4 flex justify-end items-center space-x-2 h-full">
                 {isAuthenticated && user.admin && (
                   <NavLink text={t("admin")} url="/admin" />
                 )}
@@ -124,12 +123,12 @@ export const Navbar = () => {
                 <NavLink text={t("location")} url="/location" />
               </div>
             </div>
-            <div className="flex flex-col justify-between">
-              <div className="flex space-x-3 ">
+            <div className="flex flex-col justify-between ">
+              <div className="flex space-x-3 h-full items-center justify-end">
                 {/* @todo: implement the links */}
-                <WhatsappSvgIcon className="fill-white hover:fill-green-600 hover:scale-110 duration-200" />
-                <FacebookSvgIcon className="fill-white hover:fill-blue-600 hover:scale-110 duration-200" />
-                <InstagramSvgIcon className="fill-white hover:fill-pink-600 hover:scale-110 duration-200" />
+                <WhatsappSvgIcon className="fill-white hover:fill-theme-color  hover:scale-110 duration-200" />
+                <FacebookSvgIcon className="fill-white hover:fill-theme-color  hover:scale-110 duration-200" />
+                <InstagramSvgIcon className="fill-white hover:fill-theme-color  hover:scale-110 duration-200" />
               </div>
 
               <div className="flex self-end ">
@@ -137,9 +136,9 @@ export const Navbar = () => {
                   <Link
                     href={`/profile/${user.id}`}
                     passHref
-                    className="flex items-center space-x-2 transition hover:bg-link-bgHover hover:scale-110 text-white hover:text-theme-color rounded p-1 text-lg text-link-normal "
+                    className="flex items-center space-x-2 text-white hover:text-theme-color rounded p-1 text-lg text-link-normal nav-link "
                   >
-                    <div className="w-10 h-10 relative">
+                    <div className="w-8 h-8 relative">
                       <Image
                         src={
                           !!user.profileImg
@@ -161,23 +160,34 @@ export const Navbar = () => {
           </div>
         </div>
         <div className="md:hidden">
-          <Button ref={btnRef} onClick={onOpen} w="9" h="9">
+          {/* <Button ref={btnRef} onClick={onOpen} w="9" h="9">
+            
             <HamburgerIcon h="8" w="8" className="bg-white rounded p-1" />
-          </Button>
+          </Button> */}
+          <button
+            className={cn("hamburger shadow-theme", isOpen && "active")}
+            ref={btnRef}
+            onClick={onOpen}
+          >
+            <div>
+              <span className="w-3/6 top-0 left-0 translate-y-0"></span>
+              <span className="w-full scale-x-1 opacity-1"></span>
+              <span className="w-3/6 bottom-0 right-0 rotate-0"></span>
+            </div>
+          </button>
           <Drawer
             isOpen={isOpen}
             placement="right"
             onClose={onClose}
             finalFocusRef={btnRef}
           >
-            <DrawerOverlay />
+            <DrawerOverlay mt="36" />
 
-            <DrawerContent>
-              <DrawerCloseButton fontSize="xl" my="8" mr="6" w="10" h="10" />
-              <div className="flex space-x-2 px-6 py-2">
-                <WhatsappSvgIcon className="fill-gray-800 hover:fill-green-600 hover:scale-110 duration-200" />
-                <FacebookSvgIcon className="fill-gray-800 hover:fill-blue-600 hover:scale-110 duration-200" />
-                <InstagramSvgIcon className="fill-gray-800 hover:fill-pink-600 hover:scale-110 duration-200" />
+            <DrawerContent mt="36">
+              <div className="flex space-x-2 px-6 py-2 justify-end">
+                <WhatsappSvgIcon className="fill-gray-800 hover:fill-theme-color  duration-200" />
+                <FacebookSvgIcon className="fill-gray-800 hover:fill-theme-color  duration-200" />
+                <InstagramSvgIcon className="fill-gray-800 hover:fill-theme-color  duration-200" />
               </div>
               {isAuthenticated ? (
                 <DrawerHeader>

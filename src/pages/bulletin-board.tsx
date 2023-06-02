@@ -28,7 +28,7 @@ const BulletinBoardPage = () => {
                 key={index}
                 className="space-y-4 border-b border-b-gray-600 py-2"
               >
-                <h2 className="text-3xl font-semibold text-white text-center">
+                <h2 className="text-3xl font-semibold text-white border-b-2 border-b-theme-color inline pb-1">
                   {news.title}
                 </h2>
                 <div className="flex justify-center items-center">

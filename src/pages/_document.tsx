@@ -15,7 +15,7 @@ export default function Document() {
         <meta name="theme-color" content="#fff" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
       </Head>
-      <body className="bg-gray-800">
+      <body className="bg-gray-900 font-sans">
         <Main />
         <NextScript />
       </body>
