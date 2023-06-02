@@ -13,7 +13,8 @@
       "classes",
       "admin",
       "news",
-      "location"
+      "location",
+      "pricing"
     ]
   }
 }

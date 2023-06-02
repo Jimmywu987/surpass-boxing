@@ -119,6 +119,7 @@ export const Navbar = () => {
                 <NavLink text={t("home")} url="/" />
                 <NavLink text={t("classes")} url="/classes" />
                 <NavLink text={t("coaches")} url="/coaches" />
+                <NavLink text={t("pricing")} url="/pricing" />
                 <NavLink text={t("bulletin_board")} url="/bulletin-board" />
                 <NavLink text={t("location")} url="/location" />
               </div>
@@ -160,10 +161,6 @@ export const Navbar = () => {
           </div>
         </div>
         <div className="md:hidden">
-          {/* <Button ref={btnRef} onClick={onOpen} w="9" h="9">
-            
-            <HamburgerIcon h="8" w="8" className="bg-white rounded p-1" />
-          </Button> */}
           <button
             className={cn("hamburger shadow-theme", isOpen && "active")}
             ref={btnRef}
