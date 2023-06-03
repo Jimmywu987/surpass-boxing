@@ -6,8 +6,8 @@ const CoachesPage = () => {
 
   return (
     <div className="flex justify-center items-center ">
-      <div className="flex flex-col md:flex-row my-12 md:space-x-3 border border-gray-400 rounded ">
-        <div className="relative h-[300px] md:h-[380px] w-full md:w-[400px]">
+      <div className="flex flex-col md:flex-row my-12 md:space-x-3 border border-gray-400 rounded w-full md:w-auto mx-2">
+        <div className="relative h-[450px] w-full md:w-[450px]">
           <Image
             fill
             src="https://surpass-boxing-gym.s3.ap-southeast-1.amazonaws.com/coach.jpg"
@@ -15,7 +15,7 @@ const CoachesPage = () => {
             alt="coach image"
           />
         </div>
-        <div className="text-white space-y-4 p-3">
+        <div className="text-white space-y-4 p-3 text-center md:text-left">
           <p className="text-2xl font-semibold pb-1 border-b-2 border-b-theme-color inline">
             {t("CHAN_SIU_PONG")}
           </p>
