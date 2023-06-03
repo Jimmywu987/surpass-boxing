@@ -5,9 +5,9 @@ const CoachesPage = () => {
   const { t } = useTranslation("coaches");
 
   return (
-    <div className="flex justify-center items-center">
-      <div className="flex mt-12 space-x-3 border border-gray-400 rounded">
-        <div className="relative h-[380px] w-[400px]">
+    <div className="flex justify-center items-center ">
+      <div className="flex flex-col md:flex-row my-12 md:space-x-3 border border-gray-400 rounded ">
+        <div className="relative h-[300px] md:h-[380px] w-full md:w-[400px]">
           <Image
             fill
             src="https://surpass-boxing-gym.s3.ap-southeast-1.amazonaws.com/coach.jpg"
