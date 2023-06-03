@@ -71,7 +71,7 @@ export const Navbar = () => {
         <div className="hidden md:flex flex-col justify-start">
           <div className="flex h-28">
             <div className="flex flex-col justify-between items-center ">
-              <div className="my-1 mx-4 flex justify-end items-center space-x-2 h-full">
+              <div className="my-1 mx-4 flex self-end items-center space-x-2 h-full">
                 {isAuthenticated && user.admin && (
                   <NavLink text={t("admin")} url="/admin" />
                 )}

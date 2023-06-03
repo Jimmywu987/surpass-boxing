@@ -30,7 +30,12 @@ const PricingPage = () => {
     ],
   ];
   return (
-    <div className="flex justify-center items-center h-full pt-16 px-8">
+    <div className="flex flex-col justify-center items-center pt-16 px-8 space-y-8">
+      <div className="w-full h-28 flex justify-center items-center">
+        <h1 className="text-4xl text-white font-semibold text-center border-b-4 border-b-theme-color pb-2">
+          {t("price_list")}
+        </h1>
+      </div>
       <table className="pricing-table relative w-full ">
         <tbody className="">
           <tr className="bg-gray-900 md:text-xl ">
