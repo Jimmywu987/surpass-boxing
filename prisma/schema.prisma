@@ -173,9 +173,30 @@ model ClassLevelDifferentRecord {
 }
 
 model OffDay {
-  id        String   @id @default(cuid())
+  id String @id @default(cuid())
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  reason    String?
-  date      DateTime
+
+  reason String?
+  date   DateTime
+}
+
+model Coaches {
+  id String @id @default(cuid())
+
+  enName String?
+  zhName String
+
+  coachInfos CoachInfos[]
+}
+
+model CoachInfos {
+  id String @id @default(cuid())
+
+  enTitle String?
+  zhTitle String
+
+  coachId String
+  coach   Coaches @relation(fields: [coachId], references: [id], onDelete: Cascade)
 }
