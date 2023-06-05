@@ -6,5 +6,5 @@ import Image from "next/image";
 export default function HomePage() {
   const { t } = useTranslation("common");
 
-  return <div className=""></div>;
+  return <div className="h-screen"></div>;
 }
