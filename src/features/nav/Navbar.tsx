@@ -30,6 +30,7 @@ import { useRef } from "react";
 import { MobileNavLink } from "@/features/nav/components/MobileNavLink";
 import { cn } from "@/utils/cn";
 import { useCheckMainPageAtTop } from "@/features/common/hooks/useCheckMainPageAtTop";
+import { isMobile } from "react-device-detect";
 
 export const Navbar = () => {
   const { t, lang } = useTranslation("common");
@@ -56,8 +57,8 @@ export const Navbar = () => {
   return (
     <nav
       className={cn(
-        "flex py-3 px-5 justify-between items-center shadow-xl sticky top-0 transition duration-500",
-        !isTop && "bg-gray-900 "
+        "flex py-3 px-5 justify-between items-center shadow-xl sticky top-0 transition duration-500 z-20",
+        (!isTop || !!isMobile) && "bg-gray-900 "
       )}
     >
       <div className="flex items-center flex-1 px-1 space-x-2 justify-between ">
