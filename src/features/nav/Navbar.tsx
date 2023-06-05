@@ -52,7 +52,7 @@ export const Navbar = () => {
   };
   const langIsHk = lang === "zh-HK";
   return (
-    <nav className=" flex py-3 px-5 justify-between items-center shadow-lg ">
+    <nav className="flex py-3 px-5 justify-between items-center shadow-lg sticky top-0">
       <div className="flex items-center flex-1 px-1 space-x-2 justify-between ">
         <div className="flex h-28 space-x-6 items-center">
           <Link
@@ -88,7 +88,7 @@ export const Navbar = () => {
                     as={Button}
                     color="white"
                     className="group"
-                    bgColor="#1F2937"
+                    bgColor="transparent"
                     _hover={{}}
                     _expanded={{ color: "#EE72B6", bgColor: "#1F2937" }}
                     _active={{}}
