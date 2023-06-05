@@ -21,7 +21,7 @@ const Layout: FC<{ children: React.ReactNode }> = ({ children }) => {
       <HeadHtml />
       <div className={cn(isMainPage && "relative")}>
         {isMainPage &&
-          (isMobile ? (
+          (!isMobile ? (
             <>
               <video
                 autoPlay
