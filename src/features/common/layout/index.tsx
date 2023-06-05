@@ -14,18 +14,17 @@ const Layout: FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div>
       <HeadHtml />
-      <div className={cn(isMainPage && "relative h-screen overflow-hidden")}>
+      <div className={cn(isMainPage && "relative")}>
         {isMainPage && (
           <video
             autoPlay
             loop
             muted
-            className="absolute -z-10 w-auto 
-            min-w-full min-h-full max-w-none opacity-50"
+            className="absolute -z-10 top-0 left-0 w-full h-full object-cover opacity-60"
           >
             <source
-              // src="https://surpass-boxing-gym.s3.ap-southeast-1.amazonaws.com/videos/background_compressed.mp4"
-              src="https://surpass-boxing-gym.s3.ap-southeast-1.amazonaws.com/videos/background.mp4"
+              src="https://surpass-boxing-gym.s3.ap-southeast-1.amazonaws.com/videos/background_compressed.mp4"
+              // src="https://surpass-boxing-gym.s3.ap-southeast-1.amazonaws.com/videos/background.mp4"
               type="video/mp4"
             />
           </video>
