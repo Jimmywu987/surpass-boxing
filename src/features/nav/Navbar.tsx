@@ -27,9 +27,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useRef } from "react";
-
 import { MobileNavLink } from "@/features/nav/components/MobileNavLink";
 import { cn } from "@/utils/cn";
+import { useCheckMainPageAtTop } from "@/features/common/hooks/useCheckMainPageAtTop";
 
 export const Navbar = () => {
   const { t, lang } = useTranslation("common");
@@ -37,6 +37,7 @@ export const Navbar = () => {
   const router = useRouter();
   const { pathname, asPath, query } = router;
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const isTop = useCheckMainPageAtTop();
   const btnRef = useRef(null);
   const session = useSession();
   const isAuthenticated = session.status === "authenticated";
@@ -50,9 +51,15 @@ export const Navbar = () => {
       lang: language === "en" ? LanguageEnum.EN : LanguageEnum.ZH,
     });
   };
+
   const langIsHk = lang === "zh-HK";
   return (
-    <nav className="flex py-3 px-5 justify-between items-center shadow-lg sticky top-0">
+    <nav
+      className={cn(
+        "flex py-3 px-5 justify-between items-center shadow-xl sticky top-0 transition duration-500",
+        !isTop && "bg-gray-900 "
+      )}
+    >
       <div className="flex items-center flex-1 px-1 space-x-2 justify-between ">
         <div className="flex h-28 space-x-6 items-center">
           <Link
