@@ -57,7 +57,7 @@ export const Navbar = () => {
   return (
     <nav
       className={cn(
-        "flex py-3 px-5 justify-between items-center shadow-xl sticky top-0 transition duration-500 z-20",
+        "flex py-3 px-5 justify-between items-center shadow-xl sticky top-0 transition duration-500 z-40",
         (!isTop || !!isMobile) && "bg-gray-900 "
       )}
     >
@@ -186,9 +186,9 @@ export const Navbar = () => {
             onClose={onClose}
             finalFocusRef={btnRef}
           >
-            <DrawerOverlay mt="36" />
+            <DrawerOverlay mt="32" />
 
-            <DrawerContent mt="36">
+            <DrawerContent mt="32">
               <div className="flex space-x-2 px-6 py-2 justify-end">
                 <WhatsappSvgIcon className="fill-gray-800 hover:fill-theme-color  duration-200" />
                 <FacebookSvgIcon className="fill-gray-800 hover:fill-theme-color  duration-200" />

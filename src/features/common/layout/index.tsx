@@ -21,12 +21,12 @@ const Layout: FC<{ children: React.ReactNode }> = ({ children }) => {
       <HeadHtml />
       <div className={cn(isMainPage && "relative")}>
         {isMainPage && !isMobile && (
-          <>
+          <div className="">
             <video
               autoPlay
               muted
               loop
-              className="absolute -z-10 top-0 left-0 w-full h-screen object-cover opacity-80"
+              className="absolute z-10 top-0 left-0 w-full h-screen object-cover opacity-80"
             >
               <source
                 src="https://res.cloudinary.com/dvoucdrom/video/upload/v1685989481/background-compressed_g6wuv2.mp4"
@@ -35,17 +35,17 @@ const Layout: FC<{ children: React.ReactNode }> = ({ children }) => {
             </video>
             <div
               className={cn(
-                "absolute -z-9 top-0 left-0 w-full h-screen transition duration-500",
+                "absolute z-10 top-0 left-0 w-full h-screen transition duration-500",
                 !isTop && "bg-gray-500 opacity-30"
               )}
             />
-          </>
+          </div>
         )}
         <Navbar />
         <main
           className={cn(
-            "min-h-[78vh] ",
-            route !== "/location" && "container mx-auto"
+            "min-h-[78vh]",
+            !["/", "/location"].includes(route) && "container mx-auto"
           )}
         >
           {children}
