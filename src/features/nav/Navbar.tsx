@@ -186,9 +186,8 @@ export const Navbar = () => {
             onClose={onClose}
             finalFocusRef={btnRef}
           >
-            <DrawerOverlay mt="32" />
-
-            <DrawerContent mt="32">
+            <DrawerOverlay mt="136px" />
+            <DrawerContent mt="136px">
               <div className="flex space-x-2 px-6 py-2 justify-end">
                 <WhatsappSvgIcon className="fill-gray-800 hover:fill-theme-color  duration-200" />
                 <FacebookSvgIcon className="fill-gray-800 hover:fill-theme-color  duration-200" />
