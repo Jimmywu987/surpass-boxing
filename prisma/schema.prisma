@@ -47,6 +47,7 @@ model User {
   profileImg  String
   phoneNumber String
   admin       Boolean @default(false)
+  shouldShow  Boolean @default(false)
 
   authOption UserAuthOptionsEnum
   status     UserStatusEnum      @default(ACTIVE)
@@ -59,6 +60,7 @@ model User {
   notifications              Notification[]
   bookingTimeSlots           BookingTimeSlots[]
   classLevelDifferentRecords ClassLevelDifferentRecord[]
+  coachInfos                 CoachInfos[]
 }
 
 model Lessons {
@@ -182,15 +184,6 @@ model OffDay {
   date   DateTime
 }
 
-model Coaches {
-  id String @id @default(cuid())
-
-  enName String?
-  zhName String
-
-  coachInfos CoachInfos[]
-}
-
 model CoachInfos {
   id String @id @default(cuid())
 
@@ -198,5 +191,5 @@ model CoachInfos {
   zhTitle String
 
   coachId String
-  coach   Coaches @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  coach   User   @relation(fields: [coachId], references: [id], onDelete: Cascade)
 }

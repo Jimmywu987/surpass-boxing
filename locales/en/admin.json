@@ -46,7 +46,10 @@
         "remove_authorization": "Remove authorization",
         "grant_authorization": "Become coach",
         "view_option": "Options",
-        "view_class_type": "View class type"
+        "view_class_type": "View class type",
+        "view_coach_into": "View coach info",
+        "should_show": "Show",
+        "should_hide": "Hide"
     },
     "confirm_remove_authorization": "Are you sure you want to remove authorization from this coach?",
     "confirm_grant_authorization": "Are you sure you want to update this user to become a coach?",

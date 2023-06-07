@@ -11,15 +11,29 @@ import { AccountBasicInfo } from "@/features/admin/components/AdminAccount/Accou
 import { useSession } from "next-auth/react";
 import { CoachConfirm } from "@/features/admin/components/AdminAccount/CoachConfirm";
 import { cn } from "@/utils/cn";
+import { AdminViewCoachOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
+
+import { ViewCoachInfo } from "@/features/admin/components/AdminAccount/ViewCoachInfo";
 
 export const AdminCoaches = () => {
-  const utils = trpc.useContext();
   const session = useSession();
   const user = session.data?.user as User;
   const { data, isLoading } = trpc.userRouter.fetchForAdmin.useQuery();
 
   const [account, setAccount] = useState<User | null>(null);
-  const [confirmView, setConfirmView] = useState(false);
+  const { mutateAsync, isLoading: updateDisplayIsLoading } =
+    trpc.coachInfosRouter.updateDisplay.useMutation({
+      onSuccess: async () => {
+        setAccount((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            shouldShow: !prev?.shouldShow,
+          };
+        });
+      },
+    });
+  const [view, setView] = useState(AdminViewCoachOptionEnums.VIEW_ACCOUNT);
   const { t } = useTranslation("admin");
   const modalDisclosure = useDisclosure();
   const { onOpen, onClose } = modalDisclosure;
@@ -27,7 +41,10 @@ export const AdminCoaches = () => {
     setAccount(user);
     onOpen();
   };
-
+  const handleCloseModel = () => {
+    onClose();
+    setView(AdminViewCoachOptionEnums.VIEW_ACCOUNT);
+  };
   if (!data || isLoading) {
     return (
       <Stack>
@@ -59,30 +76,71 @@ export const AdminCoaches = () => {
       </div>
       <ModalComponent
         modalDisclosure={modalDisclosure}
+        onCloseProps={handleCloseModel}
         content={
           <div>
-            {!confirmView ? (
+            {view === AdminViewCoachOptionEnums.VIEW_ACCOUNT ? (
               <div className="space-y-2 flex flex-col">
                 <AccountBasicInfo account={account as User} />
-                <button
-                  className={cn(
-                    "px-3 py-1 rounded-md text-white self-end ",
-                    user.id === account?.id
-                      ? " bg-gray-300"
-                      : "hover:bg-red-400 bg-red-500 "
-                  )}
-                  onClick={() => setConfirmView(true)}
-                  disabled={user.id === account?.id}
-                >
-                  {t("action.remove_authorization")}
-                </button>
+                <div className="flex space-x-2 self-end">
+                  <button
+                    className={cn(
+                      "px-3 py-1 rounded-md text-white",
+                      !account?.shouldShow && "bg-green-500",
+                      account?.shouldShow && "bg-gray-800",
+                      updateDisplayIsLoading && "bg-gray-400"
+                    )}
+                    disabled={updateDisplayIsLoading}
+                    onClick={async () =>
+                      await mutateAsync({
+                        userId: account?.id as string,
+                        shouldShow: !account?.shouldShow,
+                      })
+                    }
+                  >
+                    {!account?.shouldShow
+                      ? t("action.should_show")
+                      : t("action.should_hide")}
+                  </button>
+                  <button
+                    className={cn(
+                      "px-3 py-1 rounded-md text-white bg-amber-600"
+                    )}
+                    onClick={() =>
+                      setView(AdminViewCoachOptionEnums.VIEW_COACH_INFO)
+                    }
+                  >
+                    {t("action.view_coach_into")}
+                  </button>
+                  <button
+                    className={cn(
+                      "px-3 py-1 rounded-md text-white ",
+                      user.id === account?.id
+                        ? " bg-gray-300"
+                        : "hover:bg-red-400 bg-red-500 "
+                    )}
+                    onClick={() =>
+                      setView(AdminViewCoachOptionEnums.REMOVE_COACH_CONFIRM)
+                    }
+                    disabled={user.id === account?.id}
+                  >
+                    {t("action.remove_authorization")}
+                  </button>
+                </div>
               </div>
+            ) : view === AdminViewCoachOptionEnums.VIEW_COACH_INFO ? (
+              <ViewCoachInfo
+                onClick={() => {
+                  setView(AdminViewCoachOptionEnums.VIEW_ACCOUNT);
+                }}
+                userId={account?.id as string}
+              />
             ) : (
               <CoachConfirm
                 confirmText={t("confirm_remove_authorization")}
                 account={account as User}
-                onReturn={() => setConfirmView(false)}
-                onClose={onClose}
+                onReturn={() => setView(AdminViewCoachOptionEnums.VIEW_ACCOUNT)}
+                onClose={handleCloseModel}
               />
             )}
           </div>

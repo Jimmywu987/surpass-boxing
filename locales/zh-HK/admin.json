@@ -46,7 +46,10 @@
         "remove_authorization": "移除權限",
         "grant_authorization": "成為教練",
         "view_option": "選項",
-        "view_class_type": "查看堂類"
+        "view_class_type": "查看堂類",
+        "view_coach_into": "查看教練資料",
+        "should_show": "顯示",
+        "should_hide": "隱藏"
     },
     "confirm_remove_authorization": "你確認要移除這教練的權限嗎？",
     "confirm_grant_authorization": "你確認要更新這用戶成為教練嗎？",
