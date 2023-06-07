@@ -9,13 +9,13 @@ export const useCheckMainPageAtTop = () => {
   const router = useRouter();
 
   const { route } = router;
-
+  const isHomePage = route === "/";
   useMotionValueEvent(scrollY, "change", (latest) => {
-    if (route === "/") {
+    if (isHomePage) {
       if (latest > 0) setIsTop(false);
       else setIsTop(true);
     }
   });
 
-  return isTop;
+  return { isTop, isHomePage };
 };
