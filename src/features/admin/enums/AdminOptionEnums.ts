@@ -33,6 +33,11 @@ export enum AdminViewAccountOptionEnums {
   VIEW_USED_CLASS = "VIEW_USED_CLASS",
   VIEW_CONFIRM_GRANT_AUTH = "VIEW_CONFIRM_GRANT_AUTH",
 }
+export enum AdminViewCoachOptionEnums {
+  VIEW_ACCOUNT = "VIEW_ACCOUNT",
+  REMOVE_COACH_CONFIRM = "REMOVE_COACH_CONFIRM",
+  VIEW_COACH_INFO = "VIEW_COACH_INFO",
+}
 
 export enum AdminJoinLevelEnums {
   ALL = "All",

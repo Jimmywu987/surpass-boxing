@@ -127,14 +127,12 @@ export const Navbar = () => {
                 <NavLink text={t("home")} url="/" />
                 <NavLink text={t("classes")} url="/classes" />
                 <NavLink text={t("coaches")} url="/coaches" />
-                <NavLink text={t("pricing")} url="/pricing" />
                 <NavLink text={t("bulletin_board")} url="/bulletin-board" />
                 <NavLink text={t("location")} url="/location" />
               </div>
             </div>
             <div className="flex flex-col justify-between ">
               <div className="flex space-x-3 h-full items-center justify-end">
-                {/* @todo: implement the links */}
                 <WhatsappSvgIcon className="fill-white hover:fill-theme-color  hover:scale-110 duration-200" />
                 <FacebookSvgIcon className="fill-white hover:fill-theme-color  hover:scale-110 duration-200" />
                 <InstagramSvgIcon className="fill-white hover:fill-theme-color  hover:scale-110 duration-200" />
@@ -226,7 +224,6 @@ export const Navbar = () => {
                   />
                 </DrawerHeader>
               )}
-
               <DrawerBody>
                 <MobileNavbar
                   onClickLanguageHandler={onClickLanguageHandler}

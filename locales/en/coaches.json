@@ -1,13 +1,8 @@
 {
-    "muay_thai_approved_coach": "Hong Kong Muay-Thai Association approved Coach",
-    "hk_boxing_approved_coach": "The Boxing Association of Hong Kong approved Coach",
-    "AASFP": "AASFP Certificate In Personal Fitness Instructor",
-    "TRX": "TRX Suspension Movement Functional Training Instructor",
-    "Bulgarian": "Bulgarian bag Training Instructor",
-    "Kettle": "Kettle bell Training Instructor",
-    "stretching_instructor": "Stretching Instructor",
-    "personal_instructor": "Eight years of personal instructor experience",
-    "nine_years_muay_thai": "Nine years of Muay Thai coaching experience",
-    "ten_years_competition_experiences": "Ten years of competition experiences",
-    "CHAN_SIU_PONG": "CHAN SIU PONG"
+    "title": "Title",
+    "zh": "Chinese",
+    "en": "English",
+    "add_title": "Add Title",
+    "required": "Required",
+    "not_set": "Not Set"
 }
