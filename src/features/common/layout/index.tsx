@@ -7,13 +7,12 @@ import { useRouter } from "next/router";
 import { cn } from "@/utils/cn";
 import { isMobile } from "react-device-detect";
 import { useCheckMainPageAtTop } from "@/features/common/hooks/useCheckMainPageAtTop";
-import Image from "next/image";
 
 const Layout: FC<{ children: React.ReactNode }> = ({ children }) => {
   useOneSignal();
   const router = useRouter();
   const { route } = router;
-  const isTop = useCheckMainPageAtTop();
+  const { isTop } = useCheckMainPageAtTop();
 
   const isMainPage = route === "/";
   return (

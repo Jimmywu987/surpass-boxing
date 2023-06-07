@@ -38,7 +38,7 @@ export const Navbar = () => {
   const router = useRouter();
   const { pathname, asPath, query } = router;
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const isTop = useCheckMainPageAtTop();
+  const { isTop, isMainPage } = useCheckMainPageAtTop();
   const btnRef = useRef(null);
   const session = useSession();
   const isAuthenticated = session.status === "authenticated";
@@ -58,7 +58,7 @@ export const Navbar = () => {
     <nav
       className={cn(
         "flex py-3 px-5 justify-between items-center shadow-xl sticky top-0 transition duration-500 z-40",
-        (!isTop || !!isMobile) && "bg-gray-900 "
+        (!isTop || !!isMobile || !isMainPage) && "bg-gray-900 "
       )}
     >
       <div className="flex items-center flex-1 px-1 space-x-2 justify-between ">
