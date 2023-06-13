@@ -36,7 +36,7 @@ export const AdminClasses = () => {
         >
           {t("action.view_class_type")}
         </button>
-        <div className="border-b border-b-gray-600 py-3">
+        <div className="border-b border-b-gray-600 py-3 overflow-y-scroll w-full">
           <ButtonGroup gap="2">
             <OptionButton
               buttonText={t("regular_class")}
