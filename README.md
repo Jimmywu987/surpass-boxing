@@ -1,34 +1,45 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Surpass boxing
 
-## Getting Started
+### Description
 
-First, run the development server:
+This website is built for my friend's boxing gym.
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+Features:
+ - Open regular time class so the coaches don't need to keep open class with same weekday and time.
+ - Open one time class.
+ - Admin panel for the coaches
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+   <img width="500" alt="Bildschirmfoto 2023-06-18 um 10 18 28 PM" src="https://github.com/Jimmywu987/surpass-boxing/assets/65562227/281baf1b-aaa6-4e79-a8e7-6f62cbb3fa51">
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+ - Coaches can grant or edit the lesson package on the student's profile
+<img width="250" alt="Bildschirmfoto 2023-06-18 um 10 17 43 PM" src="https://github.com/Jimmywu987/surpass-boxing/assets/65562227/f74285c2-8eff-45cb-a8c8-e6cb1844e45f">
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+- Coaches can add information
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+  <img width="300" alt="Bildschirmfoto 2023-06-18 um 10 33 19 PM" src="https://github.com/Jimmywu987/surpass-boxing/assets/65562227/71793834-8e43-4c53-85c8-6b76ad21f5ab">
 
-## Learn More
+- Students can request to open a class with the lesson package
 
-To learn more about Next.js, take a look at the following resources:
+<img width="300" alt="Bildschirmfoto 2023-06-18 um 10 22 53 PM" src="https://github.com/Jimmywu987/surpass-boxing/assets/65562227/1b19fc37-a774-489c-a235-f01ddd421fb0">
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### Tech tools
 
-## Deploy on Vercel
+<a href="https://www.typescriptlang.org/"><img src="https://camo.githubusercontent.com/ff660f3b34106793e1a8008592156f3127d8465adc82e103b9f2e0ce012c70ec/68747470733a2f2f6564656e742e6769746875622e696f2f537570657254696e7949636f6e732f696d616765732f7376672f747970657363726970742e737667" alt="typescript" width="40" height="40"></a>
+<a href="https://reactjs.org/" target="_blank"> <img src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/react/react.png" alt="react" width="40" height="40"/> </a>
+ <a href="https://nextjs.org/"><img src="https://d2eip9sf3oo6c2.cloudfront.net/tags/images/000/001/074/full/nextjs.png" alt="nextjs" width="40" height="40"></a>
+<a href="https://tailwindcss.com/" target="_blank"> <img src="https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg" alt="tailwind" width="40" height="40"/> </a>
+<a href="https://www.prisma.io/" target="_blank"><img alt="Prisma" width="40px" src="https://github.com/tandpfun/skill-icons/blob/main/icons/Prisma.svg" /> </a>
+<a href="https://www.postgresql.org/" target="_blank"><img alt="Postgres" width="40px" src="https://github.com/tandpfun/skill-icons/blob/main/icons/PostgreSQL-Dark.svg" /> </a>
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [i18n](https://www.npmjs.com/package/i18n)
+- [AWS S3 bucket](https://aws.amazon.com/de/s3/) for images storage
+- [Next-auth](https://next-auth.js.org/) with google auth login
+- [Onesignal](https://onesignal.com/) for push notification
+- [Chakra ui](https://chakra-ui.com/)
+- [TRPC](https://trpc.io/) and [zod](https://zod.dev/) for type safety between the frontend and backend communication
+- [React-hook-form](https://www.react-hook-form.com/)
+- [Editorjs](https://editorjs.io/) for better information editing experience
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+    
