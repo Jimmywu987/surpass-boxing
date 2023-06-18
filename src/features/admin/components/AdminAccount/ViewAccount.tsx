@@ -21,7 +21,7 @@ export const ViewAccount = ({
   setView: Dispatch<SetStateAction<AdminViewAccountOptionEnums>>;
   setViewAccount: Dispatch<SetStateAction<UserType>>;
 }) => {
-  const { t } = useTranslation("classes");
+  const { t, lang } = useTranslation("classes");
 
   const utils = trpc.useContext();
   const { mutateAsync } = trpc.lessonClassRouter.addLesson.useMutation();
@@ -85,9 +85,13 @@ export const ViewAccount = ({
       </div>
 
       <FormProvider {...addClassInputFormMethods}>
-        <form className="flex justify-between">
-          <div className="flex border border-gray-100 justify-between">
-            <div className="flex space-x-2 border border-gray-300 p-1">
+        <form
+          className={cn(
+            lang === "en" ? "flex flex-col" : "flex justify-between"
+          )}
+        >
+          <div className="flex border border-gray-100 justify-between ">
+            <div className="flex space-x-2 border border-gray-300 p-1 items-center">
               <p>{t("admin:lesson_number")}: </p>
               <input
                 type="number"
@@ -102,7 +106,7 @@ export const ViewAccount = ({
                 }}
               />
             </div>
-            <div className="flex border border-gray-300 p-1 ">
+            <div className="flex border border-gray-300 p-1 items-center">
               <div className="flex space-x-2  ">
                 <p>{t("admin:duration")}: </p>
                 <input
@@ -141,10 +145,11 @@ export const ViewAccount = ({
           </div>
           <button
             className={cn(
-              " px-3 rounded-md text-white",
+              " px-3 rounded-md text-white self-end",
               formState.isValid
                 ? "hover:bg-green-400 bg-green-500"
-                : "bg-gray-300"
+                : "bg-gray-300",
+              lang === "en" && "mt-2 py-1"
             )}
             onClick={AddClass}
             disabled={!formState.isValid}

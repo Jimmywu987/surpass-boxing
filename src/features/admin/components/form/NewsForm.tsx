@@ -80,7 +80,7 @@ export const NewsForm = ({
         <div className="border-2 border-gray-200 p-2 rounded">
           <EditorBlock name="content" />
         </div>
-        <label className=" bg-gray-300 text-gray-700 rounded w-32 py-1 cursor-pointer ">
+        <label className=" bg-gray-300 text-gray-700 rounded w-36 py-1 cursor-pointer ">
           <input
             onChange={onClickUploadImageHandler}
             accept="image/*"
@@ -90,7 +90,7 @@ export const NewsForm = ({
           <div className="flex items-center space-x-2 justify-center">
             <div>
               <span className="text-red-600">*</span>
-              <span className="font-semibold">{"上傳圖片"}</span>
+              <span className="font-semibold">{t("admin:upload_image")}</span>
             </div>
             <ExternalLinkIcon />
           </div>
