@@ -15,19 +15,26 @@ const Layout: FC<{ children: React.ReactNode }> = ({ children }) => {
   const isMainPage = route === "/";
 
   return (
-    <div>
+    <div className="min-h-screen">
       <HeadHtml />
-      <div className={cn(isMainPage && "relative")}>
-        <MainPageVideo />
-        <Navbar />
-        <main
-          className={cn(
-            "min-h-[78vh]",
-            !["/", "/location"].includes(route) && "container mx-auto"
-          )}
-        >
-          {children}
-        </main>
+      <div
+        className={cn(
+          isMainPage && "relative",
+          "min-h-screen flex flex-col justify-between"
+        )}
+      >
+        <div>
+          <MainPageVideo />
+          <Navbar />
+          <main
+            className={cn(
+              "",
+              !["/", "/location"].includes(route) && "container mx-auto"
+            )}
+          >
+            {children}
+          </main>
+        </div>
         <Footer />
       </div>
     </div>
