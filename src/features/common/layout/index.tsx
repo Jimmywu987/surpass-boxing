@@ -28,7 +28,6 @@ const Layout: FC<{ children: React.ReactNode }> = ({ children }) => {
           <Navbar />
           <main
             className={cn(
-              "",
               !["/", "/location"].includes(route) && "container mx-auto"
             )}
           >
