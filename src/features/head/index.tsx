@@ -8,6 +8,7 @@ export const HeadHtml = () => {
         name="viewport"
         content="initial-scale=1, viewport-fit=cover, width=device-width"
       />
+      <meta name="description" content="" />
     </Head>
   );
 };
