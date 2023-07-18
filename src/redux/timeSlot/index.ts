@@ -1,4 +1,4 @@
-import { TimeSlotsType } from "types";
+import { TimeSlotsType } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { FeatureKey } from "@/redux/featureKey";
 import { RootState } from "@/redux/reducers";

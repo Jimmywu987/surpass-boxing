@@ -19,7 +19,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { UserType } from "types";
+import { UserType } from "@/types";
 import { AccountContent } from "@/features/admin/components/AdminAccount/AccountContent";
 import { AdminAccountFilterOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
 import { OptionButton } from "@/features/common/components/buttons/OptionButton";

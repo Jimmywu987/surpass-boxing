@@ -1,4 +1,4 @@
-import { UserType } from "types";
+import { UserType } from "@/types";
 import useTranslation from "next-translate/useTranslation";
 
 import { ChevronLeftIcon } from "@chakra-ui/icons";
