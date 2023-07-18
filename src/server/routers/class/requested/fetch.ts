@@ -1,7 +1,7 @@
 import { TAKE_NUMBER } from "@/constants";
 import { AdminPeriodOptionsEnum } from "@/features/admin/enums/AdminOptionEnums";
 import { prisma } from "@/services/prisma";
-import { SortedBookingTimeSlotsType } from "types";
+import { SortedBookingTimeSlotsType } from "@/types";
 import { BookingTimeSlotStatusEnum } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { isAfter, subDays } from "date-fns";
