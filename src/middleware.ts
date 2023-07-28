@@ -8,5 +8,7 @@ export async function middleware(request: NextRequest, _next: NextFetchEvent) {
   if (RESTRICTED_COUNTRIES.includes(country)) {
     return NextResponse.rewrite(new URL("/classes", request.url));
   }
-  return res;
+  const { nextUrl: url } = request;
+  url.searchParams.set("country", country);
+  return NextResponse.rewrite(url);
 }
