@@ -16,6 +16,7 @@ const App = ({
   session,
   pageProps,
 }: AppProps & { session: Session }) => {
+  console.log("pageProps", pageProps.country);
   return (
     <GoogleReCaptchaProvider reCaptchaKey="6LcywMYlAAAAAA47FggnOSAc4BBOldk-r1tGDuZq">
       <SessionProvider session={session}>
