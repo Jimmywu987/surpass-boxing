@@ -9,47 +9,53 @@
 
 @layer utilities {
     .nav-link {
-       @apply text-xl relative font-semibold py-2 px-2.5 rounded;
+        @apply text-xl relative font-semibold py-2 px-2.5 rounded;
     }
 
     .nav-link::after {
-       @apply content-[''] duration-300 absolute bg-theme-color h-[3px] w-0 left-0 -bottom-[3px] rounded-xl;
+        @apply content-[''] duration-300 absolute bg-theme-color h-[3px] w-0 left-0 -bottom-[3px] rounded-xl;
     }
 
-    .nav-link:hover::after{
+    .nav-link:hover::after {
         @apply w-full;
     }
 
     .hamburger {
         @apply relative w-[40px] h-[40px] bg-white rounded-xl cursor-pointer flex;
     }
-   
+
 
     .hamburger div {
         @apply relative w-[25px] h-[25px] m-auto flex items-center rotate-0 duration-1000;
     }
+
     .hamburger.active div {
         @apply rotate-[315deg];
     }
+
     .hamburger span {
         @apply absolute block h-[25%] border-2 border-theme-color rounded-3xl bg-gradient-to-r from-theme-color to-black shadow-md shadow-theme-color duration-300 delay-1000;
 
     }
+
     .hamburger.active span:nth-child(1) {
         @apply w-full translate-y-[10px] delay-0;
     }
+
     .hamburger.active span:nth-child(2) {
         @apply scale-x-0 opacity-0 delay-0;
     }
+
     .hamburger.active span:nth-child(3) {
         @apply w-full rotate-90 bottom-[10px] delay-0;
     }
+
     .shadow-theme {
-        box-shadow: 0 0 5px #BF4186, 0   0 10px #BF4186, 0 0 20px #BF4186, 0 0 40px #BF4186;
+        box-shadow: 0 0 5px #BF4186, 0 0 10px #BF4186, 0 0 20px #BF4186, 0 0 40px #BF4186;
     }
 
 
- 
+
     .main-section-bg-color {
 
         background-color: linear-gradient(rgb(17, 24, 39), rgb(75, 85, 99));
