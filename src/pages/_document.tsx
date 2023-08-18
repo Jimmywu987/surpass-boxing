@@ -14,6 +14,7 @@ export default function Document() {
         <meta name="format-detection" content="telephone=no" />
         <meta name="theme-color" content="#fff" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta charSet="utf-8" />
       </Head>
       <body className="bg-gray-900 font-sans">
         <Main />

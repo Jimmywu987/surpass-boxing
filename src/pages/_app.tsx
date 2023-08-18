@@ -17,15 +17,7 @@ const App = ({
   pageProps,
 }: AppProps & { session: Session }) => {
   return (
-    <GoogleReCaptchaProvider
-      reCaptchaKey="6LcywMYlAAAAAA47FggnOSAc4BBOldk-r1tGDuZq"
-      scriptProps={{
-        async: true, // optional, default to false,
-        defer: false, // optional, default to false
-        appendTo: "body", // optional, default to "head", can be "head" or "body",
-        nonce: undefined,
-      }}
-    >
+    <GoogleReCaptchaProvider reCaptchaKey="6LcywMYlAAAAAA47FggnOSAc4BBOldk-r1tGDuZq">
       <SessionProvider session={session}>
         <Provider store={store}>
           <ChakraProvider>
