@@ -19,6 +19,7 @@ export const DatePicker = ({
             _hover: {
               background: "blue.400",
             },
+            color: "white",
           },
           selectedBtnProps: {
             background: "#EE72B6",
