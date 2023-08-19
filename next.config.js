@@ -30,6 +30,7 @@ const nextConfig = nextTranslate({
     S3_UPLOAD_SECRET: process.env.S3_UPLOAD_SECRET,
     S3_UPLOAD_BUCKET: process.env.S3_UPLOAD_BUCKET,
     S3_UPLOAD_REGION: process.env.S3_UPLOAD_REGION,
+    WEB_URL: process.env.WEB_URL,
   },
   publicRuntimeConfig: {},
   serverRuntimeConfig: {
