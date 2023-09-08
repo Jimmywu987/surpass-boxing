@@ -40,7 +40,6 @@ const LocationPage = () => {
         <p className="text-xl">
           {t("boxing_address")}: {t("boxing_gym_address")}
         </p>
-        <p className="text-xl">{t("phone")}: 60120223 ( Pong sir )</p>
       </div>
 
       <div className="py-2 ">

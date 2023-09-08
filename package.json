@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "yarn tsc -p ./ --noEmit --skipLibCheck",
+    "typecheck": "tsc -p ./ --noEmit --skipLibCheck",
     "db-push": "npx prisma db push",
     "postinstall": "npx prisma generate"
   },
