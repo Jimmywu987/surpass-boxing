@@ -25,6 +25,7 @@
     "month": "月",
     "year": "年",
     "open_a_class": "開堂",
+    "only_show_confirmed_classes": "已確認開堂",
     "hours": "{{hours}}小時",
     "minutes": "{{minutes}}分鐘",
     "hours_minutes": "{{hours}}小時 {{minutes}}分鐘",

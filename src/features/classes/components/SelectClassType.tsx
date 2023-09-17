@@ -19,7 +19,7 @@ export const SelectClassType = () => {
 
   const lessonLevels = useMemo(() => {
     if (!lessonData) return [];
-    return lessonData.map((lesson) => lesson.level);
+    return lessonData.lessons.map((lesson) => lesson.level);
   }, [lessonData]);
 
   if (!data) {

@@ -145,11 +145,11 @@ export const ViewAccount = ({
           </div>
           <button
             className={cn(
-              " px-3 rounded-md text-white self-end",
+              "py-1 px-3 rounded-md text-white self-end",
               formState.isValid
                 ? "hover:bg-green-400 bg-green-500"
                 : "bg-gray-300",
-              lang === "en" && "mt-2 py-1"
+              lang === "en" && "mt-2"
             )}
             onClick={AddClass}
             disabled={!formState.isValid}

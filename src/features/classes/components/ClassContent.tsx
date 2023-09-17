@@ -36,7 +36,8 @@ export const ClassContent = ({
   const isAuthenticated = session.status === "authenticated";
 
   const [modelType, setModelType] = useState(OpenModelType.OPEN_CLASS);
-
+  const [onlyShowConfirmedClasses, setOnlyShowConfirmedClasses] =
+    useState(false);
   const modalDisclosure = useDisclosure();
   const { onOpen } = modalDisclosure;
 
@@ -86,11 +87,17 @@ export const ClassContent = ({
           <div className="text-white">
             {t(format(date, "EEEE").toLowerCase())}
           </div>
-          <div>
-            <Button onClick={handleOpenModel} isDisabled={data?.isDayOff}>
-              {t("open_a_class")}
-            </Button>
-          </div>
+          <Button onClick={handleOpenModel} isDisabled={data?.isDayOff}>
+            {t("open_a_class")}
+          </Button>
+          <Button
+            onClick={() => setOnlyShowConfirmedClasses((prev) => !prev)}
+            backgroundColor={onlyShowConfirmedClasses ? "gray.200" : "gray.700"}
+            px="4"
+            variant="unstyled"
+          >
+            {t("only_show_confirmed_classes")}
+          </Button>
         </div>
         <ClassPageContent
           data={data}
@@ -99,6 +106,7 @@ export const ClassContent = ({
           handleOpenModel={handleOpenModel}
           query={query}
           setQuery={setQuery}
+          onlyShowConfirmedClasses={onlyShowConfirmedClasses}
         />
       </div>
       <ModalComponent

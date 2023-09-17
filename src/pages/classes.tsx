@@ -11,20 +11,17 @@ const ClassesPage = () => {
 
   const isAuthenticated = session.status === "authenticated";
 
-  const { data: lessonsData } = trpc.lessonClassRouter.fetch.useQuery(
-    undefined,
-    {
-      enabled: isAuthenticated,
-    }
-  );
-  if (!lessonsData || lessonsData.length === 0) {
+  const { data } = trpc.lessonClassRouter.fetch.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
+  if (!data || (data.lessons.length === 0 && data.classes.length === 0)) {
     return (
       <div className="text-center text-white mt-24">
         {t("please_contact_coach_to_get_class_info")}
       </div>
     );
   }
-  return <ClassContent lessonsData={lessonsData} />;
+  return <ClassContent lessonsData={data.lessons} />;
 };
 
 export default ClassesPage;

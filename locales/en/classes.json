@@ -25,6 +25,7 @@
     "month": "Month",
     "year": "Year",
     "open_a_class": "Open a class",
+    "only_show_confirmed_classes": "Confirmed classes only",
     "hours": "{{hours}} Hour{{hourPlural}}",
     "minutes": "{{minutes}} Minute{{minutePlural}}",
     "hours_minutes": "{{hours}} Hour{{hourPlural}}, {{minutes}} Minute{{minutePlural}}",

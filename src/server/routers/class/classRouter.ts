@@ -7,6 +7,7 @@ import { requestedClassRouter } from "@/server/routers/class/requested/requested
 import { regularClassRouter } from "@/server/routers/class/regular/regularClassRouter";
 import { levelRecordRouter } from "@/server/routers/class/levelRecord/levelRecordRouter";
 import { ClassLevelEnum } from "@prisma/client";
+import { fetchConfirmedClasses } from "@/server/routers/class/fetchConfirmedClass";
 
 export const classRouter = router({
   create: protectedProcedure
@@ -57,6 +58,7 @@ export const classRouter = router({
         });
       }
     }),
+  fetchConfirmedClasses,
   requestedClassRouter,
   regularClassRouter,
   levelRecordRouter,
