@@ -6,20 +6,12 @@ import {
 import { PaginationSection } from "@/features/common/components/PaginationSection";
 import { RouterOutput } from "@/utils/trpc";
 import { Skeleton, Stack } from "@chakra-ui/react";
-import { Lessons } from "@prisma/client";
+import { BookingTimeSlotStatusEnum, Lessons } from "@prisma/client";
 import useTranslation from "next-translate/useTranslation";
 import { Dispatch, SetStateAction, useMemo } from "react";
 
 type inferType = RouterOutput["bookingTimeSlotRouter"]["fetchForStudent"];
-
-export const ClassPageContent = ({
-  data,
-  isLoading,
-  lessonsData,
-  handleOpenModel,
-  query,
-  setQuery,
-}: {
+type ClassPageContentProps = {
   data: inferType | undefined;
   query: {
     skip: number;
@@ -34,7 +26,17 @@ export const ClassPageContent = ({
   isLoading: boolean;
   lessonsData: Lessons[] | undefined;
   handleOpenModel: () => void;
-}) => {
+  onlyShowConfirmedClasses: boolean;
+};
+export const ClassPageContent = ({
+  data,
+  isLoading,
+  lessonsData,
+  handleOpenModel,
+  query,
+  setQuery,
+  onlyShowConfirmedClasses,
+}: ClassPageContentProps) => {
   const { t } = useTranslation("classes");
 
   const classes = useMemo(() => {
@@ -62,15 +64,24 @@ export const ClassPageContent = ({
 
   return (
     <div className="space-y-2">
-      {classes.map((slot) => (
-        <ClassCard
-          slot={slot}
-          date={query.date}
-          lessonsData={lessonsData}
-          handleOpenModel={handleOpenModel}
-          key={slot.id}
-        />
-      ))}
+      {classes
+        .filter((slot) => {
+          const bookingTimeSlot = slot as BookingTimeSlots;
+          return (
+            !onlyShowConfirmedClasses ||
+            (bookingTimeSlot.status &&
+              bookingTimeSlot.status === BookingTimeSlotStatusEnum.CONFIRM)
+          );
+        })
+        .map((slot) => (
+          <ClassCard
+            slot={slot}
+            date={query.date}
+            lessonsData={lessonsData}
+            handleOpenModel={handleOpenModel}
+            key={slot.id}
+          />
+        ))}
       {data.bookingTimeSlots.length !== 0 ? (
         <PaginationSection
           setQuery={setQuery as Dispatch<SetStateAction<{ skip: number }>>}

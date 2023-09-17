@@ -11,6 +11,7 @@ import { OptionButton } from "@/features/common/components/buttons/OptionButton"
 import { useRouter } from "next/router";
 import { cn } from "@/utils/cn";
 import { AdminSetOffDay } from "@/features/admin/components/AdminSetOffDay";
+import { AdminConfirmedClass } from "@/features/admin/components/AdminConfirmedClass";
 
 export const AdminClasses = () => {
   const { t } = useTranslation("admin");
@@ -70,6 +71,14 @@ export const AdminClasses = () => {
                 setClassOptions(AdminClassesOptionEnums.SET_DAY_OFF)
               }
             />
+            <OptionButton
+              buttonText={t("classes:only_show_confirmed_classes")}
+              currentValue={classOptions}
+              optionValue={AdminClassesOptionEnums.CONFIRMED_CLASSES}
+              onClick={() =>
+                setClassOptions(AdminClassesOptionEnums.CONFIRMED_CLASSES)
+              }
+            />
           </ButtonGroup>
         </div>
         <div>
@@ -84,6 +93,9 @@ export const AdminClasses = () => {
           )}
           {classOptions === AdminClassesOptionEnums.SET_DAY_OFF && (
             <AdminSetOffDay />
+          )}
+          {classOptions === AdminClassesOptionEnums.CONFIRMED_CLASSES && (
+            <AdminConfirmedClass />
           )}
         </div>
       </div>

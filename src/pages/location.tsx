@@ -41,8 +41,7 @@ const LocationPage = () => {
           {t("boxing_address")}: {t("boxing_gym_address")}
         </p>
       </div>
-
-      <div className="py-2 ">
+      <div className="py-2">
         <GoogleMapEmbed
           src={
             "https:/" +
