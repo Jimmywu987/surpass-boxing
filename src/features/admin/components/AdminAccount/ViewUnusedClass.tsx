@@ -39,7 +39,10 @@ export const ViewUnusedClass = ({
       <ChevronLeftIcon fontSize="3xl" cursor={"pointer"} onClick={onClick} />
       <div className="space-y-2">
         {lessons.map(({ lesson, expiryDate, id, level }, index) => (
-          <div key={index} className="flex justify-between items-end">
+          <div
+            key={index}
+            className="flex justify-between items-end border-2 border-gray-100 rounded"
+          >
             <div>
               <p>
                 {t("admin:lesson_number")}: {lesson}

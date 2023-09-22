@@ -26,13 +26,13 @@ export const ViewUsedClass = ({
   return (
     <div>
       <ChevronLeftIcon fontSize="3xl" cursor="pointer" onClick={onClick} />
-      <div>
+      <div className="space-y-2">
         {bookingTimeSlotIds.length > 0 ? (
           data.map((bookingTimeSlot, index) => {
             const { startTime, endTime, className, coach, date } =
               bookingTimeSlot;
             return (
-              <div key={index}>
+              <div key={index} className="border-2 border-gray-200 rounded p-3">
                 <p>{className}</p>
                 {coach && <p>{coach.username}</p>}
                 <div>
