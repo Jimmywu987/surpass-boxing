@@ -20,3 +20,13 @@ export type SortedBookingTimeSlotsType = {
   date: string;
   timeSlots: TimeSlotsType[];
 }[];
+
+export type SortedTimeSlotsType = {
+  [key: string]: {
+    number: number;
+    date: string;
+    timeSlots: TimeSlotsType[];
+    isDayOff: boolean;
+    dayOffReasons: string | null;
+  };
+};

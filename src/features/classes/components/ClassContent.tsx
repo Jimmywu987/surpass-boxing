@@ -1,8 +1,15 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
 
-import { endOfDay, format, isBefore, startOfDay, subDays } from "date-fns";
+import {
+  endOfDay,
+  format,
+  isBefore,
+  isSameDay,
+  startOfDay,
+  subDays,
+} from "date-fns";
 import useTranslation from "next-translate/useTranslation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { OpenModelType } from "@/features/common/enums/OpenModelType";
 import { useSession } from "next-auth/react";
@@ -23,7 +30,7 @@ export const ClassContent = ({
   lessonsData: Lessons[] | undefined;
 }) => {
   const { t } = useTranslation("classes");
-  const session = useSession();
+  const session: any = useSession();
   const router = useRouter();
   const { date: queryDate } = router.query;
   const now = new Date();
@@ -40,14 +47,14 @@ export const ClassContent = ({
     useState(false);
   const modalDisclosure = useDisclosure();
   const { onOpen } = modalDisclosure;
-
+  const isAdmin: boolean = session.data?.user["admin"];
   const handleOpenModel = () => {
     onOpen();
     if (!isAuthenticated) {
       setModelType(OpenModelType.LOGIN);
       return;
     }
-    if (!lessonsData || lessonsData.length === 0) {
+    if ((!lessonsData || lessonsData.length === 0) && !isAdmin) {
       setModelType(OpenModelType.REQUEST_LESSON_MESSAGE);
       return;
     }
@@ -61,9 +68,15 @@ export const ClassContent = ({
 
   const bookingTimeSlotResult =
     trpc.bookingTimeSlotRouter.fetchForStudent.useQuery(query);
+
   const { data, isLoading } = bookingTimeSlotResult;
   const date = new Date(query.date);
   const minDate = endOfDay(subDays(new Date(), 1));
+  const isDayOff = useMemo(() => {
+    return data?.dayOffs.find((each) => {
+      return isSameDay(each.date, date);
+    });
+  }, [data?.dayOffs, date]);
 
   return (
     <>
@@ -87,7 +100,7 @@ export const ClassContent = ({
           <div className="text-white">
             {t(format(date, "EEEE").toLowerCase())}
           </div>
-          <Button onClick={handleOpenModel} isDisabled={data?.isDayOff}>
+          <Button onClick={handleOpenModel} isDisabled={!!isDayOff}>
             {t("open_a_class")}
           </Button>
           <Button

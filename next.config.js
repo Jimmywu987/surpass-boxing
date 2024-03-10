@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const nextTranslate = require("next-translate");
+const nextTranslate = require("next-translate-plugin");
 
 const withNextPwa = require("next-pwa")({
   disable: process.env.NODE_ENV === "development",

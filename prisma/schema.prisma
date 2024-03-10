@@ -3,9 +3,11 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
-
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  // provider     = "postgresql"
+  // url          = env("POSTGRES_PRISMA_URL") 
+  // directUrl    = env("POSTGRES_URL_NON_POOLING")
   relationMode = "prisma"
 }
 
@@ -73,6 +75,8 @@ model Lessons {
   userId     String
   user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   level      ClassLevelEnum
+
+  @@index([userId])
 }
 
 model ClassesType {
@@ -104,6 +108,8 @@ model RegularBookingTimeSlots {
 
   className String
   level     ClassLevelEnum
+
+  @@index([coachId])
 }
 
 model BookingTimeSlots {
@@ -126,6 +132,8 @@ model BookingTimeSlots {
   coach   User?   @relation(fields: [coachId], references: [id], onDelete: Cascade)
 
   userOnBookingTimeSlots UserOnBookingTimeSlots[]
+
+  @@index([coachId])
 }
 
 model UserOnBookingTimeSlots {
@@ -138,6 +146,8 @@ model UserOnBookingTimeSlots {
   createdAt DateTime @default(now())
 
   @@id([userId, bookingTimeSlotId])
+  @@index([bookingTimeSlotId])
+  @@index([userId])
 }
 
 model News {
@@ -159,6 +169,8 @@ model Notification {
 
   adminId String?
   user    User?   @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([adminId])
 }
 
 model ClassLevelDifferentRecord {
@@ -172,6 +184,8 @@ model ClassLevelDifferentRecord {
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model OffDay {
@@ -192,4 +206,6 @@ model CoachInfos {
 
   coachId String
   coach   User   @relation(fields: [coachId], references: [id], onDelete: Cascade)
+
+  @@index([coachId])
 }
