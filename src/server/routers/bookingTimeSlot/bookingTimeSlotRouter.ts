@@ -1,13 +1,11 @@
 import { TAKE_NUMBER } from "@/constants";
-import {
-  getFormatTimeZone,
-  getZonedEndOfDay,
-  getZonedStartOfDay,
-} from "@/helpers/getTimeZone";
+import { getFormatTimeZone, getZonedStartOfDay } from "@/helpers/getTimeZone";
 import { protectedProcedure, publicProcedure, router } from "@/server/trpc";
 import { prisma } from "@/services/prisma";
+import { SortedTimeSlotsType, TimeSlotsType } from "@/types";
 import { BookingTimeSlotStatusEnum, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { add, addWeeks, differenceInDays } from "date-fns";
 import { z } from "zod";
 
 export const bookingTimeSlotRouter = router({
@@ -21,34 +19,21 @@ export const bookingTimeSlotRouter = router({
     .query(async ({ input }) => {
       const { skip, date } = input;
       const dateTime = new Date(date);
-      const isDayOff = await prisma.offDay.findFirst({
-        where: {
-          date: getZonedStartOfDay(dateTime),
-        },
-      });
-      if (isDayOff) {
-        return {
-          totalClassesCount: 0,
-          bookingTimeSlots: [],
-          regularBookingSlot: [],
-          dayOffReason: isDayOff.reason,
-          isDayOff: true,
-        };
-      }
-      const weekday = getFormatTimeZone({
-        date: dateTime,
-        format: "EEEE",
-      }).toLowerCase();
 
       const startDay = getZonedStartOfDay(dateTime);
-      const endDay = getZonedEndOfDay(dateTime);
+      const endDay = addWeeks(startDay, 1);
+
       try {
-        return prisma.$transaction(async (txn) => {
+        const result = await prisma.$transaction(async (txn) => {
           const whereQuery = {
             gte: startDay,
             lte: endDay,
           };
-
+          const dayOffs = await txn.offDay.findMany({
+            where: {
+              date: whereQuery,
+            },
+          });
           const totalClasses = await txn.bookingTimeSlots.aggregate({
             where: {
               date: whereQuery,
@@ -85,25 +70,11 @@ export const bookingTimeSlotRouter = router({
               date: "desc",
             },
           });
-          const regularBookingSlotIds =
-            bookingTimeSlots.length > 0
-              ? (bookingTimeSlots
-                  .map((slot) => slot.regularBookingTimeSlotId)
-                  .filter((id) => id) as string[])
-              : [];
 
           const regularBookingSlot = await txn.regularBookingTimeSlots.findMany(
             {
               take: TAKE_NUMBER,
               skip,
-              where: {
-                [weekday]: true,
-                id: {
-                  not: {
-                    in: regularBookingSlotIds,
-                  },
-                },
-              },
               include: {
                 coach: {
                   select: {
@@ -113,15 +84,117 @@ export const bookingTimeSlotRouter = router({
               },
             }
           );
-
           return {
             totalClassesCount,
             bookingTimeSlots,
             regularBookingSlot,
-            dayOffReason: null,
-            isDayOff: false,
+            dayOffs,
           };
         });
+        const sortedBookingTimeSlots: SortedTimeSlotsType = {};
+
+        for (let i = 0; i < result.bookingTimeSlots.length; i++) {
+          const timeSlot = result.bookingTimeSlots[i];
+          const date = getFormatTimeZone({
+            date: timeSlot.date,
+          });
+
+          if (!sortedBookingTimeSlots[date]) {
+            sortedBookingTimeSlots[date] = {
+              number: differenceInDays(timeSlot.date, startDay),
+              isDayOff: false,
+              dayOffReasons: null,
+              date,
+              timeSlots: [timeSlot],
+            };
+            continue;
+          }
+
+          sortedBookingTimeSlots[date].timeSlots.push(timeSlot);
+        }
+
+        const weeks: {
+          [key: string]: { day: Date; date: string; weekDay: string };
+        } = {};
+
+        for (let x = 0; x < 7; x++) {
+          const day = add(startDay, { days: x });
+          const weekDay = getFormatTimeZone({
+            date: day,
+            format: "EEEE",
+          }).toLowerCase();
+          const date = getFormatTimeZone({
+            date: day,
+          });
+
+          weeks[x.toString()] = {
+            day,
+            date,
+            weekDay,
+          };
+        }
+
+        for (let a = 0; a < result.dayOffs.length; a++) {
+          const dayOff = result.dayOffs[a];
+          const date = getFormatTimeZone({
+            date: dayOff.date,
+          });
+
+          sortedBookingTimeSlots[date] = {
+            number: differenceInDays(dayOff.date, startDay),
+            isDayOff: true,
+            dayOffReasons: dayOff.reason,
+            timeSlots: [],
+            date,
+          };
+        }
+
+        for (let i = 0; i < result.regularBookingSlot.length; i++) {
+          const regularSlot = result.regularBookingSlot[i];
+          for (let x = 0; x < 7; x++) {
+            const each = weeks[x];
+
+            if (sortedBookingTimeSlots[each.date]) {
+              const existingSlots = sortedBookingTimeSlots[each.date];
+              const shouldInclude =
+                existingSlots.timeSlots.findIndex(
+                  (slot) => slot.regularBookingTimeSlotId === regularSlot.id
+                ) === -1;
+              if (shouldInclude && regularSlot[each.weekDay as "monday"]) {
+                sortedBookingTimeSlots[each.date].timeSlots.push({
+                  ...regularSlot,
+                  date: each.day,
+                  userOnBookingTimeSlots: [],
+                  numberOfParticipants: 0,
+                  regularBookingTimeSlotId: null,
+                  status: BookingTimeSlotStatusEnum.PENDING,
+                } as TimeSlotsType);
+              }
+            } else {
+              sortedBookingTimeSlots[each.date] = {
+                number: differenceInDays(each.day, startDay),
+                isDayOff: false,
+                dayOffReasons: null,
+                date: each.date,
+                timeSlots: [
+                  {
+                    ...regularSlot,
+                    date: each.day,
+                    userOnBookingTimeSlots: [],
+                    numberOfParticipants: 0,
+                    regularBookingTimeSlotId: null,
+                    status: BookingTimeSlotStatusEnum.PENDING,
+                  } as TimeSlotsType,
+                ],
+              };
+            }
+          }
+        }
+
+        return {
+          ...result,
+          sortedBookingTimeSlots,
+        };
       } catch (error) {
         throw new TRPCError({
           code: "BAD_REQUEST",

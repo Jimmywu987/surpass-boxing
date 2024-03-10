@@ -22,12 +22,8 @@ export const useOneSignal = () => {
         },
         allowLocalhostAsSecureOrigin: true,
       });
-      const externalId = await OneSignal.getExternalUserId();
 
-      if (externalId === uid) {
-        return;
-      }
-      await OneSignal.setExternalUserId(uid);
+      await OneSignal.login(uid);
     } catch (err) {}
   };
   useEffect(() => {

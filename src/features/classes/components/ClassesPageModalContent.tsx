@@ -28,7 +28,7 @@ export const ClassesPageModalContent = ({
         <div>
           <p className="text-center">
             {t("request_class_message")}
-            <span className="font-medium hover:font-semibold cursor-pointer">
+            <span className="font-medium hover:font-semibold">
               {t("contact_coach")}
             </span>
           </p>

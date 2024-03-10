@@ -7,14 +7,18 @@ import { trpc } from "@/utils/trpc";
 
 const ClassesPage = () => {
   const { t } = useTranslation("classes");
-  const session = useSession();
+  const session: any = useSession();
 
   const isAuthenticated = session.status === "authenticated";
 
   const { data } = trpc.lessonClassRouter.fetch.useQuery(undefined, {
     enabled: isAuthenticated,
   });
-  if (!data || (data.lessons.length === 0 && data.classes.length === 0)) {
+  const isAdmin: boolean = session.data?.user["admin"];
+  if (
+    !data ||
+    (data.lessons.length === 0 && data.classes.length === 0 && !isAdmin)
+  ) {
     return (
       <div className="text-center text-white mt-24">
         {t("please_contact_coach_to_get_class_info")}
