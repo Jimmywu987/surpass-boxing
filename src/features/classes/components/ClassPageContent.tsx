@@ -74,7 +74,7 @@ export const ClassPageContent = ({
                 return (
                   <ClassCard
                     slot={slot}
-                    date={query.date}
+                    date={date}
                     lessonsData={lessonsData}
                     handleOpenModel={handleOpenModel}
                     key={slot.id}
