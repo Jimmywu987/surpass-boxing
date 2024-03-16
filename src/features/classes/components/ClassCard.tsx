@@ -51,7 +51,7 @@ export const ClassCard = ({
     );
 
   const dateOfClass = startOfDay(new Date(date)).getTime() + startTime;
-
+  console.log("date", date);
   const nowPlusHours = add(new Date(), {
     hours: HOURS,
   }).getTime();

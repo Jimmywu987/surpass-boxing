@@ -21,12 +21,15 @@ export const join = protectedProcedure
     const { id } = input;
     const user = ctx.session?.user as User;
     const { username } = user;
-
+    const now = new Date();
     const lessons = await prisma.lessons.findMany({
       where: {
         userId: user.id,
         expiryDate: {
-          gte: new Date(),
+          gte: now,
+        },
+        startDate: {
+          lte: now,
         },
         lesson: {
           gt: 0,

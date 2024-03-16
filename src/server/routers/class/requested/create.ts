@@ -20,11 +20,15 @@ export const create = protectedProcedure
     const user = ctx.session.user as User;
     let lessons: Lessons[] = [];
     if (!user.admin) {
+      const now = new Date();
       lessons = await prisma.lessons.findMany({
         where: {
           userId: user.id,
           expiryDate: {
-            gte: new Date(),
+            gte: now,
+          },
+          startDate: {
+            lte: now,
           },
           lesson: {
             gt: 0,

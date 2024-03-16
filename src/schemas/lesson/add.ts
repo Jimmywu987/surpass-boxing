@@ -6,6 +6,7 @@ export const addLessonSchema = z.object({
   durationUnit: z.string(),
   duration: z.number().positive(),
   userId: z.string(),
+  startDate: z.date(),
   level: z.enum([
     ClassLevelEnum.BEGINNER,
     ClassLevelEnum.INTERMEDIATE,

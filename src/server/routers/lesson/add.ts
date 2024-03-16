@@ -18,11 +18,12 @@ export const addLesson = protectedProcedure
       });
     }
 
-    const { lesson, durationUnit, duration, userId, level } = data;
+    const { lesson, durationUnit, duration, userId, level, startDate } = data;
     return prisma.lessons.create({
       data: {
         lesson,
-        expiryDate: add(new Date(), {
+        startDate,
+        expiryDate: add(startDate, {
           [durationUnit]: duration,
         }),
         userId,

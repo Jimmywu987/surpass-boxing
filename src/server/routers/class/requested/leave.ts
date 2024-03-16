@@ -56,6 +56,9 @@ export const leave = protectedProcedure
             expiryDate: {
               gte: now,
             },
+            startDate: {
+              lte: now,
+            },
           },
           orderBy: {
             expiryDate: "asc",

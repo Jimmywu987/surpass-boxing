@@ -17,11 +17,15 @@ export const ViewUnusedLesson = ({
       <ChevronLeftIcon fontSize="3xl" cursor={"pointer"} onClick={onClick} />
       <div className="space-y-2">
         {lessons.length !== 0 ? (
-          lessons.map(({ lesson, expiryDate, level }, index) => (
+          lessons.map(({ lesson, expiryDate, startDate, level }, index) => (
             <div key={index} className="flex justify-between items-end">
               <div>
                 <p>
                   {t("admin:lesson_number")}: {lesson}
+                </p>
+                <p>
+                  {t("admin:start_date")}:{" "}
+                  {format(new Date(startDate), "dd/MM/yyyy")}
                 </p>
                 <p>
                   {t("admin:expired_date")}:{" "}

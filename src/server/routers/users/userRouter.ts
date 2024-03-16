@@ -89,6 +89,7 @@ export const userRouter = router({
               createdAt: true,
               lesson: true,
               expiryDate: true,
+              startDate: true,
               id: true,
               level: true,
             },
@@ -152,6 +153,7 @@ export const userRouter = router({
             select: {
               createdAt: true,
               lesson: true,
+              startDate: true,
               expiryDate: true,
               id: true,
               level: true,

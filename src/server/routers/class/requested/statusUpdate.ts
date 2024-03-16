@@ -42,12 +42,16 @@ export const statusUpdate = protectedProcedure
     const userIds = timeSlots.map((timeSlot) => timeSlot.userId);
     const isCancelled = status === BookingTimeSlotStatusEnum.CANCELED;
     if (isCancelled) {
+      const now = new Date();
       const uniqueLessons: Lessons[] = [];
       const lessons = await prisma.lessons.findMany({
         where: {
           userId: { in: userIds },
           expiryDate: {
-            gte: new Date(),
+            gte: now,
+          },
+          startDate: {
+            lte: now,
           },
         },
         orderBy: {

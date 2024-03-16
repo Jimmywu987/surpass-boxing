@@ -21,6 +21,9 @@ export const fetch = protectedProcedure.query(async ({ ctx }) => {
       expiryDate: {
         gte: now,
       },
+      startDate: {
+        lte: now,
+      },
       lesson: {
         gt: 0,
       },

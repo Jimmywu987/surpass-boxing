@@ -10,7 +10,7 @@ import { editAccountSchema } from "@/schemas/user/edit";
 import { trpc } from "@/utils/trpc";
 import { EditIcon } from "@chakra-ui/icons";
 import { Skeleton, Stack } from "@chakra-ui/react";
-import { isAfter } from "date-fns";
+import { isAfter, isBefore } from "date-fns";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";

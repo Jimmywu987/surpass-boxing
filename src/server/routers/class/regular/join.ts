@@ -37,11 +37,15 @@ export const join = protectedProcedure
         code: "NOT_FOUND",
       });
     }
+    const now = new Date();
     const lessons = await prisma.lessons.findMany({
       where: {
         userId: user.id,
         expiryDate: {
-          gte: new Date(),
+          gte: now,
+        },
+        startDate: {
+          lte: now,
         },
         lesson: {
           gt: 0,
