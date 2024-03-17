@@ -9,7 +9,7 @@ import { getTimeDuration } from "@/helpers/getTime";
 import { getFormatTimeZone } from "@/helpers/getTimeZone";
 import { protectedProcedure } from "@/server/trpc";
 import { getTranslatedTerm } from "@/services/notification/getTranslatedTerm";
-import { sendSingleNotification } from "@/services/notification/onesignal";
+import { sendWebPushSingleNotification } from "@/services/notification/onesignal";
 import { z } from "zod";
 export const join = protectedProcedure
   .input(
@@ -129,11 +129,28 @@ export const join = protectedProcedure
             : NotificationEnums.JOIN_DIFFERENT_CLASS,
           lang: admin.lang,
         });
-        await sendSingleNotification({
-          receiverIds: [admin.id],
-          url,
-          message,
-        });
+        const { pushNotification } = admin as any;
+        if (pushNotification) {
+          const result = pushNotification.subscription
+            .map((each: any) => {
+              return sendWebPushSingleNotification({
+                subscription: each,
+                data: {
+                  title: "Surpass boxing",
+                  body: message,
+                  url,
+                },
+              });
+            })
+            .flat();
+          await Promise.all(result);
+        }
+
+        // await sendSingleNotification({
+        //   receiverIds: [admin.id],
+        //   url,
+        //   message,
+        // });
         if (index === 0) {
           await prisma.notification.create({
             data: {

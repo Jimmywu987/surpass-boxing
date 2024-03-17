@@ -4,7 +4,7 @@ import { getFormatTimeZone } from "@/helpers/getTimeZone";
 import { requestedClassCreateSchema } from "@/schemas/class/requested/create";
 import { protectedProcedure } from "@/server/trpc";
 import { getMessage } from "@/services/notification/getMessage";
-import { sendSingleNotification } from "@/services/notification/onesignal";
+import { sendWebPushSingleNotification } from "@/services/notification/onesignal";
 import { prisma } from "@/services/prisma";
 import { Lessons, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
@@ -135,11 +135,28 @@ export const create = protectedProcedure
             messageKey: NotificationEnums.CLASS_CREATED,
             lang: admin.lang,
           });
-          await sendSingleNotification({
-            receiverIds: [admin.id],
-            url,
-            message,
-          });
+          const { pushNotification } = admin as any;
+          if (pushNotification) {
+            const result = pushNotification.subscription
+              .map((each: any) => {
+                return sendWebPushSingleNotification({
+                  subscription: each,
+                  data: {
+                    title: "Surpass boxing",
+                    body: message,
+                    url,
+                  },
+                });
+              })
+              .flat();
+            await Promise.all(result);
+          }
+
+          // await sendSingleNotification({
+          //   receiverIds: [admin.id],
+          //   url,
+          //   message,
+          // });
           if (index === 0) {
             await prisma.notification.create({
               data: {

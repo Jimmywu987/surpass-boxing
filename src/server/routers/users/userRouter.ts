@@ -98,6 +98,99 @@ export const userRouter = router({
       });
       return { users, totalUsersCount: totalUsersCount._count };
     }),
+  addPushNotification: protectedProcedure
+    .input(z.object({ pushSubscription: z.any() }))
+    .mutation(async ({ input, ctx }) => {
+      const user = ctx.session?.user as User;
+      const { pushSubscription } = input;
+      const userData = await prisma.user.findUnique({
+        where: {
+          id: user.id,
+        },
+        select: {
+          pushNotification: true,
+        },
+      });
+      if (!userData) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+        });
+      }
+
+      const { pushNotification } = userData as any;
+
+      if (!pushNotification) {
+        await prisma.user.update({
+          where: {
+            id: user.id,
+          },
+          data: {
+            pushNotification: {
+              subscriptions: [pushSubscription],
+            },
+          },
+        });
+        return;
+      }
+
+      for (let i = 0; i < pushNotification.subscriptions.length; i++) {
+        const each = pushNotification.subscriptions[i];
+        if (each.endpoint === pushSubscription.endpoint) {
+          return;
+        }
+      }
+      await prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          pushNotification: {
+            subscriptions: [
+              ...pushNotification.subscriptions,
+              pushSubscription,
+            ],
+          },
+        },
+      });
+    }),
+  removePushNotification: protectedProcedure
+    .input(z.object({ pushSubscription: z.any() }))
+    .mutation(async ({ input, ctx }) => {
+      const user = ctx.session?.user as User;
+      const { pushSubscription } = input;
+      const userData = await prisma.user.findUnique({
+        where: {
+          id: user.id,
+        },
+        select: {
+          pushNotification: true,
+        },
+      });
+      if (!userData) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+        });
+      }
+
+      const { pushNotification } = userData as any;
+
+      if (!pushNotification) {
+        return;
+      }
+
+      await prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          pushNotification: {
+            subscriptions: pushNotification.subscriptions.filter(
+              (each: any) => each.endpoint !== pushSubscription.endpoint
+            ),
+          },
+        },
+      });
+    }),
   fetchForAdmin: protectedProcedure.query(async () => {
     const totalUsersCount = await prisma.user.aggregate({
       where: {

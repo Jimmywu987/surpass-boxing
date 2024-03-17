@@ -1,48 +1,25 @@
-import * as OneSignal from "@onesignal/node-onesignal";
+import { getServerConfig } from "@/utils/getServerConfig";
 
-export const appId = process.env["NEXT_PUBLIC_ONESIGNAL_APP_ID"]!;
+import webPush, { PushSubscription } from "web-push";
 
-const userAuthKey = process.env["NEXT_PUBLIC_ONESIGNAL_API_AUTH_KEY"]!;
-const userApiKey = process.env["NEXT_PUBLIC_ONESIGNAL_API_KEY"]!;
+const config = getServerConfig();
 
-const configuration = OneSignal.createConfiguration({
-  authMethods: {
-    default: {
-      getName: () => {
-        return "Surpass Boxing";
-      },
-      applySecurityAuthentication: (context) => {
-        context.setHeaderParam("Authorization", `Basic ${userApiKey}`);
-      },
-    },
-  },
-  appKey: appId,
-  userKey: userAuthKey,
-});
+const {
+  env: { WEB_PUSH_PRIVATE_KEY },
+} = config;
 
-export const client = new OneSignal.DefaultApi(configuration);
-
-export const sendSingleNotification = async ({
-  receiverIds,
-  url,
-  message,
+export const sendWebPushSingleNotification = async ({
+  subscription,
+  data,
 }: {
-  receiverIds: string[];
-  url: string;
-  message: string;
+  subscription: PushSubscription;
+  data: any;
 }) => {
-  await client.createNotification({
-    app_id: appId,
-    contents: {
-      en: message,
+  await webPush.sendNotification(subscription, JSON.stringify(data), {
+    vapidDetails: {
+      subject: "jimmywu987@gmail.com",
+      privateKey: WEB_PUSH_PRIVATE_KEY,
+      publicKey: process.env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY!,
     },
-    //@todo: get the user to the class
-    url: `${
-      process.env.NODE_ENV === "development"
-        ? process.env.BACKEND_URL_DEVELOPMENT
-        : process.env.BACKEND_URL_PRODUCTION
-    }/${url}`,
-    included_segments: ["Subscribed Users"],
-    include_external_user_ids: receiverIds,
   });
 };

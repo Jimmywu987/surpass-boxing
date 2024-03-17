@@ -6,7 +6,7 @@ import { LanguageEnum, User } from "@prisma/client";
 import { z } from "zod";
 
 import { getTimeDuration } from "@/helpers/getTime";
-import { sendSingleNotification } from "@/services/notification/onesignal";
+import { sendWebPushSingleNotification } from "@/services/notification/onesignal";
 import { getMessage } from "@/services/notification/getMessage";
 import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
 
@@ -156,11 +156,28 @@ export const join = protectedProcedure
             : NotificationEnums.JOIN_DIFFERENT_CLASS,
           lang: admin.lang,
         });
-        await sendSingleNotification({
-          receiverIds: [admin.id],
-          url,
-          message,
-        });
+        const { pushNotification } = admin as any;
+        if (pushNotification) {
+          const result = pushNotification.subscription
+            .map((each: any) => {
+              return sendWebPushSingleNotification({
+                subscription: each,
+                data: {
+                  title: "Surpass boxing",
+                  body: message,
+                  url,
+                },
+              });
+            })
+            .flat();
+          await Promise.all(result);
+        }
+
+        // await sendSingleNotification({
+        //   receiverIds: [admin.id],
+        //   url,
+        //   message,
+        // });
         if (index === 0) {
           await prisma.notification.create({
             data: {

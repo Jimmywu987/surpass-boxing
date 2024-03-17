@@ -6,7 +6,7 @@ import { getTimeDuration } from "@/helpers/getTime";
 import { getFormatTimeZone } from "@/helpers/getTimeZone";
 import { protectedProcedure } from "@/server/trpc";
 import { getMessage } from "@/services/notification/getMessage";
-import { sendSingleNotification } from "@/services/notification/onesignal";
+import { sendWebPushSingleNotification } from "@/services/notification/onesignal";
 import {
   BookingTimeSlotStatusEnum,
   LanguageEnum,
@@ -97,6 +97,7 @@ export const statusUpdate = protectedProcedure
                 select: {
                   id: true,
                   lang: true,
+                  pushNotification: true,
                 },
               },
             },
@@ -109,10 +110,10 @@ export const statusUpdate = protectedProcedure
       bookingTimeSlot;
     const userIdsForZh = userOnBookingTimeSlots
       .filter((timeSlot) => timeSlot.user.lang === LanguageEnum.ZH)
-      .map((timeSlot) => timeSlot.user.id);
+      .map((timeSlot) => timeSlot.user.pushNotification);
     const userIdsForEn = userOnBookingTimeSlots
       .filter((timeSlot) => timeSlot.user.lang === LanguageEnum.EN)
-      .map((timeSlot) => timeSlot.user.id);
+      .map((timeSlot) => timeSlot.user.pushNotification);
     const dateTime = getFormatTimeZone({
       date: new Date(date),
     });
@@ -138,15 +139,56 @@ export const statusUpdate = protectedProcedure
       lang: LanguageEnum.ZH,
     });
 
-    await sendSingleNotification({
-      receiverIds: userIdsForZh,
-      url,
-      message: messageInZh,
-    });
-    await sendSingleNotification({
-      receiverIds: userIdsForEn,
-      url,
-      message: messageInEn,
-    });
+    if (userIdsForZh.length > 0) {
+      for (let i = 0; i < userIdsForZh.length; i++) {
+        const each = userIdsForZh[i] as any;
+        if (each) {
+          const result = each.subscription
+            .map((each: any) => {
+              return sendWebPushSingleNotification({
+                subscription: each,
+                data: {
+                  title: "Surpass boxing",
+                  body: messageInZh,
+                  url,
+                },
+              });
+            })
+            .flat();
+          await Promise.all(result);
+        }
+      }
+    }
+    if (userIdsForEn.length > 0) {
+      for (let i = 0; i < userIdsForEn.length; i++) {
+        const each = userIdsForEn[i] as any;
+        if (each) {
+          const result = each.subscription
+            .map((each: any) => {
+              return sendWebPushSingleNotification({
+                subscription: each,
+                data: {
+                  title: "Surpass boxing",
+                  body: messageInEn,
+                  url,
+                },
+              });
+            })
+            .flat();
+          await Promise.all(result);
+        }
+      }
+    }
+
+    // await sendSingleNotification({
+    //   receiverIds: userIdsForZh,
+    //   url,
+    //   message: messageInZh,
+    // });
+    // await sendSingleNotification({
+    //   receiverIds: userIdsForEn,
+    //   url,
+    //   message: messageInEn,
+    // });
     return bookingTimeSlot;
   });

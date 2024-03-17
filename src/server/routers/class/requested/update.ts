@@ -4,7 +4,7 @@ import { getFormatTimeZone } from "@/helpers/getTimeZone";
 import { requestedClassCreateSchema } from "@/schemas/class/requested/create";
 import { protectedProcedure } from "@/server/trpc";
 import { getMessage } from "@/services/notification/getMessage";
-import { sendSingleNotification } from "@/services/notification/onesignal";
+import { sendWebPushSingleNotification } from "@/services/notification/onesignal";
 import { prisma } from "@/services/prisma";
 import { LanguageEnum, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
@@ -80,6 +80,7 @@ export const update = protectedProcedure
               select: {
                 id: true,
                 lang: true,
+                pushNotification: true,
               },
             },
           },
@@ -93,10 +94,10 @@ export const update = protectedProcedure
       const { userOnBookingTimeSlots } = updatedBookingTimeSlot;
       const userIdsForZh = userOnBookingTimeSlots
         .filter((timeSlot) => timeSlot.user.lang === LanguageEnum.ZH)
-        .map((timeSlot) => timeSlot.user.id);
+        .map((timeSlot) => timeSlot.user.pushNotification);
       const userIdsForEn = userOnBookingTimeSlots
         .filter((timeSlot) => timeSlot.user.lang === LanguageEnum.EN)
-        .map((timeSlot) => timeSlot.user.id);
+        .map((timeSlot) => timeSlot.user.pushNotification);
 
       const {
         date: timeSlotDate,
@@ -131,16 +132,56 @@ export const update = protectedProcedure
         messageKey: NotificationEnums.CLASS_UPDATED,
         lang: LanguageEnum.ZH,
       });
+      if (userIdsForZh.length > 0) {
+        for (let i = 0; i < userIdsForZh.length; i++) {
+          const each = userIdsForZh[i] as any;
+          if (each) {
+            const result = each.subscription
+              .map((each: any) => {
+                return sendWebPushSingleNotification({
+                  subscription: each,
+                  data: {
+                    title: "Surpass boxing",
+                    body: messageInZh,
+                    url,
+                  },
+                });
+              })
+              .flat();
+            await Promise.all(result);
+          }
+        }
+      }
+      if (userIdsForEn.length > 0) {
+        for (let i = 0; i < userIdsForEn.length; i++) {
+          const each = userIdsForEn[i] as any;
+          if (each) {
+            const result = each.subscription
+              .map((each: any) => {
+                return sendWebPushSingleNotification({
+                  subscription: each,
+                  data: {
+                    title: "Surpass boxing",
+                    body: messageInEn,
+                    url,
+                  },
+                });
+              })
+              .flat();
+            await Promise.all(result);
+          }
+        }
+      }
 
-      await sendSingleNotification({
-        receiverIds: userIdsForZh,
-        url,
-        message: messageInZh,
-      });
-      await sendSingleNotification({
-        receiverIds: userIdsForEn,
-        url,
-        message: messageInEn,
-      });
+      // await sendSingleNotification({
+      //   receiverIds: userIdsForZh,
+      //   url,
+      //   message: messageInZh,
+      // });
+      // await sendSingleNotification({
+      //   receiverIds: userIdsForEn,
+      //   url,
+      //   message: messageInEn,
+      // });
     }
   });

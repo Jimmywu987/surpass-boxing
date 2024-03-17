@@ -31,6 +31,7 @@ import { MobileNavLink } from "@/features/nav/components/MobileNavLink";
 import { cn } from "@/utils/cn";
 import { useCheckMainPageAtTop } from "@/features/common/hooks/useCheckMainPageAtTop";
 import { isMobile } from "react-device-detect";
+import { PushNotificationButton } from "@/features/common/components/buttons/PushNotificationButton";
 
 export const Navbar = () => {
   const { t, lang } = useTranslation("common");
@@ -80,6 +81,7 @@ export const Navbar = () => {
           <div className="flex h-28">
             <div className="flex flex-col justify-between items-center ">
               <div className="my-1 mx-4 flex self-end items-center space-x-2 h-full">
+                <PushNotificationButton />
                 {isAuthenticated && user.admin && (
                   <NavLink text={t("admin")} url="/admin" />
                 )}
@@ -166,7 +168,9 @@ export const Navbar = () => {
             </div>
           </div>
         </div>
-        <div className="md:hidden">
+        <div className="md:hidden flex items-center space-x-6">
+          <PushNotificationButton />
+
           <button
             className={cn("hamburger shadow-theme", isOpen && "active")}
             ref={btnRef}

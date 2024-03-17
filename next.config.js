@@ -31,6 +31,8 @@ const nextConfig = nextTranslate({
     S3_UPLOAD_BUCKET: process.env.S3_UPLOAD_BUCKET,
     S3_UPLOAD_REGION: process.env.S3_UPLOAD_REGION,
     WEB_URL: process.env.WEB_URL,
+    NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY:
+      process.env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY,
   },
   publicRuntimeConfig: {},
   serverRuntimeConfig: {
@@ -38,6 +40,7 @@ const nextConfig = nextTranslate({
       REACT_APP_GOOGLE_ID: process.env.REACT_APP_GOOGLE_ID,
       REACT_APP_GOOGLE_SECRET: process.env.REACT_APP_GOOGLE_SECRET,
       JWT_SECRET: process.env.JWT_SECRET,
+      WEB_PUSH_PRIVATE_KEY: process.env.WEB_PUSH_PRIVATE_KEY,
     },
   },
 });

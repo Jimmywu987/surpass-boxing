@@ -1,4 +1,4 @@
-import { useOneSignal } from "@/features/common/hooks/useOneSignal";
+import { useServiceWorker } from "@/features/common/hooks/useServiceWorker";
 import { Footer } from "@/features/footer";
 import { HeadHtml } from "@/features/head";
 import { MainPageVideo } from "@/features/home/components/MainPageVideo";
@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { FC } from "react";
 
 const Layout: FC<{ children: React.ReactNode }> = ({ children }) => {
-  useOneSignal();
+  useServiceWorker();
   const router = useRouter();
   const { route } = router;
 

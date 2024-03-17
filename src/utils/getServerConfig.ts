@@ -4,6 +4,7 @@ type Config = {
     REACT_APP_GOOGLE_ID: string;
     REACT_APP_GOOGLE_SECRET: string;
     JWT_SECRET: string;
+    WEB_PUSH_PRIVATE_KEY: string;
   };
 };
 const { serverRuntimeConfig } = getConfig() ?? {};
