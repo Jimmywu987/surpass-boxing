@@ -9,6 +9,7 @@ import { FC } from "react";
 
 const Layout: FC<{ children: React.ReactNode }> = ({ children }) => {
   useOneSignal();
+
   const router = useRouter();
   const { route } = router;
 
