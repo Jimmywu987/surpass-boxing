@@ -16,8 +16,10 @@ const ClassesPage = () => {
   });
   const isAdmin: boolean = session.data?.user["admin"];
   if (
-    !data ||
-    (data.lessons.length === 0 && data.classes.length === 0 && !isAdmin)
+    data &&
+    data.lessons.length === 0 &&
+    data.classes.length === 0 &&
+    !isAdmin
   ) {
     return (
       <div className="text-center text-white mt-24">
@@ -25,7 +27,7 @@ const ClassesPage = () => {
       </div>
     );
   }
-  return <ClassContent lessonsData={data.lessons} />;
+  return <ClassContent lessonsData={data?.lessons ?? []} />;
 };
 
 export default ClassesPage;
