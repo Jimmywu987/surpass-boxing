@@ -38,20 +38,18 @@ export const EditRequestedClassForm = ({
 
   const { data: userData } = trpc.userRouter.fetchForAdmin.useQuery();
 
-  const session = useSession();
-  const user = session.data?.user as User;
   const { mutateAsync, isLoading } =
     classRouter.requestedClassRouter.update.useMutation();
 
   const { onClose } = modalDisclosure;
-
+  const resolver = useRequestedClassInputResolver({
+    joinedPeopleNum: timeSlot.userOnBookingTimeSlots.length,
+    withInHours: 12,
+  });
   const requestedClassInputFormMethods = useForm<
     z.infer<typeof requestedClassCreateSchema>
   >({
-    resolver: useRequestedClassInputResolver({
-      joinedPeopleNum: timeSlot.userOnBookingTimeSlots.length,
-      withInHours: 12,
-    }),
+    resolver,
     mode: "onSubmit",
     defaultValues: {
       id: timeSlot.id,
