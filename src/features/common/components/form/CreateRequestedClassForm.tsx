@@ -49,11 +49,11 @@ export const CreateRequestedClassForm = ({
     });
 
   const { onClose } = modalDisclosure;
-
+  const resolver = useRequestedClassInputResolver({ withInHours: HOURS });
   const requestedClassInputFormMethods = useForm<
     z.infer<typeof requestedClassCreateSchema>
   >({
-    resolver: useRequestedClassInputResolver({ withInHours: HOURS }),
+    resolver,
     mode: "onChange",
     defaultValues: {
       date: date.toString(),
