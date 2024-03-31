@@ -19,7 +19,9 @@ export const join = protectedProcedure
   )
   .mutation(async ({ ctx, input }) => {
     const { id } = input;
+
     const user = ctx.session?.user as User;
+
     const { username } = user;
     const now = new Date();
     const lessons = await prisma.lessons.findMany({
@@ -53,6 +55,7 @@ export const join = protectedProcedure
         coach: true,
       },
     });
+
     if (!bookingTimeSlots) {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -61,6 +64,7 @@ export const join = protectedProcedure
     const classLevel = lessons.find(
       (lesson) => lesson.level === bookingTimeSlots.level
     );
+
     await prisma.$transaction(async (txn) => {
       await txn.lessons.update({
         data: {
@@ -72,12 +76,14 @@ export const join = protectedProcedure
           id: classLevel ? classLevel.id : lessons[0].id,
         },
       });
+
       await txn.userOnBookingTimeSlots.create({
         data: {
           userId: user.id,
           bookingTimeSlotId: id,
         },
       });
+
       if (!classLevel) {
         await txn.classLevelDifferentRecord.create({
           data: {
@@ -89,6 +95,7 @@ export const join = protectedProcedure
         });
       }
     });
+
     const { className, startTime, endTime, date, coachId, level } =
       bookingTimeSlots;
 
@@ -99,6 +106,7 @@ export const join = protectedProcedure
             admin: true,
           },
     });
+
     const dateTime = getFormatTimeZone({ date: date });
     const time = getTimeDuration({ startTime, endTime });
 
@@ -129,11 +137,13 @@ export const join = protectedProcedure
             : NotificationEnums.JOIN_DIFFERENT_CLASS,
           lang: admin.lang,
         });
+
         await sendSingleNotification({
           receiverIds: [admin.id],
           url,
           message,
         });
+
         if (index === 0) {
           await prisma.notification.create({
             data: {

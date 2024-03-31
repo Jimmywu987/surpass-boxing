@@ -18,6 +18,7 @@ import {
   BookingTimeSlots,
   RegularBookingTimeSlots,
 } from "@/features/classes/types";
+import { useMemo } from "react";
 
 export const ClassCard = ({
   slot,
@@ -50,11 +51,18 @@ export const ClassCard = ({
       (slot) => slot.userId === user.id
     );
 
-  const dateOfClass = startOfDay(new Date(date)).getTime() + startTime;
-  console.log("date", date);
-  const nowPlusHours = add(new Date(), {
-    hours: HOURS,
-  }).getTime();
+  const dateOfClass = useMemo(
+    () => startOfDay(new Date(date)).getTime() + startTime,
+    [startTime, date]
+  );
+
+  const nowPlusHours = useMemo(
+    () =>
+      add(new Date(), {
+        hours: HOURS,
+      }).getTime(),
+    []
+  );
   const { mutateAsync: leaveClassMutateAsync, isLoading: leaveClassIsLoading } =
     trpc.classRouter.requestedClassRouter.leave.useMutation({
       onSuccess: () => {
@@ -203,6 +211,7 @@ export const ClassCard = ({
                 handleOpenModel();
                 return;
               }
+
               if (isRegular) {
                 await joinRegularClass(slot as RegularBookingTimeSlots);
                 return;

@@ -1,10 +1,15 @@
-import { BookingTimeSlots, UserOnBookingTimeSlots } from "@prisma/client";
+import {
+  BookingTimeSlotStatusEnum,
+  BookingTimeSlots,
+  UserOnBookingTimeSlots,
+} from "@prisma/client";
 import { RouterOutput } from "@/utils/trpc";
 
 export type UserType = RouterOutput["userRouter"]["fetch"]["users"][0];
 
-type BookingTimeSlotsType = BookingTimeSlots & {
+type BookingTimeSlotsType = Omit<BookingTimeSlots, "status"> & {
   coach: { username: string } | null;
+  status?: BookingTimeSlotStatusEnum;
 };
 
 export type TimeSlotsType = BookingTimeSlotsType & {

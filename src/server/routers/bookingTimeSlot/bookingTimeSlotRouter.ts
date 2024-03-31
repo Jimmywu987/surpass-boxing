@@ -167,7 +167,6 @@ export const bookingTimeSlotRouter = router({
                   userOnBookingTimeSlots: [],
                   numberOfParticipants: 0,
                   regularBookingTimeSlotId: null,
-                  status: BookingTimeSlotStatusEnum.PENDING,
                 } as TimeSlotsType);
               }
             } else {
@@ -183,7 +182,6 @@ export const bookingTimeSlotRouter = router({
                     userOnBookingTimeSlots: [],
                     numberOfParticipants: 0,
                     regularBookingTimeSlotId: null,
-                    status: BookingTimeSlotStatusEnum.PENDING,
                   } as TimeSlotsType,
                 ],
               };

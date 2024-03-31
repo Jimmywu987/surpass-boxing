@@ -45,8 +45,10 @@ export const ClassContent = ({
   const [modelType, setModelType] = useState(OpenModelType.OPEN_CLASS);
   const [onlyShowConfirmedClasses, setOnlyShowConfirmedClasses] =
     useState(false);
+
   const modalDisclosure = useDisclosure();
   const { onOpen } = modalDisclosure;
+
   const isAdmin: boolean = session.data?.user["admin"];
   const handleOpenModel = () => {
     onOpen();
@@ -72,6 +74,7 @@ export const ClassContent = ({
   const { data, isLoading } = bookingTimeSlotResult;
   const date = new Date(query.date);
   const minDate = endOfDay(subDays(new Date(), 1));
+
   const isDayOff = useMemo(() => {
     return data?.dayOffs.find((each) => {
       return isSameDay(each.date, date);
@@ -103,14 +106,14 @@ export const ClassContent = ({
           <Button onClick={handleOpenModel} isDisabled={!!isDayOff}>
             {t("open_a_class")}
           </Button>
-          <Button
+          {/* <Button
             onClick={() => setOnlyShowConfirmedClasses((prev) => !prev)}
             backgroundColor={onlyShowConfirmedClasses ? "gray.200" : "gray.700"}
             px="4"
             variant="unstyled"
           >
             {t("only_show_confirmed_classes")}
-          </Button>
+          </Button> */}
         </div>
         <ClassPageContent
           data={data}
