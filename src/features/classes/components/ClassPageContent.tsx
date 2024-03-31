@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
 import { Dispatch, SetStateAction, useMemo } from "react";
 
+import { BookingTimeSlots } from "@/features/classes/types";
 type inferType = RouterOutput["bookingTimeSlotRouter"]["fetchForStudent"];
 type ClassPageContentProps = {
   data: inferType | undefined;
@@ -73,7 +74,7 @@ export const ClassPageContent = ({
               timeSlots.map((slot) => {
                 return (
                   <ClassCard
-                    slot={slot}
+                    slot={slot as BookingTimeSlots}
                     date={date}
                     lessonsData={lessonsData}
                     handleOpenModel={handleOpenModel}

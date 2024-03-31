@@ -156,6 +156,7 @@ export const join = protectedProcedure
             : NotificationEnums.JOIN_DIFFERENT_CLASS,
           lang: admin.lang,
         });
+
         await sendSingleNotification({
           receiverIds: [admin.id],
           url,
