@@ -40,6 +40,7 @@ const nextConfig = nextTranslate({
       JWT_SECRET: process.env.JWT_SECRET,
       EMAIL: process.env.EMAIL,
       EMAIL_PASS: process.env.EMAIL_PASS,
+      CRON_SECRET: process.env.CRON_SECRET,
     },
   },
 });
