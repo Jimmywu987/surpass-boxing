@@ -66,7 +66,7 @@ export const HideRegularClassForm = ({
                       shouldValidate: true,
                     });
                   },
-                  minDate: endOfDay(subDays(new Date(), 1)),
+                  // minDate: endOfDay(subDays(new Date(), 1)),
                   propsConfigs: {
                     inputProps: {
                       color: "teal.800",
