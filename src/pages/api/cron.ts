@@ -2,8 +2,11 @@ import { getZonedStartOfDay } from "@/helpers/getTimeZone";
 import { prisma } from "@/services/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(request: any, response: NextApiResponse) {
-  const authHeader = request.headers.get("authorization");
+export default async function handler(
+  request: NextApiRequest,
+  response: NextApiResponse
+) {
+  const authHeader = request.headers["Authorization"];
   if (
     !process.env.CRON_SECRET ||
     authHeader !== `Bearer ${process.env.CRON_SECRET}`
