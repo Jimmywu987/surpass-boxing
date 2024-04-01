@@ -32,7 +32,7 @@ export default async function handler(
   await prisma.bookingTimeSlots.deleteMany({
     where: {
       date: {
-        lt: new Date(),
+        lt: past,
       },
       status: BookingTimeSlotStatusEnum.PENDING,
       userOnBookingTimeSlots: {
