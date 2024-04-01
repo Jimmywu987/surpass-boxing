@@ -1,5 +1,6 @@
 import { getZonedStartOfDay } from "@/helpers/getTimeZone";
 import { prisma } from "@/services/prisma";
+import { BookingTimeSlotStatusEnum } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -13,12 +14,35 @@ export default async function handler(
   ) {
     return response.status(401).json({ success: false });
   }
+  const past = getZonedStartOfDay(new Date());
   await prisma.cancelRegularBookingTimeSlot.deleteMany({
     where: {
       date: {
-        lt: getZonedStartOfDay(new Date()),
+        lt: past,
       },
     },
   });
-  return Response.json({ success: true });
+  await prisma.offDay.deleteMany({
+    where: {
+      date: {
+        lt: past,
+      },
+    },
+  });
+  await prisma.bookingTimeSlots.deleteMany({
+    where: {
+      date: {
+        lt: new Date(),
+      },
+      status: BookingTimeSlotStatusEnum.PENDING,
+      userOnBookingTimeSlots: {
+        every: {
+          userId: {
+            in: [],
+          },
+        },
+      },
+    },
+  });
+  return response.status(200).end("done!");
 }

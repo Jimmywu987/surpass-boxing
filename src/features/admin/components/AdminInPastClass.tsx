@@ -47,11 +47,7 @@ export const AdminInPastClass = () => {
       ...query,
       isPast: true,
     });
-  const { mutateAsync } = trpc.bookingTimeSlotRouter.remove.useMutation({
-    onSuccess: () => {
-      utils.classRouter.requestedClassRouter.fetch.invalidate();
-    },
-  });
+
   const handleOpenModel = () => {
     onOpen();
   };
@@ -156,15 +152,6 @@ export const AdminInPastClass = () => {
                 </span>
               </div>
             </div>
-            <Button
-              colorScheme="whiteAlpha"
-              variant="solid"
-              onClick={async () => {
-                await mutateAsync();
-              }}
-            >
-              {t("clear_unattended_class")}
-            </Button>
           </div>
           <div className="space-y-2">
             {data.bookingTimeSlots.map(({ date, timeSlots }, indx) => {

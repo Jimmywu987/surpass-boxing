@@ -246,28 +246,4 @@ export const bookingTimeSlotRouter = router({
         });
       }
     }),
-  remove: protectedProcedure.mutation(async ({ ctx }) => {
-    const user = ctx.session?.user as User;
-    if (!user.admin) {
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-      });
-    }
-
-    await prisma.bookingTimeSlots.deleteMany({
-      where: {
-        date: {
-          lt: new Date(),
-        },
-        status: BookingTimeSlotStatusEnum.PENDING,
-        userOnBookingTimeSlots: {
-          every: {
-            userId: {
-              in: [],
-            },
-          },
-        },
-      },
-    });
-  }),
 });

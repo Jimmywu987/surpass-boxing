@@ -16,10 +16,7 @@ export const AdminSetOffDay = () => {
 
   const { onOpen } = modalDisclosure;
   const { data, isLoading } = trpc.offDayRouter.fetch.useQuery();
-  const {
-    mutateAsync: mutateAsyncRemoveAllPast,
-    isLoading: isLoadingRemoveAllPast,
-  } = trpc.offDayRouter.removeAllPast.useMutation();
+
   const { mutateAsync, isLoading: isLoadingRemoveOne } =
     trpc.offDayRouter.remove.useMutation({
       onSuccess: () => {
@@ -29,7 +26,7 @@ export const AdminSetOffDay = () => {
   const handleOpenModel = () => {
     onOpen();
   };
-  const disabled = isLoading || isLoadingRemoveOne || isLoadingRemoveAllPast;
+  const disabled = isLoading || isLoadingRemoveOne;
   return (
     <>
       <div className="w-full space-y-2">
@@ -42,16 +39,6 @@ export const AdminSetOffDay = () => {
             variant="solid"
           >
             {t("add_day_off")}
-          </Button>
-          <Button
-            onClick={() => {
-              mutateAsyncRemoveAllPast();
-            }}
-            colorScheme="whiteAlpha"
-            variant="solid"
-            disabled={disabled}
-          >
-            {t("delete_past_off_day")}
           </Button>
         </div>
         <div>

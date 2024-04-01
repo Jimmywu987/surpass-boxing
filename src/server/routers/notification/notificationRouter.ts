@@ -51,6 +51,6 @@ export const notificationRouter = router({
     if (!user.admin) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
-    await prisma.notification.deleteMany({});
+    await prisma.notification.deleteMany();
   }),
 });
