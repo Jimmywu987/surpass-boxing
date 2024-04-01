@@ -1,9 +1,8 @@
 import { TAKE_NUMBER } from "@/constants";
 import { getFormatTimeZone, getZonedStartOfDay } from "@/helpers/getTimeZone";
-import { protectedProcedure, publicProcedure, router } from "@/server/trpc";
+import { publicProcedure, router } from "@/server/trpc";
 import { prisma } from "@/services/prisma";
 import { SortedTimeSlotsType, TimeSlotsType } from "@/types";
-import { BookingTimeSlotStatusEnum, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { add, addWeeks, differenceInDays } from "date-fns";
 import { z } from "zod";
@@ -24,79 +23,75 @@ export const bookingTimeSlotRouter = router({
       const endDay = addWeeks(startDay, 1);
 
       try {
-        const result = await prisma.$transaction(async (txn) => {
-          const whereQuery = {
-            gte: startDay,
-            lte: endDay,
-          };
-          const dayOffs = await txn.offDay.findMany({
-            where: {
-              date: whereQuery,
-            },
-          });
-          const totalClasses = await txn.bookingTimeSlots.aggregate({
-            where: {
-              date: whereQuery,
-              status: { not: BookingTimeSlotStatusEnum.CANCELED },
-            },
-            _count: true,
-          });
-          const totalClassesCount = totalClasses._count;
-
-          const bookingTimeSlots = await txn.bookingTimeSlots.findMany({
-            take: TAKE_NUMBER,
-            skip,
-            include: {
-              userOnBookingTimeSlots: {
-                include: {
-                  user: {
-                    select: {
-                      username: true,
-                      profileImg: true,
-                    },
-                  },
-                },
+        const result = await prisma.$transaction(
+          async (txn) => {
+            const whereQuery = {
+              gte: startDay,
+              lte: endDay,
+            };
+            const dayOffs = await txn.offDay.findMany({
+              where: {
+                date: whereQuery,
               },
-              coach: {
-                select: {
-                  username: true,
-                },
-              },
-            },
-            where: {
-              date: whereQuery,
-            },
-            orderBy: {
-              date: "desc",
-            },
-          });
+            });
 
-          const regularBookingSlot = await txn.regularBookingTimeSlots.findMany(
-            {
+            const bookingTimeSlots = await txn.bookingTimeSlots.findMany({
               take: TAKE_NUMBER,
               skip,
               include: {
+                userOnBookingTimeSlots: {
+                  include: {
+                    user: {
+                      select: {
+                        username: true,
+                        profileImg: true,
+                      },
+                    },
+                  },
+                },
                 coach: {
                   select: {
                     username: true,
                   },
                 },
-                cancelRegularBookingTimeSlot: {
-                  where: {
-                    date: whereQuery,
+              },
+              where: {
+                date: whereQuery,
+              },
+              orderBy: {
+                date: "desc",
+              },
+            });
+
+            const regularBookingSlot =
+              await txn.regularBookingTimeSlots.findMany({
+                take: TAKE_NUMBER,
+                skip,
+                include: {
+                  coach: {
+                    select: {
+                      username: true,
+                    },
+                  },
+                  cancelRegularBookingTimeSlot: {
+                    where: {
+                      date: whereQuery,
+                    },
                   },
                 },
-              },
-            }
-          );
+              });
 
-          return {
-            totalClassesCount,
-            bookingTimeSlots,
-            regularBookingSlot,
-            dayOffs,
-          };
-        });
+            return {
+              bookingTimeSlots,
+              regularBookingSlot,
+              dayOffs,
+            };
+          },
+          {
+            maxWait: 5000, // default: 2000
+            timeout: 10000, // default: 5000
+          }
+        );
         const sortedBookingTimeSlots: SortedTimeSlotsType = {};
 
         for (let i = 0; i < result.bookingTimeSlots.length; i++) {

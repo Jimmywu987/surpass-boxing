@@ -136,12 +136,12 @@ export const update = protectedProcedure
 
       await Promise.all(
         userForZh.map((user) => {
-          return sendEmail(user.email, messageInZh);
+          return sendEmail(user.email, messageInZh, url);
         })
       );
       await Promise.all(
         userForEn.map((user) => {
-          return sendEmail(user.email, messageInEn);
+          return sendEmail(user.email, messageInEn, url);
         })
       );
     }

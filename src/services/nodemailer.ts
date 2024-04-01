@@ -20,17 +20,11 @@ const CONTACT_MESSAGE_FIELDS = {
   message: "Message",
 };
 
-export const generateEmailContent = (data: typeof CONTACT_MESSAGE_FIELDS) => {
-  const stringData = Object.entries(data).reduce(
-    (str, [key, val]) =>
-      (str += `${
-        CONTACT_MESSAGE_FIELDS[key as keyof typeof CONTACT_MESSAGE_FIELDS]
-      }: \n${val} \n \n`),
-    ""
-  );
-  const htmlData = Object.entries(data).reduce((str, [key, val]) => {
-    return (str += `<h3 class="form-heading" align="left">${val}</h3>`);
-  }, "");
+export const generateEmailContent = (message: string, url?: string) => {
+  const stringData = `\nMessage \n \n`;
+  const htmlData = `<div><h3 class="form-heading" align="left">${message}</h3>
+  <a href="https://surpass-boxing.vercel.app/${url}"  target="_blank">Link</a>
+  </div>`;
 
   return {
     text: stringData,
@@ -38,13 +32,11 @@ export const generateEmailContent = (data: typeof CONTACT_MESSAGE_FIELDS) => {
   };
 };
 
-export const sendEmail = async (to: string, message: string) => {
+export const sendEmail = async (to: string, message: string, url?: string) => {
   await transporter.sendMail({
     from: email,
     to,
-    ...generateEmailContent({
-      message,
-    }),
+    ...generateEmailContent(message, url),
     subject: "Surpass boxing",
   });
 };

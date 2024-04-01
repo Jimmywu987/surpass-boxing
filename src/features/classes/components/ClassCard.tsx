@@ -112,7 +112,8 @@ export const ClassCard = ({
     nowPlusHours > dateOfClass ||
     leaveClassIsLoading ||
     joinClassIsLoading ||
-    joinRegularClassIsLoading;
+    joinRegularClassIsLoading ||
+    bookingTimeSlot.status === BookingTimeSlotStatusEnum.CANCELED;
 
   return (
     <div className="flex justify-between p-5 border border-gray-600 rounded-md shadow-lg text-white">
@@ -123,6 +124,9 @@ export const ClassCard = ({
               <CheckIcon bg="green.600" rounded="full" p="1" />
             )}
           <span className="font-semibold">{slot.className}</span>
+          {bookingTimeSlot.status === BookingTimeSlotStatusEnum.CANCELED && (
+            <span className="text-[18px]">({t("classes:canceled")})</span>
+          )}
         </div>
         <div>
           {getTimeDuration({

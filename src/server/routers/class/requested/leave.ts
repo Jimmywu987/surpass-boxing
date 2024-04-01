@@ -124,7 +124,7 @@ export const leave = protectedProcedure
           messageKey: NotificationEnums.LEAVE_CLASS,
           lang: admin.lang,
         });
-        await sendEmail(admin.email, message);
+        await sendEmail(admin.email, message, url);
 
         if (index === 0) {
           await prisma.notification.create({

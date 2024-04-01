@@ -136,7 +136,7 @@ export const create = protectedProcedure
             messageKey: NotificationEnums.CLASS_CREATED,
             lang: admin.lang,
           });
-          await sendEmail(admin.email, message);
+          await sendEmail(admin.email, message, url);
 
           if (index === 0) {
             await prisma.notification.create({
