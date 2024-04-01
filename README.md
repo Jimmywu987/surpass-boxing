@@ -35,7 +35,7 @@ Features:
 - [i18n](https://www.npmjs.com/package/i18n)
 - [AWS S3 bucket](https://aws.amazon.com/de/s3/) for images storage
 - [Next-auth](https://next-auth.js.org/) with google auth login
-- [Onesignal](https://onesignal.com/) for push notification
+- [Nodemailer](https://www.nodemailer.com/) for email sending
 - [Chakra ui](https://chakra-ui.com/)
 - [TRPC](https://trpc.io/) and [zod](https://zod.dev/) for type safety between the frontend and backend communication
 - [React-hook-form](https://www.react-hook-form.com/)
