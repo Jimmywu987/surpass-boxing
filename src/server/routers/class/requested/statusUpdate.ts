@@ -70,42 +70,48 @@ export const statusUpdate = protectedProcedure
       }
     }
 
-    const bookingTimeSlot = await prisma.$transaction(async (txn) => {
-      if (lessonIds.length > 0) {
-        await txn.lessons.updateMany({
-          data: {
-            lesson: {
-              increment: 1,
+    const bookingTimeSlot = await prisma.$transaction(
+      async (txn) => {
+        if (lessonIds.length > 0) {
+          await txn.lessons.updateMany({
+            data: {
+              lesson: {
+                increment: 1,
+              },
             },
-          },
-          where: {
-            id: { in: lessonIds },
-          },
-        });
-      }
+            where: {
+              id: { in: lessonIds },
+            },
+          });
+        }
 
-      return await txn.bookingTimeSlots.update({
-        where: {
-          id,
-        },
-        data: {
-          status,
-        },
-        include: {
-          userOnBookingTimeSlots: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  lang: true,
-                  email: true,
+        return await txn.bookingTimeSlots.update({
+          where: {
+            id,
+          },
+          data: {
+            status,
+          },
+          include: {
+            userOnBookingTimeSlots: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    lang: true,
+                    email: true,
+                  },
                 },
               },
             },
           },
-        },
-      });
-    });
+        });
+      },
+      {
+        maxWait: 5000, // default: 2000
+        timeout: 10000, // default: 5000
+      }
+    );
 
     const { date, startTime, endTime, className, userOnBookingTimeSlots } =
       bookingTimeSlot;
@@ -142,12 +148,12 @@ export const statusUpdate = protectedProcedure
 
     await Promise.all(
       userForZh.map((user) => {
-        return sendEmail(user.email, messageInZh);
+        return sendEmail(user.email, messageInZh, url);
       })
     );
     await Promise.all(
       userForEn.map((user) => {
-        return sendEmail(user.email, messageInEn);
+        return sendEmail(user.email, messageInEn, url);
       })
     );
 
