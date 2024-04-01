@@ -6,12 +6,13 @@ import { LanguageEnum, User } from "@prisma/client";
 import { z } from "zod";
 
 import { getTimeDuration } from "@/helpers/getTime";
-import { sendSingleNotification } from "@/services/notification/onesignal";
+
 import { getMessage } from "@/services/notification/getMessage";
 import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
 
 import { getTranslatedTerm } from "@/services/notification/getTranslatedTerm";
 import { getFormatTimeZone } from "@/helpers/getTimeZone";
+import { sendEmail } from "@/services/nodemailer";
 
 export const join = protectedProcedure
   .input(
@@ -156,12 +157,8 @@ export const join = protectedProcedure
             : NotificationEnums.JOIN_DIFFERENT_CLASS,
           lang: admin.lang,
         });
+        await sendEmail(admin.email, message);
 
-        await sendSingleNotification({
-          receiverIds: [admin.id],
-          url,
-          message,
-        });
         if (index === 0) {
           await prisma.notification.create({
             data: {

@@ -144,7 +144,7 @@ export const fetch = publicProcedure
             ...specificTimeSlot,
           },
           orderBy: {
-            date: "desc",
+            date: "asc",
           },
         });
         const totalConfirmedClasses = await txn.bookingTimeSlots.aggregate({
@@ -179,7 +179,7 @@ export const fetch = publicProcedure
           (slot) => slot.date === date
         );
         if (checkIfExist !== -1) {
-          sortedBookingTimeSlots[checkIfExist].timeSlots.push(timeSlot);
+          sortedBookingTimeSlots[checkIfExist].timeSlots.unshift(timeSlot);
           return;
         }
         sortedBookingTimeSlots.push({

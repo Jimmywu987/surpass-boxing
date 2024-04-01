@@ -3,8 +3,9 @@ import { getTimeDuration } from "@/helpers/getTime";
 import { getFormatTimeZone } from "@/helpers/getTimeZone";
 import { requestedClassCreateSchema } from "@/schemas/class/requested/create";
 import { protectedProcedure } from "@/server/trpc";
+import { sendEmail } from "@/services/nodemailer";
 import { getMessage } from "@/services/notification/getMessage";
-import { sendSingleNotification } from "@/services/notification/onesignal";
+
 import { prisma } from "@/services/prisma";
 import { LanguageEnum, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
@@ -80,6 +81,7 @@ export const update = protectedProcedure
               select: {
                 id: true,
                 lang: true,
+                email: true,
               },
             },
           },
@@ -91,12 +93,12 @@ export const update = protectedProcedure
       bookingTimeSlot.endTime !== data.endTime
     ) {
       const { userOnBookingTimeSlots } = updatedBookingTimeSlot;
-      const userIdsForZh = userOnBookingTimeSlots
+      const userForZh = userOnBookingTimeSlots
         .filter((timeSlot) => timeSlot.user.lang === LanguageEnum.ZH)
-        .map((timeSlot) => timeSlot.user.id);
-      const userIdsForEn = userOnBookingTimeSlots
+        .map((timeSlot) => timeSlot.user);
+      const userForEn = userOnBookingTimeSlots
         .filter((timeSlot) => timeSlot.user.lang === LanguageEnum.EN)
-        .map((timeSlot) => timeSlot.user.id);
+        .map((timeSlot) => timeSlot.user);
 
       const {
         date: timeSlotDate,
@@ -132,15 +134,15 @@ export const update = protectedProcedure
         lang: LanguageEnum.ZH,
       });
 
-      await sendSingleNotification({
-        receiverIds: userIdsForZh,
-        url,
-        message: messageInZh,
-      });
-      await sendSingleNotification({
-        receiverIds: userIdsForEn,
-        url,
-        message: messageInEn,
-      });
+      await Promise.all(
+        userForZh.map((user) => {
+          return sendEmail(user.email, messageInZh);
+        })
+      );
+      await Promise.all(
+        userForEn.map((user) => {
+          return sendEmail(user.email, messageInEn);
+        })
+      );
     }
   });

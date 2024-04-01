@@ -106,22 +106,20 @@ export const ClassContent = ({
           <Button onClick={handleOpenModel} isDisabled={!!isDayOff}>
             {t("open_a_class")}
           </Button>
-          {/* <Button
+          <Button
             onClick={() => setOnlyShowConfirmedClasses((prev) => !prev)}
             backgroundColor={onlyShowConfirmedClasses ? "gray.200" : "gray.700"}
             px="4"
             variant="unstyled"
           >
             {t("only_show_confirmed_classes")}
-          </Button> */}
+          </Button>
         </div>
         <ClassPageContent
           data={data}
           isLoading={isLoading}
           lessonsData={lessonsData}
           handleOpenModel={handleOpenModel}
-          query={query}
-          setQuery={setQuery}
           onlyShowConfirmedClasses={onlyShowConfirmedClasses}
         />
       </div>

@@ -106,8 +106,9 @@ model RegularBookingTimeSlots {
   coach                User    @relation(fields: [coachId], references: [id], onDelete: Cascade)
   numberOfParticipants Int?
 
-  className String
-  level     ClassLevelEnum
+  className                    String
+  level                        ClassLevelEnum
+  cancelRegularBookingTimeSlot CancelRegularBookingTimeSlot[]
 
   @@index([coachId])
 }
@@ -196,6 +197,19 @@ model OffDay {
 
   reason String?
   date   DateTime
+}
+
+model CancelRegularBookingTimeSlot {
+  id String @id @default(cuid())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  regularBookingTimeSlotId String
+  regularBookingTimeSlots  RegularBookingTimeSlots? @relation(fields: [regularBookingTimeSlotId], references: [id], onDelete: Cascade)
+  date                     DateTime
+
+  @@index([regularBookingTimeSlotId])
 }
 
 model CoachInfos {

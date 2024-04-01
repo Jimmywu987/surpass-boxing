@@ -1,25 +1,16 @@
 import { ClassCard } from "@/features/classes/components/ClassCard";
 import { RouterOutput } from "@/utils/trpc";
 import { Skeleton, Stack } from "@chakra-ui/react";
-import { Lessons } from "@prisma/client";
+import { BookingTimeSlotStatusEnum, Lessons } from "@prisma/client";
 import { format } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
-import { Dispatch, SetStateAction, useMemo } from "react";
+import { useMemo } from "react";
 
 import { BookingTimeSlots } from "@/features/classes/types";
 type inferType = RouterOutput["bookingTimeSlotRouter"]["fetchForStudent"];
 type ClassPageContentProps = {
   data: inferType | undefined;
-  query: {
-    skip: number;
-    date: string;
-  };
-  setQuery: Dispatch<
-    SetStateAction<{
-      skip: number;
-      date: string;
-    }>
-  >;
+
   isLoading: boolean;
   lessonsData: Lessons[] | undefined;
   handleOpenModel: () => void;
@@ -30,8 +21,7 @@ export const ClassPageContent = ({
   isLoading,
   lessonsData,
   handleOpenModel,
-  query,
-  setQuery,
+
   onlyShowConfirmedClasses,
 }: ClassPageContentProps) => {
   const { t } = useTranslation("classes");
@@ -63,6 +53,14 @@ export const ClassPageContent = ({
   return (
     <div className="space-y-2">
       {classes.map(({ date, timeSlots, dayOffReasons, isDayOff }, indx) => {
+        const filteredTimeSlots = onlyShowConfirmedClasses
+          ? timeSlots.filter(
+              (slot) => slot.status === BookingTimeSlotStatusEnum.CONFIRM
+            )
+          : timeSlots;
+
+        if (filteredTimeSlots.length === 0 && onlyShowConfirmedClasses)
+          return null;
         return (
           <div key={indx} className="space-y-1">
             <div className=" font-semibold p-3 border border-gray-600">
@@ -71,7 +69,7 @@ export const ClassPageContent = ({
               )} ${isDayOff ? `(Closed) ${dayOffReasons}` : ""}`}</p>
             </div>
             {!isDayOff &&
-              timeSlots.map((slot) => {
+              filteredTimeSlots.map((slot) => {
                 return (
                   <ClassCard
                     slot={slot as BookingTimeSlots}
@@ -85,37 +83,6 @@ export const ClassPageContent = ({
           </div>
         );
       })}
-      {/* {classes
-        .filter((slot) => {
-          const bookingTimeSlot = slot as BookingTimeSlots;
-          return (
-            !onlyShowConfirmedClasses ||
-            (bookingTimeSlot.status &&
-              bookingTimeSlot.status === BookingTimeSlotStatusEnum.CONFIRM)
-          );
-        })
-        .map((slot) => (
-          <ClassCard
-            slot={slot}
-            date={query.date}
-            lessonsData={lessonsData}
-            handleOpenModel={handleOpenModel}
-            key={slot.id}
-          />
-        ))}
-      {data.bookingTimeSlots.length !== 0 ? (
-        <PaginationSection
-          setQuery={setQuery as Dispatch<SetStateAction<{ skip: number }>>}
-          query={query}
-          totalCount={data.totalClassesCount}
-        />
-      ) : data.regularBookingSlot.length === 0 ? (
-        <div className="flex justify-center text-white text-xl my-12">
-          {data?.dayOffReason ? data?.dayOffReason : t("admin:no_data")}
-        </div>
-      ) : (
-        <></>
-      )} */}
     </div>
   );
 };

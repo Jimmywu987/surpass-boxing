@@ -10,6 +10,7 @@
     "no_news": "Currently no news",
     "regular_class": "Regular Class",
     "add_regular_class": "Add regular class",
+    "remove_regular_class_on_specific_date": "Hide regular class",
     "edit_requested_class": "Edit requested class",
     "clear_unattended_class": "Delete unattended class in the past",
     "add_class": "Add class",

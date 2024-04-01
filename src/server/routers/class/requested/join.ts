@@ -9,8 +9,9 @@ import { getTimeDuration } from "@/helpers/getTime";
 import { getFormatTimeZone } from "@/helpers/getTimeZone";
 import { protectedProcedure } from "@/server/trpc";
 import { getTranslatedTerm } from "@/services/notification/getTranslatedTerm";
-import { sendSingleNotification } from "@/services/notification/onesignal";
+
 import { z } from "zod";
+import { sendEmail } from "@/services/nodemailer";
 export const join = protectedProcedure
   .input(
     z.object({
@@ -137,12 +138,7 @@ export const join = protectedProcedure
             : NotificationEnums.JOIN_DIFFERENT_CLASS,
           lang: admin.lang,
         });
-
-        await sendSingleNotification({
-          receiverIds: [admin.id],
-          url,
-          message,
-        });
+        await sendEmail(admin.email, message);
 
         if (index === 0) {
           await prisma.notification.create({

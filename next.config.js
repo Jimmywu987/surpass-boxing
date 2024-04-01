@@ -38,6 +38,8 @@ const nextConfig = nextTranslate({
       REACT_APP_GOOGLE_ID: process.env.REACT_APP_GOOGLE_ID,
       REACT_APP_GOOGLE_SECRET: process.env.REACT_APP_GOOGLE_SECRET,
       JWT_SECRET: process.env.JWT_SECRET,
+      EMAIL: process.env.EMAIL,
+      EMAIL_PASS: process.env.EMAIL_PASS,
     },
   },
 });

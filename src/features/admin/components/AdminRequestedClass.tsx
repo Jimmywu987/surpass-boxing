@@ -36,7 +36,7 @@ export const AdminRequestedClass = () => {
     date: noSpecificDate ? now.toString() : date.toString(),
   });
   const dateTime = new Date(query.date);
-  const minDate = endOfDay(subDays(new Date(), 1));
+  const minDate = endOfDay(subDays(now, 1));
   const { timeSlot } = useSelector(timeSlotSelector);
 
   const { onOpen } = modalDisclosure;
