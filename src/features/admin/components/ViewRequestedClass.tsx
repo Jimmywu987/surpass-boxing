@@ -38,7 +38,7 @@ export const ViewRequestedClass = ({
   }
   const session = useSession();
   const user = session.data?.user as User;
-  const { startTime, endTime } = timeSlot;
+  const { startTime, endTime, status } = timeSlot;
 
   const updateClassStatus = async (status: BookingTimeSlotStatusEnum) => {
     await mutateAsync({
@@ -51,7 +51,7 @@ export const ViewRequestedClass = ({
   const dateTime = new Date(timeSlot.date);
   return (
     <div>
-      {!isPast && (
+      {!isPast && status !== BookingTimeSlotStatusEnum.CANCELED && (
         <div>
           <button
             onClick={() => {
@@ -81,7 +81,7 @@ export const ViewRequestedClass = ({
           <div className="flex">
             <div className="space-y-2">
               <div className="text-2xl flex items-center space-x-2">
-                {timeSlot.status === BookingTimeSlotStatusEnum.CONFIRM && (
+                {status === BookingTimeSlotStatusEnum.CONFIRM && (
                   <CheckIcon
                     bg="green.600"
                     rounded="full"
@@ -91,7 +91,7 @@ export const ViewRequestedClass = ({
                 )}
 
                 <span className="font-semibold">{timeSlot.className}</span>
-                {timeSlot.status === BookingTimeSlotStatusEnum.CANCELED && (
+                {status === BookingTimeSlotStatusEnum.CANCELED && (
                   <span className="text-sm bg-gray-400 text-white px-2 py-1 rounded">
                     {t("classes:canceled")}
                   </span>
@@ -156,13 +156,12 @@ export const ViewRequestedClass = ({
               <button
                 className={cn(
                   "px-4 py-1 rounded text-white",
-                  timeSlot.status !== BookingTimeSlotStatusEnum.PENDING
+                  status !== BookingTimeSlotStatusEnum.PENDING
                     ? "bg-gray-300"
                     : "bg-green-500"
                 )}
                 disabled={
-                  timeSlot.status !== BookingTimeSlotStatusEnum.PENDING ||
-                  isLoading
+                  status !== BookingTimeSlotStatusEnum.PENDING || isLoading
                 }
                 onClick={() =>
                   updateClassStatus(BookingTimeSlotStatusEnum.CONFIRM)
@@ -173,13 +172,12 @@ export const ViewRequestedClass = ({
               <button
                 className={cn(
                   "rounded text-white px-4 py-1",
-                  timeSlot.status === BookingTimeSlotStatusEnum.CANCELED
+                  status === BookingTimeSlotStatusEnum.CANCELED
                     ? "bg-gray-300"
                     : "bg-red-500"
                 )}
                 disabled={
-                  timeSlot.status === BookingTimeSlotStatusEnum.CANCELED ||
-                  isLoading
+                  status === BookingTimeSlotStatusEnum.CANCELED || isLoading
                 }
                 onClick={() =>
                   updateClassStatus(BookingTimeSlotStatusEnum.CANCELED)
