@@ -126,6 +126,7 @@ export const join = protectedProcedure
             admin: true,
           },
     });
+
     const dateTime = getFormatTimeZone({
       date: new Date(date),
     });
