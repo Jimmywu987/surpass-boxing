@@ -3,8 +3,9 @@ import { getTimeDuration } from "@/helpers/getTime";
 import { getFormatTimeZone } from "@/helpers/getTimeZone";
 import { requestedClassCreateSchema } from "@/schemas/class/requested/create";
 import { protectedProcedure } from "@/server/trpc";
+import { sendEmail } from "@/services/nodemailer";
 import { getMessage } from "@/services/notification/getMessage";
-import { sendSingleNotification } from "@/services/notification/onesignal";
+
 import { prisma } from "@/services/prisma";
 import { Lessons, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
@@ -135,11 +136,8 @@ export const create = protectedProcedure
             messageKey: NotificationEnums.CLASS_CREATED,
             lang: admin.lang,
           });
-          await sendSingleNotification({
-            receiverIds: [admin.id],
-            url,
-            message,
-          });
+          await sendEmail(admin.email, message);
+
           if (index === 0) {
             await prisma.notification.create({
               data: {

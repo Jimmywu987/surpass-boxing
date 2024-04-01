@@ -6,7 +6,7 @@ import { getTimeDuration } from "@/helpers/getTime";
 import { getFormatTimeZone } from "@/helpers/getTimeZone";
 import { protectedProcedure } from "@/server/trpc";
 import { getMessage } from "@/services/notification/getMessage";
-import { sendSingleNotification } from "@/services/notification/onesignal";
+
 import {
   BookingTimeSlotStatusEnum,
   LanguageEnum,
@@ -14,6 +14,7 @@ import {
   User,
 } from "@prisma/client";
 import { z } from "zod";
+import { sendEmail } from "@/services/nodemailer";
 export const statusUpdate = protectedProcedure
   .input(
     z.object({
@@ -97,6 +98,7 @@ export const statusUpdate = protectedProcedure
                 select: {
                   id: true,
                   lang: true,
+                  email: true,
                 },
               },
             },
@@ -107,12 +109,12 @@ export const statusUpdate = protectedProcedure
 
     const { date, startTime, endTime, className, userOnBookingTimeSlots } =
       bookingTimeSlot;
-    const userIdsForZh = userOnBookingTimeSlots
+    const userForZh = userOnBookingTimeSlots
       .filter((timeSlot) => timeSlot.user.lang === LanguageEnum.ZH)
-      .map((timeSlot) => timeSlot.user.id);
-    const userIdsForEn = userOnBookingTimeSlots
+      .map((timeSlot) => timeSlot.user);
+    const userForEn = userOnBookingTimeSlots
       .filter((timeSlot) => timeSlot.user.lang === LanguageEnum.EN)
-      .map((timeSlot) => timeSlot.user.id);
+      .map((timeSlot) => timeSlot.user);
     const dateTime = getFormatTimeZone({
       date: new Date(date),
     });
@@ -138,15 +140,16 @@ export const statusUpdate = protectedProcedure
       lang: LanguageEnum.ZH,
     });
 
-    await sendSingleNotification({
-      receiverIds: userIdsForZh,
-      url,
-      message: messageInZh,
-    });
-    await sendSingleNotification({
-      receiverIds: userIdsForEn,
-      url,
-      message: messageInEn,
-    });
+    await Promise.all(
+      userForZh.map((user) => {
+        return sendEmail(user.email, messageInZh);
+      })
+    );
+    await Promise.all(
+      userForEn.map((user) => {
+        return sendEmail(user.email, messageInEn);
+      })
+    );
+
     return bookingTimeSlot;
   });

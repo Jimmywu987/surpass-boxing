@@ -10,6 +10,7 @@ export const fetch = publicProcedure.query(async () => {
           username: true,
         },
       },
+      cancelRegularBookingTimeSlot: true,
     },
   });
 });

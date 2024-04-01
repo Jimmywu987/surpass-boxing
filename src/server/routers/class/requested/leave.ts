@@ -8,8 +8,9 @@ import { getTimeDuration } from "@/helpers/getTime";
 import { getFormatTimeZone } from "@/helpers/getTimeZone";
 import { protectedProcedure } from "@/server/trpc";
 import { getMessage } from "@/services/notification/getMessage";
-import { sendSingleNotification } from "@/services/notification/onesignal";
+
 import { z } from "zod";
+import { sendEmail } from "@/services/nodemailer";
 
 export const leave = protectedProcedure
   .input(
@@ -123,11 +124,8 @@ export const leave = protectedProcedure
           messageKey: NotificationEnums.LEAVE_CLASS,
           lang: admin.lang,
         });
-        await sendSingleNotification({
-          receiverIds: [admin.id],
-          url,
-          message,
-        });
+        await sendEmail(admin.email, message);
+
         if (index === 0) {
           await prisma.notification.create({
             data: {
