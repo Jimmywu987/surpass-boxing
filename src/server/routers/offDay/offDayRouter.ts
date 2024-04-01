@@ -42,22 +42,7 @@ export const offDayRouter = router({
         },
       });
     }),
-  removeAllPast: protectedProcedure.mutation(async ({ ctx }) => {
-    if (!ctx.session || !ctx.session.user) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
-    const user = ctx.session.user as User;
-    if (!user.admin) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
-    await prisma.offDay.deleteMany({
-      where: {
-        date: {
-          lt: getZonedStartOfDay(new Date()),
-        },
-      },
-    });
-  }),
+
   add: protectedProcedure
     .input(addOffDaySchema)
     .mutation(async ({ input, ctx }) => {
