@@ -160,14 +160,18 @@ export const bookingTimeSlotRouter = router({
                 date,
               });
             });
-            if (!hideDates.includes(each.date)) {
+
+            if (
+              !hideDates.includes(each.date) &&
+              regularSlot[each.weekDay as "monday"]
+            ) {
               if (sortedBookingTimeSlots[each.date]) {
                 const existingSlots = sortedBookingTimeSlots[each.date];
                 const shouldInclude =
                   existingSlots.timeSlots.findIndex(
                     (slot) => slot.regularBookingTimeSlotId === regularSlot.id
                   ) === -1;
-                if (shouldInclude && regularSlot[each.weekDay as "monday"]) {
+                if (shouldInclude) {
                   sortedBookingTimeSlots[each.date].timeSlots.push({
                     ...regularSlot,
                     date: each.day,
