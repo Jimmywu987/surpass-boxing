@@ -5,7 +5,7 @@ import { add, isAfter } from "date-fns";
 
 import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
 import { getTimeDuration } from "@/helpers/getTime";
-import { getFormatTimeZone } from "@/helpers/getTimeZone";
+import { getFormatTimeZone, getZonedStartOfDay } from "@/helpers/getTimeZone";
 import { protectedProcedure } from "@/server/trpc";
 import { getMessage } from "@/services/notification/getMessage";
 
@@ -42,10 +42,24 @@ export const leave = protectedProcedure
       });
     }
     const now = new Date();
+    const bookingTimeSlot = await prisma.bookingTimeSlots.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!bookingTimeSlot) {
+      return;
+    }
+    const { startTime, date, endTime, coachId, className } = bookingTimeSlot;
+
     if (status === BookingTimeSlotStatusEnum.CONFIRM) {
       const joiningTime = new Date(userBookingTimeSlot.createdAt);
+      const startDate = getZonedStartOfDay(date);
 
-      if (isAfter(now, add(joiningTime, { hours: 1 }))) {
+      if (
+        isAfter(now, add(joiningTime, { hours: 1 })) &&
+        isAfter(add(now, { hours: 12 }), startDate.getTime() + startTime)
+      ) {
         shouldAddBackLesson = false;
       }
     }
@@ -89,15 +103,6 @@ export const leave = protectedProcedure
         },
       });
     });
-    const bookingTimeSlot = await prisma.bookingTimeSlots.findUnique({
-      where: {
-        id,
-      },
-    });
-    if (!bookingTimeSlot) {
-      return;
-    }
-    const { startTime, date, endTime, coachId, className } = bookingTimeSlot;
     const admins = await prisma.user.findMany({
       where: coachId
         ? { id: coachId }
