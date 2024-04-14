@@ -9,6 +9,7 @@ import { SmallCloseIcon } from "@chakra-ui/icons";
 import { deleteFile } from "@/utils/s3Uploader";
 import { ContentRenderer } from "@/features/common/components/ContentRenderer";
 import { OutputData } from "@editorjs/editorjs";
+import { NewCardContainer } from "@/features/news/NewsCard";
 
 export const AdminNews = () => {
   const { t } = useTranslation("admin");
@@ -53,7 +54,7 @@ export const AdminNews = () => {
                 key={index}
                 className="space-y-2 border-b border-b-gray-600 py-2"
               >
-                <div className="flex justify-between">
+                <div className="flex justify-between my-2">
                   <h2 className="text-4xl font-semibold">{news.title}</h2>{" "}
                   <SmallCloseIcon
                     className={`${
@@ -64,15 +65,16 @@ export const AdminNews = () => {
                     }}
                   />
                 </div>
-
-                <div className="relative h-72 w-72">
-                  <Image
-                    fill
-                    src={news.img}
-                    alt={`${news.title} - image`}
-                    className="object-contain"
-                  />
-                </div>
+                <NewCardContainer news={news}>
+                  <div className="relative h-72 w-72">
+                    <Image
+                      fill
+                      src={news.img}
+                      alt={`${news.title} - image`}
+                      className="object-contain"
+                    />
+                  </div>
+                </NewCardContainer>
 
                 {news.content && (
                   <div>

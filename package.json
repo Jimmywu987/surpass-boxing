@@ -31,7 +31,7 @@
     "@trpc/react-query": "^10.45.1",
     "@trpc/server": "^10.45.1",
     "@vercel/analytics": "^1.0.1",
-    "aws-sdk": "^2.1569.0",
+    "aws-sdk": "^2.1599.0",
     "axios": "^1.6.7",
     "bcryptjs": "^2.4.3",
     "chakra-dayzed-datepicker": "^0.2.10",

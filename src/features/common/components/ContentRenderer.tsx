@@ -1,7 +1,7 @@
 //components/EditorJsRenderer.tsx
 
 import { OutputData } from "@editorjs/editorjs";
-import React from "react";
+import { useMemo } from "react";
 
 //use require since editorjs-html doesn't have types
 const editorJsHtml = require("editorjs-html");
@@ -13,7 +13,18 @@ type Props = {
 type ParsedContent = string | JSX.Element;
 
 export const ContentRenderer = ({ content }: Props) => {
-  const html = EditorJsToHtml.parse(content) as ParsedContent[];
+  const { blocks } = content;
+
+  const restContents = useMemo(
+    () => blocks.filter((block) => block.type !== "link", []),
+    []
+  );
+
+  const html = EditorJsToHtml.parse({
+    ...content,
+    blocks: restContents,
+  }) as ParsedContent[];
+
   return (
     //✔️ It's important to add key={data.time} here to re-render based on the latest data.
     <div
