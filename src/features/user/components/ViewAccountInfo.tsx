@@ -69,28 +69,32 @@ export const ViewAccountInfo = ({
           {t("account.created_at")}:{" "}
           {format(new Date(user.createdAt), "yyyy-MM-dd")}
         </p>
-        <div className="flex justify-between my-2">
-          <p className="text-gray-600">
-            {t("admin:total_lessons")}: {user.userOnBookingTimeSlots.length}
-          </p>
-          <button
-            className="hover:bg-gray-400 bg-gray-500 px-3 py-1 rounded-md text-white"
-            onClick={() => setView(ViewAccountEnums.VIEW_USED_CLASS)}
-          >
-            {t("admin:check")}
-          </button>
-        </div>
-        <div className="flex justify-between my-2">
-          <p className="text-gray-600">
-            {t("admin:unused_lessons")}: {unusedLessonNum}
-          </p>
-          <button
-            className="hover:bg-gray-400 bg-gray-500 px-3 py-1 rounded-md text-white"
-            onClick={() => setView(ViewAccountEnums.VIEW_UNUSED_CLASS)}
-          >
-            {t("admin:check")}
-          </button>
-        </div>
+        {(isCurrentUser || currentUser.admin) && (
+          <div className="flex justify-between my-2">
+            <p className="text-gray-600">
+              {t("admin:total_lessons")}: {user.userOnBookingTimeSlots.length}
+            </p>
+            <button
+              className="hover:bg-gray-400 bg-gray-500 px-3 py-1 rounded-md text-white"
+              onClick={() => setView(ViewAccountEnums.VIEW_USED_CLASS)}
+            >
+              {t("admin:check")}
+            </button>
+          </div>
+        )}
+        {(isCurrentUser || currentUser.admin) && (
+          <div className="flex justify-between my-2">
+            <p className="text-gray-600">
+              {t("admin:unused_lessons")}: {unusedLessonNum}
+            </p>
+            <button
+              className="hover:bg-gray-400 bg-gray-500 px-3 py-1 rounded-md text-white"
+              onClick={() => setView(ViewAccountEnums.VIEW_UNUSED_CLASS)}
+            >
+              {t("admin:check")}
+            </button>
+          </div>
+        )}
       </div>
       {isCurrentUser && (
         <button

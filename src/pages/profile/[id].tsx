@@ -15,12 +15,14 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
+import { useSession } from "next-auth/react";
 
 const ProfilePage = () => {
   const router = useRouter();
   const { id } = router.query;
   const [view, setView] = useState(ViewAccountEnums.NORMAL);
-
+  const session: any = useSession();
+  const userId = session.data?.user?.id;
   const editAccountInputFormMethod = useForm<
     z.infer<ReturnType<typeof editAccountSchema>>
   >({
@@ -83,10 +85,12 @@ const ProfilePage = () => {
           />
         ) : (
           <div className="flex flex-col">
-            <EditIcon
-              className="cursor-pointer text-xl"
-              onClick={() => setView(ViewAccountEnums.EDIT)}
-            />
+            {userId === id && (
+              <EditIcon
+                className="cursor-pointer text-xl"
+                onClick={() => setView(ViewAccountEnums.EDIT)}
+              />
+            )}
             <ViewAccountInfo user={data} setView={setView} />
           </div>
         )}
