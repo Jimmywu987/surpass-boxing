@@ -56,12 +56,12 @@ export const NewsCard = ({ news }: NewsCardProps) => {
   const { t } = useTranslation("news");
 
   return (
-    <div className="space-y-4 border-b border-b-gray-600 py-2">
-      <h2 className="text-3xl font-semibold text-white border-b-2 border-b-theme-color inline pb-1">
+    <div className="border-b border-b-gray-600 py-2">
+      <h2 className="my-6 text-3xl font-semibold text-white border-b-2 border-b-theme-color inline pb-1">
         {news.title}
       </h2>
       <NewCardContainer news={news}>
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center my-10">
           <div className="relative w-full h-96 md:h-[650px]">
             <Image
               fill
