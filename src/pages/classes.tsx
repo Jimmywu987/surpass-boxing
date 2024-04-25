@@ -103,6 +103,14 @@ const ClassesPage = () => {
 
     setModelType(OpenModelType.OPEN_CLASS);
   };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="text-center text-white mt-24">
+        {t("please_contact_coach_to_get_class_info")}
+      </div>
+    );
+  }
   return (
     <>
       <div className="space-y-2 p-2 md:p-0">
