@@ -67,6 +67,9 @@ export default async function handler(
       expiryDate: {
         lt: sub(past, { days: 1 }),
       },
+      lesson: {
+        equals: 0,
+      },
     },
   });
   const pendingTimeSlots = await prisma.bookingTimeSlots.findMany({
