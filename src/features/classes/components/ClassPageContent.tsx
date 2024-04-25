@@ -10,7 +10,7 @@ import { BookingTimeSlots } from "@/features/classes/types";
 type inferType = RouterOutput["bookingTimeSlotRouter"]["fetchForStudent"];
 type ClassPageContentProps = {
   data: inferType | undefined;
-
+  canJoin: boolean;
   isLoading: boolean;
   lessonsData: Lessons[] | undefined;
   handleOpenModel: () => void;
@@ -21,7 +21,7 @@ export const ClassPageContent = ({
   isLoading,
   lessonsData,
   handleOpenModel,
-
+  canJoin,
   onlyShowConfirmedClasses,
 }: ClassPageContentProps) => {
   const { t } = useTranslation("classes");
@@ -72,6 +72,7 @@ export const ClassPageContent = ({
               filteredTimeSlots.map((slot) => {
                 return (
                   <ClassCard
+                    canJoin={canJoin}
                     slot={slot as BookingTimeSlots}
                     date={date}
                     lessonsData={lessonsData}
