@@ -1,5 +1,9 @@
 import { NotificationEnums } from "@/features/common/enums/NotificationEnums";
-import { getFormatTimeZone, getZonedStartOfDay } from "@/helpers/getTimeZone";
+import {
+  getFormatTimeZone,
+  getZonedEndOfDay,
+  getZonedStartOfDay,
+} from "@/helpers/getTimeZone";
 import { sendEmail } from "@/services/nodemailer";
 import { prisma } from "@/services/prisma";
 import {
@@ -10,6 +14,7 @@ import {
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getMessage } from "@/services/notification/getMessage";
 import { getTimeDuration } from "@/helpers/getTime";
+import { sub } from "date-fns";
 
 export default async function handler(
   request: NextApiRequest,
@@ -23,7 +28,11 @@ export default async function handler(
     return response.status(401).json({ success: false });
   }
   const now = new Date();
+
+  const startOfSelectedDate = getZonedEndOfDay(now);
+
   const past = getZonedStartOfDay(now);
+
   await prisma.cancelRegularBookingTimeSlot.deleteMany({
     where: {
       date: {
@@ -53,6 +62,13 @@ export default async function handler(
       },
     },
   });
+  await prisma.lessons.deleteMany({
+    where: {
+      expiryDate: {
+        lt: sub(past, { days: 1 }),
+      },
+    },
+  });
   const pendingTimeSlots = await prisma.bookingTimeSlots.findMany({
     where: {
       date: {
@@ -75,10 +91,10 @@ export default async function handler(
       where: {
         userId: { in: userIds },
         expiryDate: {
-          gte: now,
+          gte: past,
         },
         startDate: {
-          lte: now,
+          lte: startOfSelectedDate,
         },
       },
       orderBy: {
