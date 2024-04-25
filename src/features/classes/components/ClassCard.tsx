@@ -21,11 +21,13 @@ import {
 import { useMemo } from "react";
 
 export const ClassCard = ({
+  canJoin,
   slot,
   date,
   lessonsData,
   handleOpenModel,
 }: {
+  canJoin: boolean;
   slot: BookingTimeSlots | RegularBookingTimeSlots;
   date: string;
   lessonsData: Lessons[] | undefined;
@@ -108,6 +110,7 @@ export const ClassCard = ({
   };
 
   const shouldDisabled =
+    !canJoin ||
     isPast(dateOfClass) ||
     nowPlusHours > dateOfClass ||
     leaveClassIsLoading ||
