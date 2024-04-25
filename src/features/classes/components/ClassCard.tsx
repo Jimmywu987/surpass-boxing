@@ -2,7 +2,7 @@ import DefaultProfileImg from "@/../public/default-profile-img.png";
 import { JoinOrLeaveClassIcon } from "@/features/classes/components/JoinOrLeaveClassIcon";
 import { trpc } from "@/utils/trpc";
 import { BookingTimeSlotStatusEnum, Lessons, User } from "@prisma/client";
-import { add, isPast, startOfDay } from "date-fns";
+import { add, endOfDay, isAfter, isPast, startOfDay } from "date-fns";
 import Image from "next/image";
 
 import useTranslation from "next-translate/useTranslation";
@@ -21,13 +21,11 @@ import {
 import { useMemo } from "react";
 
 export const ClassCard = ({
-  canJoin,
   slot,
   date,
   lessonsData,
   handleOpenModel,
 }: {
-  canJoin: boolean;
   slot: BookingTimeSlots | RegularBookingTimeSlots;
   date: string;
   lessonsData: Lessons[] | undefined;
@@ -43,7 +41,21 @@ export const ClassCard = ({
   const session = useSession();
   const user = session.data?.user as User;
   const { bookingTimeSlotRouter, lessonClassRouter } = utils;
+  const canJoin = useMemo(() => {
+    if (!lessonsData) {
+      return false;
+    }
+    return lessonsData?.some((lesson) => {
+      const { startDate, expiryDate } = lesson;
+      const startOfSelectedDate = startOfDay(new Date(date));
+      const endOfSelectedDate = endOfDay(new Date(date));
 
+      return (
+        isAfter(endOfDay(expiryDate), startOfSelectedDate) &&
+        isAfter(endOfSelectedDate, startDate)
+      );
+    });
+  }, [date, lessonsData]);
   const isAuthenticated = session.status === "authenticated";
 
   const isJoined =
@@ -106,7 +118,7 @@ export const ClassCard = ({
     });
   };
   const joinClass = async (slot: BookingTimeSlots) => {
-    await joinClassMutateAsync({ id: slot.id });
+    await joinClassMutateAsync({ id: slot.id, selectedDateInString: date });
   };
 
   const shouldDisabled =

@@ -12,27 +12,32 @@ import { getTranslatedTerm } from "@/services/notification/getTranslatedTerm";
 
 import { z } from "zod";
 import { sendEmail } from "@/services/nodemailer";
+import { endOfDay, startOfDay } from "date-fns";
 export const join = protectedProcedure
   .input(
     z.object({
       id: z.string(),
+      selectedDateInString: z.string(),
     })
   )
   .mutation(async ({ ctx, input }) => {
-    const { id } = input;
+    const { id, selectedDateInString } = input;
 
     const user = ctx.session?.user as User;
 
     const { username } = user;
-    const now = new Date();
+    const selectedDate = new Date(selectedDateInString);
+    const startOfSelectedDate = endOfDay(selectedDate);
+
+    const endOfSelectedDate = startOfDay(selectedDate);
     const lessons = await prisma.lessons.findMany({
       where: {
         userId: user.id,
         expiryDate: {
-          gte: now,
+          gte: endOfSelectedDate,
         },
         startDate: {
-          lte: now,
+          lte: startOfSelectedDate,
         },
         lesson: {
           gt: 0,
