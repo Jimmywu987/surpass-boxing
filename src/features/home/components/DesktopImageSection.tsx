@@ -6,7 +6,7 @@ export const DesktopImageSection = () => {
       <div className="absolute z-20 hover:z-30 shadow-2xl top-20">
         <div className="relative md:w-[300px] lg:w-[400px] xl:w-[540px] h-[50vh] md:h-[60vh] ">
           <Image
-            src="https://res.cloudinary.com/dvoucdrom/image/upload/v1685990027/20230604_182418-min_x9kdzi.jpg"
+            src="/place-1.jpg"
             alt="background-image"
             className="object-cover rounded-sm"
             fill
@@ -17,7 +17,7 @@ export const DesktopImageSection = () => {
       <div className="absolute z-10 hover:z-30 shadow-2xl top-40 left-20">
         <div className="relative md:w-[300px] lg:w-[400px] xl:w-[540px] h-[50vh] md:h-[60vh]">
           <Image
-            src="https://res.cloudinary.com/dvoucdrom/image/upload/v1685990029/20230604_182638-min_gjjn0k.jpg"
+            src="/place-2.jpg"
             alt="background-image"
             className="object-cover rounded-sm"
             fill
