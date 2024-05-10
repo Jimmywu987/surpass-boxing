@@ -45,8 +45,11 @@ export const ClassCard = ({
     if (!lessonsData) {
       return false;
     }
-    return lessonsData?.some((lesson) => {
-      const { startDate, expiryDate } = lesson;
+    return lessonsData?.some((lessonOb) => {
+      const { startDate, expiryDate, lesson } = lessonOb;
+      if (lesson === 0) {
+        return false;
+      }
       const startOfSelectedDate = startOfDay(new Date(date));
       const endOfSelectedDate = endOfDay(new Date(date));
 

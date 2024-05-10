@@ -34,12 +34,12 @@ export const ClassContent = ({
   const session: any = useSession();
   const router = useRouter();
   const { date: queryDate } = router.query;
-  const now = new Date();
+  const now = startOfDay(new Date());
 
   const noSpecificDate =
     !queryDate ||
     isNaN(new Date(queryDate.toString()) as unknown as number) ||
-    isBefore(new Date(queryDate.toString()), startOfDay(now));
+    isBefore(new Date(queryDate.toString()), now);
 
   const isAuthenticated = session.status === "authenticated";
 

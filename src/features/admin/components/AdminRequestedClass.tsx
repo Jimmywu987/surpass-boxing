@@ -24,12 +24,12 @@ export const AdminRequestedClass = () => {
   const { date, time_slot_id } = router.query;
   const modalDisclosure = useDisclosure();
   const dispatch = useDispatch();
-  const now = new Date();
+  const now = startOfDay(new Date());
 
   const noSpecificDate =
     !date ||
     isNaN(new Date(date.toString()) as unknown as number) ||
-    isBefore(new Date(date.toString()), startOfDay(now));
+    isBefore(new Date(date.toString()), now);
 
   const [query, setQuery] = useState({
     skip: 0,

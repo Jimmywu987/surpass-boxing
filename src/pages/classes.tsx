@@ -15,13 +15,8 @@ const ClassesPage = () => {
     enabled: isAuthenticated,
   });
   const isAdmin: boolean = session.data?.user["admin"];
-  if (
-    (data &&
-      data.lessons.length === 0 &&
-      data.classes.length === 0 &&
-      !isAdmin) ||
-    !isAuthenticated
-  ) {
+
+  if ((data && data.lessons.length === 0 && !isAdmin) || !isAuthenticated) {
     return (
       <div className="text-center text-white mt-24">
         {t("please_contact_coach_to_get_class_info")}
