@@ -10,7 +10,7 @@ import {
   subDays,
 } from "date-fns";
 import useTranslation from "next-translate/useTranslation";
-import { useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 
 import { OpenModelType } from "@/features/common/enums/OpenModelType";
 import { useSession } from "next-auth/react";
@@ -22,24 +22,33 @@ import { DatePicker } from "@/features/common/components/DatePicker";
 import { ClassesPageModalContent } from "@/features/classes/components/ClassesPageModalContent";
 import { ClassPageContent } from "@/features/classes/components/ClassPageContent";
 import { trpc } from "@/utils/trpc";
-import { useRouter } from "next/router";
+
 import { Lessons } from "@prisma/client";
 
 export const ClassContent = ({
+  isLessonLoading,
   lessonsData,
+  queryState,
+  canViewClasses,
 }: {
+  isLessonLoading: boolean;
+  canViewClasses: boolean;
   lessonsData: Lessons[] | undefined;
+  queryState: [
+    {
+      skip: number;
+      date: string;
+    },
+    Dispatch<
+      SetStateAction<{
+        skip: number;
+        date: string;
+      }>
+    >
+  ];
 }) => {
   const { t } = useTranslation("classes");
   const session: any = useSession();
-  const router = useRouter();
-  const { date: queryDate } = router.query;
-  const now = new Date();
-
-  const noSpecificDate =
-    !queryDate ||
-    isNaN(new Date(queryDate.toString()) as unknown as number) ||
-    isBefore(new Date(queryDate.toString()), startOfDay(now));
 
   const isAuthenticated = session.status === "authenticated";
 
@@ -52,10 +61,7 @@ export const ClassContent = ({
 
   const isAdmin: boolean = session.data?.user["admin"];
 
-  const [query, setQuery] = useState({
-    skip: 0,
-    date: noSpecificDate ? now.toString() : queryDate.toString(),
-  });
+  const [query, setQuery] = queryState;
 
   const bookingTimeSlotResult =
     trpc.bookingTimeSlotRouter.fetchForStudent.useQuery(query);
@@ -69,6 +75,7 @@ export const ClassContent = ({
       return isSameDay(each.date, date);
     });
   }, [data?.dayOffs, date]);
+
   const canJoin = useMemo(() => {
     if (!lessonsData) {
       return false;
@@ -119,25 +126,37 @@ export const ClassContent = ({
           <div className="text-white">
             {t(format(date, "EEEE").toLowerCase())}
           </div>
-          <Button onClick={handleOpenModel} isDisabled={!!isDayOff}>
-            {t("open_a_class")}
-          </Button>
-          <Button
-            onClick={() => setOnlyShowConfirmedClasses((prev) => !prev)}
-            backgroundColor={onlyShowConfirmedClasses ? "gray.200" : "gray.700"}
-            px="4"
-            variant="unstyled"
-          >
-            {t("only_show_confirmed_classes")}
-          </Button>
+          {!isLessonLoading && canViewClasses && (
+            <>
+              <Button onClick={handleOpenModel} isDisabled={!!isDayOff}>
+                {t("open_a_class")}
+              </Button>
+              <Button
+                onClick={() => setOnlyShowConfirmedClasses((prev) => !prev)}
+                backgroundColor={
+                  onlyShowConfirmedClasses ? "gray.200" : "gray.700"
+                }
+                px="4"
+                variant="unstyled"
+              >
+                {t("only_show_confirmed_classes")}
+              </Button>
+            </>
+          )}
         </div>
-        <ClassPageContent
-          data={data}
-          isLoading={isLoading}
-          lessonsData={lessonsData}
-          handleOpenModel={handleOpenModel}
-          onlyShowConfirmedClasses={onlyShowConfirmedClasses}
-        />
+        {canViewClasses ? (
+          <ClassPageContent
+            data={data}
+            isLoading={isLoading}
+            lessonsData={lessonsData}
+            handleOpenModel={handleOpenModel}
+            onlyShowConfirmedClasses={onlyShowConfirmedClasses}
+          />
+        ) : (
+          <div className="text-center text-white mt-24">
+            {t("please_contact_coach_to_get_class_info")}
+          </div>
+        )}
       </div>
       <ModalComponent
         modalDisclosure={modalDisclosure}

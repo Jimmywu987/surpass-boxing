@@ -21,7 +21,6 @@ export const ClassPageContent = ({
   isLoading,
   lessonsData,
   handleOpenModel,
-
   onlyShowConfirmedClasses,
 }: ClassPageContentProps) => {
   const { t } = useTranslation("classes");
