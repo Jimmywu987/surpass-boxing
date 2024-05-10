@@ -4,26 +4,49 @@ import { useSession } from "next-auth/react";
 
 import { ClassContent } from "@/features/classes/components/ClassContent";
 import { trpc } from "@/utils/trpc";
+import { useState } from "react";
+import { isBefore, startOfDay } from "date-fns";
+import { useRouter } from "next/router";
 
 const ClassesPage = () => {
   const { t } = useTranslation("classes");
   const session: any = useSession();
+  const router = useRouter();
 
+  const { date: queryDate } = router.query;
+  const now = startOfDay(new Date());
+
+  const noSpecificDate =
+    !queryDate ||
+    isNaN(new Date(queryDate.toString()) as unknown as number) ||
+    isBefore(new Date(queryDate.toString()), now);
   const isAuthenticated = session.status === "authenticated";
 
-  const { data } = trpc.lessonClassRouter.fetch.useQuery(undefined, {
-    enabled: isAuthenticated,
+  const queryState = useState({
+    skip: 0,
+    date: noSpecificDate ? now.toString() : queryDate.toString(),
   });
+  const [query] = queryState;
+  const { data, isLoading } = trpc.lessonClassRouter.fetch.useQuery(
+    { selectedDate: query.date },
+    {
+      enabled: isAuthenticated,
+    }
+  );
   const isAdmin: boolean = session.data?.user["admin"];
 
-  if ((data && data.lessons.length === 0 && !isAdmin) || !isAuthenticated) {
-    return (
-      <div className="text-center text-white mt-24">
-        {t("please_contact_coach_to_get_class_info")}
-      </div>
-    );
-  }
-  return <ClassContent lessonsData={data?.lessons ?? []} />;
+  const canViewClasses = !(
+    (data && data.lessons.length === 0 && !isAdmin) ||
+    !isAuthenticated
+  );
+  return (
+    <ClassContent
+      isLessonLoading={isLoading}
+      lessonsData={data?.lessons ?? []}
+      queryState={queryState}
+      canViewClasses={canViewClasses}
+    />
+  );
 };
 
 export default ClassesPage;
