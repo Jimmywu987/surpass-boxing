@@ -96,7 +96,7 @@ export const CreateRequestedClassForm = ({
             <div>{t(format(date, "EEEE").toLowerCase())}</div>
           </div>
           <div>
-            <SelectClassType date={date} />
+            <SelectClassType />
             {errors.className && (
               <div className="text-sm text-red-600">
                 {errors.className.message}
