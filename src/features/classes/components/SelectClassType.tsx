@@ -5,16 +5,23 @@ import { useFormContext, FieldValues } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { User } from "@prisma/client";
 import { useMemo } from "react";
-
-export const SelectClassType = () => {
+type SelectClassTypeProps = {
+  date?: Date;
+};
+export const SelectClassType = ({
+  date = new Date(),
+}: SelectClassTypeProps) => {
   const { t } = useTranslation("classes");
   const { data } = trpc.classRouter.fetch.useQuery();
+
   const session = useSession();
   const user = session.data?.user as User;
 
   const util = trpc.useContext();
 
-  const lessonData = util.lessonClassRouter.fetch.getData();
+  const lessonData = util.lessonClassRouter.fetch.getData({
+    selectedDate: date.toString(),
+  });
   const { setValue } = useFormContext<FieldValues>();
 
   const lessonLevels = useMemo(() => {
