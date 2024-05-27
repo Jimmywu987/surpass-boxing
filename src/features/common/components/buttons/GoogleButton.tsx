@@ -3,7 +3,7 @@ import { signIn } from "next-auth/react";
 import { GoogleSvgIcon } from "@/features/common/components/buttons/svg/GoogleSvgIcon";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/router";
-import { isBrowser } from "react-device-detect";
+import { isEmbedded } from "react-device-detect";
 import { cn } from "@/utils/cn";
 
 export const GoogleButton = ({ loading }: { loading: boolean }) => {
@@ -14,7 +14,7 @@ export const GoogleButton = ({ loading }: { loading: boolean }) => {
     <button
       className={cn(
         " py-2 rounded shadow flex items-center w-full justify-center space-x-2 hover:bg-gray-50",
-        isBrowser ? "cursor-pointer" : " opacity-70"
+        !isEmbedded ? "cursor-pointer" : " opacity-70"
       )}
       onClick={() => {
         signIn(
@@ -24,10 +24,10 @@ export const GoogleButton = ({ loading }: { loading: boolean }) => {
             : { callbackUrl: "/" }
         );
       }}
-      disabled={loading || !isBrowser}
+      disabled={loading || isEmbedded}
     >
       <GoogleSvgIcon className="w-5 h-5" />
-      {isBrowser ? (
+      {!isEmbedded ? (
         <span className="text-gray-600">{t("sign_up_with_google")}</span>
       ) : (
         <span className="text-gray-600">{t("please_use_browser")}</span>
