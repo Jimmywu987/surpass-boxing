@@ -133,6 +133,27 @@ export const userRouter = router({
         },
       });
     }),
+  deleteAccount: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const user = ctx.session?.user as User;
+      const { id } = input;
+      if (!user.admin) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+        });
+      }
+      await prisma.userOnBookingTimeSlots.deleteMany({
+        where: {
+          userId: id,
+        },
+      });
+      await prisma.user.delete({
+        where: {
+          id,
+        },
+      });
+    }),
 
   fetchUserById: protectedProcedure
     .input(z.object({ id: z.string() }))

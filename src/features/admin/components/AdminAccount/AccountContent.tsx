@@ -3,22 +3,23 @@ import { UseDisclosureReturn } from "@chakra-ui/react";
 import useTranslation from "next-translate/useTranslation";
 
 import { CoachConfirm } from "@/features/admin/components/AdminAccount/CoachConfirm";
+import { DeleteConfirm } from "@/features/admin/components/AdminAccount/DeleteConfirm";
 import { ViewAccount } from "@/features/admin/components/AdminAccount/ViewAccount";
 import { ViewUnusedClass } from "@/features/admin/components/AdminAccount/ViewUnusedClass";
 import { ViewUsedClass } from "@/features/admin/components/AdminAccount/ViewUsedClass";
 import { AdminViewAccountOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
 import { isAfter } from "date-fns";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
 export const AccountContent = ({
-  account,
+  accountState,
   modalDisclosure,
 }: {
-  account: UserType | null;
+  accountState: [UserType | null, Dispatch<SetStateAction<UserType | null>>];
   modalDisclosure: UseDisclosureReturn;
 }) => {
   const { t } = useTranslation("admin");
-
+  const [account, setAccount] = accountState;
   const { onClose } = modalDisclosure;
 
   if (!account) {
@@ -55,6 +56,19 @@ export const AccountContent = ({
         account={account}
         onReturn={() => setView(AdminViewAccountOptionEnums.VIEW_ACCOUNT)}
         onClose={onClose}
+      />
+    );
+  }
+  if (view === AdminViewAccountOptionEnums.VIEW_CONFIRM_DELETE) {
+    return (
+      <DeleteConfirm
+        confirmText={t("confirm_delete")}
+        account={account}
+        onReturn={() => setView(AdminViewAccountOptionEnums.VIEW_ACCOUNT)}
+        onClose={() => {
+          onClose();
+          setAccount(null);
+        }}
       />
     );
   }

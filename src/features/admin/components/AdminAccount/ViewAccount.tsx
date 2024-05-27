@@ -192,14 +192,24 @@ export const ViewAccount = ({
           </p>
         </div>
       </FormProvider>
-      <button
-        className=" hover:bg-red-400 bg-red-500 px-3 py-1 rounded-md text-white self-start"
-        onClick={() =>
-          setView(AdminViewAccountOptionEnums.VIEW_CONFIRM_GRANT_AUTH)
-        }
-      >
-        {t("admin:action.grant_authorization")}
-      </button>
+      <div className="flex justify-between">
+        <button
+          className=" hover:bg-red-400 bg-red-500 px-3 py-1 rounded-md text-white self-start"
+          onClick={() =>
+            setView(AdminViewAccountOptionEnums.VIEW_CONFIRM_GRANT_AUTH)
+          }
+        >
+          {t("admin:action.grant_authorization")}
+        </button>
+        <button
+          className=" hover:bg-red-400 bg-red-500 px-3 py-1 rounded-md text-white self-start"
+          onClick={() =>
+            setView(AdminViewAccountOptionEnums.VIEW_CONFIRM_DELETE)
+          }
+        >
+          {t("admin:action.delete")}
+        </button>
+      </div>
     </div>
   );
 };

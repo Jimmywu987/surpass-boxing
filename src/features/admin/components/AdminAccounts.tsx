@@ -39,8 +39,8 @@ export const AdminAccounts = () => {
 
   const { data, isLoading } = trpc.userRouter.fetch.useQuery(query);
 
-  const [account, setAccount] = useState<UserType | null>(null);
-
+  const accountState = useState<UserType | null>(null);
+  const [account, setAccount] = accountState;
   const { t } = useTranslation("admin");
   const modalDisclosure = useDisclosure();
   const { onOpen } = modalDisclosure;
@@ -167,7 +167,10 @@ export const AdminAccounts = () => {
       <ModalComponent
         modalDisclosure={modalDisclosure}
         content={
-          <AccountContent modalDisclosure={modalDisclosure} account={account} />
+          <AccountContent
+            modalDisclosure={modalDisclosure}
+            accountState={accountState}
+          />
         }
       />
     </div>
