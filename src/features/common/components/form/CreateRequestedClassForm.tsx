@@ -84,7 +84,7 @@ export const CreateRequestedClassForm = ({
     <FormProvider {...requestedClassInputFormMethods}>
       <div className="flex flex-col space-y-2">
         <h1 className="text-2xl text-theme-color text-center">
-          {t("admin:add_regular_class")}
+          {t("admin:add_class")}
         </h1>
         <form onSubmit={onSubmit} className="flex flex-col space-y-3 w-full">
           <div className="flex space-x-2">
