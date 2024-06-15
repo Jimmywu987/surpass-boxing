@@ -43,6 +43,7 @@
     "clear_unattended_class": "刪除已開未有學員課堂",
     "action": {
         "confirm": "確認",
+        "pending": "取消確認",
         "cancel": "取消",
         "search": "搜尋",
         "remove_authorization": "移除權限",

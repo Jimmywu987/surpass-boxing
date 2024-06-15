@@ -24,6 +24,12 @@ export type NotificationDataType = {
     time: string;
     className: string;
   };
+  [NotificationEnums.CLASS_PENDING]: {
+    dateTime: string;
+    time: string;
+    className: string;
+  };
+
   [NotificationEnums.CLASS_CANCELLED]: {
     dateTime: string;
     time: string;

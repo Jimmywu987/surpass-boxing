@@ -8,6 +8,7 @@
     "join_different_class": "{{username}}已加入{{dateTime}} | {{time}}的{{className}}課堂，請留意這學員是{{levelFrom}}，參加了{{levelTo}}的課堂",
     "class_cancelled": "{{dateTime}} | {{time}}的{{className}}課堂已被取消",
     "class_confirmed": "{{dateTime}} | {{time}}的{{className}}課堂已被確認",
+    "class_pending": "{{dateTime}} | {{time}}的{{className}}課堂已被返回至等待確認",
     "class_updated": "{{dateTime}} | {{time}}的{{className}}課堂已被更新至{{updatedTime}}",
     "class_created": "{{username}}已建立{{dateTime}} | {{time}}的{{className}}課堂",
     "leave_class": "{{username}}已離開{{dateTime}} | {{time}}的{{className}}課堂"

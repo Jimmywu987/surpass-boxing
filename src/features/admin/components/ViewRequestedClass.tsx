@@ -153,22 +153,28 @@ export const ViewRequestedClass = ({
           </div>
           {!isPast && (
             <div className="space-x-2 self-end">
-              <button
-                className={cn(
-                  "px-4 py-1 rounded text-white",
-                  status !== BookingTimeSlotStatusEnum.PENDING
-                    ? "bg-gray-300"
-                    : "bg-green-500"
-                )}
-                disabled={
-                  status !== BookingTimeSlotStatusEnum.PENDING || isLoading
-                }
-                onClick={() =>
-                  updateClassStatus(BookingTimeSlotStatusEnum.CONFIRM)
-                }
-              >
-                {t("admin:action.confirm")}
-              </button>
+              {status === BookingTimeSlotStatusEnum.PENDING && (
+                <button
+                  className={cn("px-4 py-1 rounded text-white bg-green-500")}
+                  disabled={isLoading}
+                  onClick={() =>
+                    updateClassStatus(BookingTimeSlotStatusEnum.CONFIRM)
+                  }
+                >
+                  {t("admin:action.confirm")}
+                </button>
+              )}
+              {status === BookingTimeSlotStatusEnum.CONFIRM && (
+                <button
+                  className={cn("px-4 py-1 rounded text-white bg-gray-700")}
+                  disabled={isLoading}
+                  onClick={() =>
+                    updateClassStatus(BookingTimeSlotStatusEnum.PENDING)
+                  }
+                >
+                  {t("admin:action.pending")}
+                </button>
+              )}
               <button
                 className={cn(
                   "rounded text-white px-4 py-1",

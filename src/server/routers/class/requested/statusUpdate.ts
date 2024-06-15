@@ -131,18 +131,23 @@ export const statusUpdate = protectedProcedure
       time,
       className,
     };
+    const isConfirmed = status === BookingTimeSlotStatusEnum.CONFIRM;
     const messageInEn = getMessage({
       data: messageData,
       messageKey: isCancelled
         ? NotificationEnums.CLASS_CANCELLED
-        : NotificationEnums.CLASS_CONFIRMED,
+        : isConfirmed
+        ? NotificationEnums.CLASS_CONFIRMED
+        : NotificationEnums.CLASS_PENDING,
       lang: LanguageEnum.EN,
     });
     const messageInZh = getMessage({
       data: messageData,
       messageKey: isCancelled
         ? NotificationEnums.CLASS_CANCELLED
-        : NotificationEnums.CLASS_CONFIRMED,
+        : isConfirmed
+        ? NotificationEnums.CLASS_CONFIRMED
+        : NotificationEnums.CLASS_PENDING,
       lang: LanguageEnum.ZH,
     });
 
