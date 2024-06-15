@@ -43,6 +43,7 @@
     "total_pending": "Pending classes",
     "action": {
         "confirm": "Confirm",
+        "pending": "Cancel confirm",
         "cancel": "Cancel",
         "search": "Search",
         "remove_authorization": "Remove authorization",
