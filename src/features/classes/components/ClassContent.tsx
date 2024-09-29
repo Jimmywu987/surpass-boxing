@@ -1,6 +1,7 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
 
 import {
+  addDays,
   endOfDay,
   format,
   isAfter,
@@ -69,6 +70,7 @@ export const ClassContent = ({
   const { data, isLoading } = bookingTimeSlotResult;
   const date = new Date(query.date);
   const minDate = endOfDay(subDays(new Date(), 1));
+  const maxDate = endOfDay(addDays(new Date(), 10));
 
   const isDayOff = useMemo(() => {
     return data?.dayOffs.find((each) => {
@@ -120,6 +122,7 @@ export const ClassContent = ({
                   }));
                 },
                 minDate,
+                maxDate,
               }}
             />
           </div>
