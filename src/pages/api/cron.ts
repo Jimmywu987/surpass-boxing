@@ -32,43 +32,51 @@ export default async function handler(
   const startOfSelectedDate = getZonedEndOfDay(now);
 
   const past = getZonedStartOfDay(now);
-
-  await prisma.cancelRegularBookingTimeSlot.deleteMany({
-    where: {
-      date: {
-        lt: past,
+  try {
+    await prisma.cancelRegularBookingTimeSlot.deleteMany({
+      where: {
+        date: {
+          lt: past,
+        },
       },
-    },
-  });
-  await prisma.offDay.deleteMany({
-    where: {
-      date: {
-        lt: past,
+    });
+  } catch (error) {}
+  try {
+    await prisma.offDay.deleteMany({
+      where: {
+        date: {
+          lt: past,
+        },
       },
-    },
-  });
-  await prisma.bookingTimeSlots.deleteMany({
-    where: {
-      date: {
-        lt: past,
-      },
-      status: BookingTimeSlotStatusEnum.PENDING,
-      userOnBookingTimeSlots: {
-        every: {
-          userId: {
-            in: [],
+    });
+  } catch (error) {}
+  try {
+    await prisma.bookingTimeSlots.deleteMany({
+      where: {
+        date: {
+          lt: past,
+        },
+        status: BookingTimeSlotStatusEnum.PENDING,
+        userOnBookingTimeSlots: {
+          every: {
+            userId: {
+              in: [],
+            },
           },
         },
       },
-    },
-  });
-  await prisma.lessons.deleteMany({
-    where: {
-      expiryDate: {
-        lt: sub(past, { days: 1 }),
+    });
+  } catch (error) {}
+  try {
+    await prisma.lessons.deleteMany({
+      where: {
+        expiryDate: {
+          lt: sub(past, { days: 1 }),
+        },
       },
-    },
-  });
+    });
+  } catch (error) {}
+
   const pendingTimeSlots = await prisma.bookingTimeSlots.findMany({
     where: {
       date: {
