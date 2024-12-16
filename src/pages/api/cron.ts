@@ -157,8 +157,8 @@ export default async function handler(
         });
       },
       {
-        maxWait: 5000, // default: 2000
-        timeout: 10000, // default: 5000
+        maxWait: 10000, // default: 2000
+        timeout: 15000, // default: 5000
       }
     );
 
