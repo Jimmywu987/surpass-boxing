@@ -6,6 +6,14 @@ export const MobileImageSection = () => {
     <div className="md:hidden w-screen px-2 space-y-2">
       <div className="relative w-full h-[330px]">
         <Image
+          src="/main-page.jpeg"
+          alt="background-image"
+          className="object-cover rounded-sm"
+          fill
+        />
+      </div>
+      <div className="relative w-full h-[330px]">
+        <Image
           src="/place-1.jpg"
           alt="background-image"
           className="object-cover rounded-sm"
