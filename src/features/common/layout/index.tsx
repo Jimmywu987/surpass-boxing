@@ -1,6 +1,6 @@
 import { Footer } from "@/features/footer";
 import { HeadHtml } from "@/features/head";
-import { MainPageVideo } from "@/features/home/components/MainPageVideo";
+
 import { Navbar } from "@/features/nav/Navbar";
 import { cn } from "@/utils/cn";
 import { useRouter } from "next/router";
@@ -22,7 +22,6 @@ const Layout: FC<{ children: React.ReactNode }> = ({ children }) => {
         )}
       >
         <div>
-          <MainPageVideo />
           <Navbar />
           <main
             className={cn(
