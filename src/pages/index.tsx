@@ -6,7 +6,6 @@ import { isMobile } from "react-device-detect";
 export default function HomePage() {
   return (
     <section>
-      {!isMobile && <div className="h-[83vh]" />}
       <div className="w-full from-black to-gray-900 bg-gradient-to-r">
         <div className="container mx-auto flex flex-col md:flex-row w-full justify-around items-center py-6 text-center md:text-left">
           <div className="w-full md:w-3/6 flex flex-col py-6 text-white space-y-10">

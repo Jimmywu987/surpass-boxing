@@ -57,7 +57,7 @@ export const Navbar = () => {
   return (
     <nav
       className={cn(
-        "flex py-3 px-5 justify-between items-center shadow-xl sticky top-0 transition duration-500 z-40",
+        "flex py-3 px-5 justify-between items-center shadow-xl sticky top-0 transition duration-500 z-50",
         (!isTop || !!isMobile || !isMainPage) && "bg-gray-900 "
       )}
     >
