@@ -4,7 +4,7 @@ import useTranslation from "next-translate/useTranslation";
 import { AdminViewAccountOptionEnums } from "@/features/admin/enums/AdminOptionEnums";
 import { useAddClassInputResolver } from "@/features/admin/schemas/useAddClassInputResolver";
 import { add, format, isAfter, startOfDay, subDays } from "date-fns";
-import { Dispatch, SetStateAction, useMemo } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { DatePicker } from "@/features/common/components/DatePicker";
 
@@ -23,9 +23,10 @@ export const ViewAccount = ({
   setViewAccount: Dispatch<SetStateAction<UserType>>;
 }) => {
   const { t, lang } = useTranslation("classes");
-
+  const [level, setLevel] = useState<number | null>(null);
   const utils = trpc.useContext();
   const { mutateAsync } = trpc.lessonClassRouter.addLesson.useMutation();
+  const updateLevelMutation = trpc.userRouter.updateLevel.useMutation();
   const addClassInputFormMethods = useForm({
     resolver: useAddClassInputResolver(),
     mode: "onChange",
@@ -60,6 +61,19 @@ export const ViewAccount = ({
     utils.userRouter.fetch.invalidate();
     utils.userRouter.fetchForAdmin.invalidate();
   });
+
+  const onHandleUpdateLevel = async () => {
+    if (level === null || level === account.level) {
+      return;
+    }
+    await updateLevelMutation.mutateAsync({
+      id: account.id,
+      level,
+    });
+    setLevel(null);
+    utils.userRouter.fetch.invalidate();
+    utils.userRouter.fetchForAdmin.invalidate();
+  };
   const startDate = watch("startDate");
   return (
     <div className="flex flex-col space-y-2">
@@ -180,6 +194,40 @@ export const ViewAccount = ({
             {t("admin:add_lesson")}
           </button>
         </form>
+        <div className="flex space-x-2 justify-between ">
+          <div className="flex border border-gray-300 p-1 space-x-2">
+            <p>{t("admin:level")}: </p>
+            <input
+              type="number"
+              className="w-10 outline-none"
+              placeholder={
+                account.level !== null
+                  ? account.level.toString()
+                  : t("admin:not_set")
+              }
+              name="level"
+              onChange={(e) => {
+                const { valueAsNumber } = e.target;
+                setLevel(valueAsNumber ?? null);
+              }}
+            />
+          </div>
+          <button
+            className={cn(
+              "py-1 px-3 rounded-md text-white self-end",
+              level && level !== account.level && !updateLevelMutation.isLoading
+                ? "hover:bg-green-400 bg-green-500"
+                : "bg-gray-300",
+              lang === "en" && "mt-2"
+            )}
+            onClick={onHandleUpdateLevel}
+            disabled={
+              !level || level === account.level || updateLevelMutation.isLoading
+            }
+          >
+            {t("admin:edit")}
+          </button>
+        </div>
         <div>
           <p>
             {t("admin:expired_date")}:{" "}

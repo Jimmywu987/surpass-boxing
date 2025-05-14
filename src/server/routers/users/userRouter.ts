@@ -6,6 +6,9 @@ import { BookingTimeSlotStatusEnum, LanguageEnum, User } from "@prisma/client";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { editAccountSchema } from "@/schemas/user/edit";
+import { updateLevelSchema } from "@/schemas/user/updateLevel";
+import { changePasswordSchema } from "@/schemas/user/changePassword";
+import { checkPassword, hashPassword } from "@/utils/hash";
 
 export const userRouter = router({
   fetch: protectedProcedure
@@ -206,6 +209,75 @@ export const userRouter = router({
           ...rest,
         },
       });
+    }),
+
+  changePassword: protectedProcedure
+    .input(changePasswordSchema)
+    .mutation(async ({ input, ctx }) => {
+      const user = ctx.session?.user as User;
+      const { id, password, confirmPassword, oldPassword } = input;
+      if (user.id !== id) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+        });
+      }
+      if (confirmPassword !== password) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "incorrect password",
+        });
+      }
+
+      const currentUser = await prisma.user.findUnique({
+        where: {
+          id,
+        },
+        select: {
+          password: true,
+        },
+      });
+      if (!currentUser) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+        });
+      }
+      const isValid = await checkPassword(oldPassword, currentUser.password);
+      if (!isValid) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+        });
+      }
+      const hashedPassword = await hashPassword(password);
+      await prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          password: hashedPassword,
+        },
+      });
+    }),
+
+  updateLevel: protectedProcedure
+    .input(updateLevelSchema())
+    .mutation(async ({ input, ctx }) => {
+      const user = ctx.session?.user as User;
+      if (!user.admin) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+        });
+      }
+
+      const { id, level } = input;
+      await prisma.user.update({
+        where: {
+          id,
+        },
+        data: {
+          level,
+        },
+      });
+      return null;
     }),
   updateLang: protectedProcedure
     .input(

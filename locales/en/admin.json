@@ -64,6 +64,8 @@
     "expired_date": "Expired Date",
     "start_date": "Start Date",
     "unused_lessons": "Unused Lessons",
+    "not_set": "Not set",
+    "updated_successfully": "Update Successfully",
     "total_lessons": "Total Lessons",
     "add_lesson": "Add",
     "duration": "Duration",

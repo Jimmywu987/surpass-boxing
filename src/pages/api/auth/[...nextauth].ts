@@ -23,7 +23,7 @@ export const authOptions: AuthOptions = {
         email: {
           label: "Email",
           type: "email",
-          placeholder: "jimmywu@gmail.com",
+          placeholder: "peterchan@gmail.com",
         },
         password: { label: "Password", type: "password" },
       },

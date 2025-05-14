@@ -56,6 +56,8 @@ model User {
 
   lang LanguageEnum
 
+  level Int?
+
   lessons                    Lessons[]
   userOnBookingTimeSlots     UserOnBookingTimeSlots[]
   regularBookingTimeSlots    RegularBookingTimeSlots[]
