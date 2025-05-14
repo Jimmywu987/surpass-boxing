@@ -73,6 +73,10 @@ export const ViewAccount = ({
       id: account.id,
       level,
     });
+    setViewAccount((prev) => ({
+      ...prev,
+      level,
+    }));
     toast({
       title: t("admin:updated_successfully"),
       status: "success",
