@@ -94,14 +94,11 @@ export const ViewAccountInfo = ({
             </button>
           </div>
         )}
-        {((isCurrentUser && currentUser.level !== null) ||
-          currentUser.admin) && (
+        {((isCurrentUser && user.level !== null) || currentUser.admin) && (
           <div className="flex justify-between my-2">
             <p className="text-gray-600">
               {t("admin:level")}:{" "}
-              {currentUser.level !== null
-                ? currentUser.level
-                : t("admin:not_set")}
+              {user.level !== null ? user.level : t("admin:not_set")}
             </p>
           </div>
         )}
