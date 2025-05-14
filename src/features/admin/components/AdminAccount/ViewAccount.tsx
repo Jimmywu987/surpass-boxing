@@ -228,14 +228,18 @@ export const ViewAccount = ({
           <button
             className={cn(
               "py-1 px-3 rounded-md text-white self-end",
-              level && level !== account.level && !updateLevelMutation.isLoading
+              level !== null &&
+                level !== account.level &&
+                !updateLevelMutation.isLoading
                 ? "hover:bg-green-400 bg-green-500"
                 : "bg-gray-300",
               lang === "en" && "mt-2"
             )}
             onClick={onHandleUpdateLevel}
             disabled={
-              !level || level === account.level || updateLevelMutation.isLoading
+              level === null ||
+              level === account.level ||
+              updateLevelMutation.isLoading
             }
           >
             {t("admin:edit")}
