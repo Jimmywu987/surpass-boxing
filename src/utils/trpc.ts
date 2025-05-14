@@ -88,8 +88,9 @@ export const trpc = createTRPCNext<AppRouter, SSRContext>({
        */
       queryClientConfig: {
         defaultOptions: {
-          queries: {},
-          mutations: {},
+          queries: {
+            staleTime: 1000 * 60 * 60,
+          },
         },
       },
     };

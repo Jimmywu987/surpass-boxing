@@ -29,7 +29,6 @@ import { trpc } from "@/utils/trpc";
 
 export const AdminAccounts = () => {
   const searchAccountInputValue = useRef<HTMLInputElement>(null);
-  const utils = trpc.useContext();
 
   const [query, setQuery] = useState({
     skip: 0,
@@ -40,7 +39,7 @@ export const AdminAccounts = () => {
   const { data, isLoading } = trpc.userRouter.fetch.useQuery(query);
 
   const accountState = useState<UserType | null>(null);
-  const [account, setAccount] = accountState;
+  const [_, setAccount] = accountState;
   const { t } = useTranslation("admin");
   const modalDisclosure = useDisclosure();
   const { onOpen } = modalDisclosure;
@@ -70,9 +69,11 @@ export const AdminAccounts = () => {
   };
   if (!data || isLoading) {
     return (
-      <Stack>
-        <Skeleton height="30px" />
-      </Stack>
+      <div className="pt-16 flex-1">
+        <Stack className="w-full ">
+          <Skeleton h="70px" />
+        </Stack>
+      </div>
     );
   }
 

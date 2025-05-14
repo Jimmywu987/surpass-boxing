@@ -8,6 +8,7 @@ type FormTextInputProps = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
   className?: string;
   onChange?: () => void;
+  shouldValidate?: boolean;
 };
 type FormErrorType = { message: string; type: string; ref: undefined | string };
 export const FormTextInput: FC<FormTextInputProps> = ({
@@ -16,6 +17,7 @@ export const FormTextInput: FC<FormTextInputProps> = ({
   label,
   className = "",
   onChange,
+  shouldValidate,
   ...inputProps
 }) => {
   const {
@@ -41,7 +43,13 @@ export const FormTextInput: FC<FormTextInputProps> = ({
             ? onChange
             : (event) => {
                 const { value } = event.target;
-                setValue(name, value);
+                setValue(
+                  name,
+                  value,
+                  shouldValidate !== undefined
+                    ? { shouldValidate: shouldValidate }
+                    : undefined
+                );
               }
         }
       />

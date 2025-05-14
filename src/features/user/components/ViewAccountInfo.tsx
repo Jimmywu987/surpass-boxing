@@ -1,13 +1,12 @@
 import DefaultProfileImg from "@/../public/default-profile-img.png";
+import { ViewAccountEnums } from "@/features/common/enums/ViewAccountEnums";
+import { RouterOutput } from "@/utils/trpc";
+import { User, UserAuthOptionsEnum } from "@prisma/client";
 import { format, isAfter } from "date-fns";
+import { signOut, useSession } from "next-auth/react";
 import useTranslation from "next-translate/useTranslation";
 import Image from "next/image";
-import { trpc, RouterOutput } from "@/utils/trpc";
-import { signOut, useSession } from "next-auth/react";
 import { Dispatch, SetStateAction, useMemo } from "react";
-import { ViewAccountEnums } from "@/features/common/enums/ViewAccountEnums";
-import { useRouter } from "next/router";
-import { User } from "@prisma/client";
 
 type inferType = RouterOutput["userRouter"]["fetchUserById"];
 
@@ -21,9 +20,7 @@ export const ViewAccountInfo = ({
   const session = useSession();
   const currentUser = session.data?.user as User;
 
-  const router = useRouter();
   const { t } = useTranslation("common");
-  const util = trpc.useContext();
 
   const isCurrentUser = currentUser.id === user.id;
   const unusedLessonNum = useMemo(
@@ -33,6 +30,7 @@ export const ViewAccountInfo = ({
         .reduce((pre, cur) => pre + cur.lesson, 0) ?? 0,
     [user.lessons]
   );
+
   return (
     <div className="flex flex-col items-center space-y-6 ">
       <div className="w-32 h-32 relative">
@@ -82,6 +80,7 @@ export const ViewAccountInfo = ({
             </button>
           </div>
         )}
+
         {(isCurrentUser || currentUser.admin) && (
           <div className="flex justify-between my-2">
             <p className="text-gray-600">
@@ -95,19 +94,43 @@ export const ViewAccountInfo = ({
             </button>
           </div>
         )}
+        {((isCurrentUser && currentUser.level !== null) ||
+          currentUser.admin) && (
+          <div className="flex justify-between my-2">
+            <p className="text-gray-600">
+              {t("admin:level")}:{" "}
+              {currentUser.level !== null
+                ? currentUser.level
+                : t("admin:not_set")}
+            </p>
+          </div>
+        )}
       </div>
-      {isCurrentUser && (
-        <button
-          onClick={async () => {
-            await signOut({
-              callbackUrl: "/",
-            });
-          }}
-          className="text-gray-600 self-end shadow border-2 border-gray-200 px-3 py-1 hover:text-gray-800 font-semibold"
-        >
-          {t("auth:sign_out")}
-        </button>
-      )}
+      <div className="flex justify-between w-full">
+        {isCurrentUser &&
+        currentUser.authOption === UserAuthOptionsEnum.CREDENTIAL ? (
+          <button
+            onClick={() => setView(ViewAccountEnums.CHANGE_PASSWORD)}
+            className="text-gray-600 shadow border-2 border-gray-200 px-3 py-1 hover:text-gray-800 font-semibold"
+          >
+            {t("auth:change_password")}
+          </button>
+        ) : (
+          <div />
+        )}
+        {isCurrentUser && (
+          <button
+            onClick={async () => {
+              await signOut({
+                callbackUrl: "/",
+              });
+            }}
+            className="text-gray-600 shadow border-2 border-gray-200 px-3 py-1 hover:text-gray-800 font-semibold"
+          >
+            {t("auth:sign_out")}
+          </button>
+        )}
+      </div>
     </div>
   );
 };

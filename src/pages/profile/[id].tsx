@@ -16,6 +16,7 @@ import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useSession } from "next-auth/react";
+import { ChangePassword } from "@/features/user/components/ChangePassword";
 
 const ProfilePage = () => {
   const router = useRouter();
@@ -82,6 +83,13 @@ const ProfilePage = () => {
               isAfter(new Date(lesson.expiryDate), new Date())
             )}
             onClick={() => setView(ViewAccountEnums.NORMAL)}
+          />
+        ) : view === ViewAccountEnums.CHANGE_PASSWORD ? (
+          <ChangePassword
+            onBack={() => {
+              setView(ViewAccountEnums.NORMAL);
+            }}
+            id={userId}
           />
         ) : (
           <div className="flex flex-col">
