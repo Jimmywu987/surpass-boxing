@@ -12,6 +12,7 @@ import { AccountBasicInfo } from "@/features/admin/components/AdminAccount/Accou
 import { trpc } from "@/utils/trpc";
 import { ClassLevelEnum } from "@prisma/client";
 import { cn } from "@/utils/cn";
+import { createStandaloneToast } from "@chakra-ui/react";
 
 export const ViewAccount = ({
   account,
@@ -22,6 +23,8 @@ export const ViewAccount = ({
   setView: Dispatch<SetStateAction<AdminViewAccountOptionEnums>>;
   setViewAccount: Dispatch<SetStateAction<UserType>>;
 }) => {
+  const { toast } = createStandaloneToast();
+
   const { t, lang } = useTranslation("classes");
   const [level, setLevel] = useState<number | null>(null);
   const utils = trpc.useContext();
@@ -58,8 +61,8 @@ export const ViewAccount = ({
         lessons: [...prev.lessons, result],
       };
     });
-    utils.userRouter.fetch.invalidate();
-    utils.userRouter.fetchForAdmin.invalidate();
+    await utils.userRouter.fetch.invalidate();
+    await utils.userRouter.fetchForAdmin.invalidate();
   });
 
   const onHandleUpdateLevel = async () => {
@@ -70,9 +73,15 @@ export const ViewAccount = ({
       id: account.id,
       level,
     });
+    toast({
+      title: t("admin:updated_successfully"),
+      status: "success",
+      duration: 4000,
+      isClosable: true,
+    });
     setLevel(null);
-    utils.userRouter.fetch.invalidate();
-    utils.userRouter.fetchForAdmin.invalidate();
+    await utils.userRouter.fetch.invalidate();
+    await utils.userRouter.fetchForAdmin.invalidate();
   };
   const startDate = watch("startDate");
   return (
