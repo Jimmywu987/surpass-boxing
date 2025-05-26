@@ -1,6 +1,7 @@
 import { create } from "@/server/routers/class/requested/create";
 import { update } from "@/server/routers/class/requested/update";
 import { statusUpdate } from "@/server/routers/class/requested/statusUpdate";
+import { resumeClass } from "@/server/routers/class/requested/resumeClass";
 import { leave } from "@/server/routers/class/requested/leave";
 import { join } from "@/server/routers/class/requested/join";
 import { fetch } from "@/server/routers/class/requested/fetch";
@@ -10,6 +11,7 @@ export const requestedClassRouter = router({
   create,
   update,
   statusUpdate,
+  resumeClass,
   leave,
   join,
   fetch,

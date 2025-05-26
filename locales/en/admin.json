@@ -43,7 +43,10 @@
     "total_pending": "Pending classes",
     "action": {
         "confirm": "Confirm",
+        "resume_class": "Resume class",
         "pending": "Cancel confirm",
+        "confirm_cancel": "Confirm cancel",
+        "return": "Return",
         "cancel": "Cancel",
         "search": "Search",
         "remove_authorization": "Remove authorization",
@@ -76,5 +79,6 @@
     "different_level_text": "{{levelFrom}} Student {{username}} has joined a {{levelTo}} class.",
     "reason": "Reason",
     "off_day": "Off Day",
-    "delete_past_off_day": "Delete past off day"
+    "delete_past_off_day": "Delete past off day",
+    "confirming_cancel_class": "Are you sure to continue?"
 }

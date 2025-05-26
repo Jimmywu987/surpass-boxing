@@ -25,23 +25,24 @@ export const ViewRequestedClass = ({
   modalDisclosure: UseDisclosureReturn;
   isPast: boolean;
 }) => {
+  const [onConfirmCancel, setOnConfirmCancel] = useState(false);
   const { t } = useTranslation("classes");
   const dispatch = useDispatch();
   const utils = trpc.useContext();
   const [isEdit, setIsEdit] = useState(false);
   const { timeSlot } = useSelector(timeSlotSelector);
 
-  const { mutateAsync, isLoading } =
+  const statusUpdateMutation =
     trpc.classRouter.requestedClassRouter.statusUpdate.useMutation();
+  const resumeClassMutation =
+    trpc.classRouter.requestedClassRouter.resumeClass.useMutation();
   if (!timeSlot) {
     return <></>;
   }
-  const session = useSession();
-  const user = session.data?.user as User;
   const { startTime, endTime, status } = timeSlot;
 
   const updateClassStatus = async (status: BookingTimeSlotStatusEnum) => {
-    await mutateAsync({
+    await statusUpdateMutation.mutateAsync({
       status,
       id: timeSlot.id,
     });
@@ -49,6 +50,8 @@ export const ViewRequestedClass = ({
     utils.classRouter.requestedClassRouter.fetch.invalidate();
   };
   const dateTime = new Date(timeSlot.date);
+  const isLoading =
+    statusUpdateMutation.isLoading || resumeClassMutation.isLoading;
   return (
     <div>
       {!isPast && status !== BookingTimeSlotStatusEnum.CANCELED && (
@@ -151,48 +154,89 @@ export const ViewRequestedClass = ({
               </Link>
             ))}
           </div>
-          {!isPast && (
-            <div className="space-x-2 self-end">
-              {status === BookingTimeSlotStatusEnum.PENDING && (
-                <button
-                  className={cn("px-4 py-1 rounded text-white bg-green-500")}
-                  disabled={isLoading}
-                  onClick={() =>
-                    updateClassStatus(BookingTimeSlotStatusEnum.CONFIRM)
-                  }
-                >
-                  {t("admin:action.confirm")}
-                </button>
-              )}
-              {status === BookingTimeSlotStatusEnum.CONFIRM && (
-                <button
-                  className={cn("px-4 py-1 rounded text-white bg-gray-700")}
-                  disabled={isLoading}
-                  onClick={() =>
-                    updateClassStatus(BookingTimeSlotStatusEnum.PENDING)
-                  }
-                >
-                  {t("admin:action.pending")}
-                </button>
-              )}
-              <button
-                className={cn(
-                  "rounded text-white px-4 py-1",
-                  status === BookingTimeSlotStatusEnum.CANCELED
-                    ? "bg-gray-300"
-                    : "bg-red-500"
+          {!isPast &&
+            (!onConfirmCancel ? (
+              <div className="flex space-x-2 justify-between">
+                {status !== BookingTimeSlotStatusEnum.CANCELED && (
+                  <button
+                    className={cn("rounded text-white px-4 py-1 bg-red-500")}
+                    disabled={isLoading}
+                    onClick={() => setOnConfirmCancel(true)}
+                  >
+                    {t("admin:action.cancel")}
+                  </button>
                 )}
-                disabled={
-                  status === BookingTimeSlotStatusEnum.CANCELED || isLoading
-                }
-                onClick={() =>
-                  updateClassStatus(BookingTimeSlotStatusEnum.CANCELED)
-                }
-              >
-                {t("admin:action.cancel")}
-              </button>
-            </div>
-          )}
+                {status === BookingTimeSlotStatusEnum.CANCELED && (
+                  <button
+                    className={cn("px-4 py-1 rounded text-white bg-green-500")}
+                    disabled={isLoading}
+                    onClick={async () => {
+                      await resumeClassMutation.mutateAsync({
+                        id: timeSlot.id,
+                      });
+                      dispatch(
+                        updateTimeSlot({
+                          timeSlot: {
+                            ...timeSlot,
+                            status: BookingTimeSlotStatusEnum.PENDING,
+                          },
+                        })
+                      );
+                      utils.classRouter.requestedClassRouter.fetch.invalidate();
+                    }}
+                  >
+                    {t("admin:action.resume_class")}
+                  </button>
+                )}
+                {status === BookingTimeSlotStatusEnum.PENDING && (
+                  <button
+                    className={cn("px-4 py-1 rounded text-white bg-green-500")}
+                    disabled={isLoading}
+                    onClick={() =>
+                      updateClassStatus(BookingTimeSlotStatusEnum.CONFIRM)
+                    }
+                  >
+                    {t("admin:action.confirm")}
+                  </button>
+                )}
+                {status === BookingTimeSlotStatusEnum.CONFIRM && (
+                  <button
+                    className={cn("px-4 py-1 rounded text-white bg-gray-700")}
+                    disabled={isLoading}
+                    onClick={() =>
+                      updateClassStatus(BookingTimeSlotStatusEnum.PENDING)
+                    }
+                  >
+                    {t("admin:action.pending")}
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-6 border-t border-gray-100 pt-6">
+                <p className="font-medium text-center">
+                  {t("admin:confirming_cancel_class")}
+                </p>
+                <div className="flex space-x-2 justify-between">
+                  <button
+                    className={cn("rounded text-white px-4 py-1  bg-gray-700")}
+                    onClick={() => setOnConfirmCancel(false)}
+                  >
+                    {t("admin:action.return")}
+                  </button>
+
+                  <button
+                    className={cn("px-4 py-1 rounded text-white bg-red-500")}
+                    disabled={isLoading}
+                    onClick={() => {
+                      updateClassStatus(BookingTimeSlotStatusEnum.CANCELED);
+                      setOnConfirmCancel(false);
+                    }}
+                  >
+                    {t("admin:action.confirm_cancel")}
+                  </button>
+                </div>
+              </div>
+            ))}
         </div>
       )}
     </div>
