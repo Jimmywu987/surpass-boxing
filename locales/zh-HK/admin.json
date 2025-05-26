@@ -43,9 +43,12 @@
     "clear_unattended_class": "刪除已開未有學員課堂",
     "action": {
         "confirm": "確認",
+        "resume_class": "恢復課堂",
         "pending": "取消確認",
+        "confirm_cancel": "確認取消",
         "cancel": "取消",
         "search": "搜尋",
+        "return": "返回",
         "remove_authorization": "移除權限",
         "grant_authorization": "成為教練",
         "delete": "刪除",
@@ -76,5 +79,6 @@
     "different_level_text": "{{levelFrom}}學員：{{username}}加入了{{levelTo}}的課堂。",
     "reason": "原因",
     "off_day": "休息日",
-    "delete_past_off_day": "刪除過去休息日"
+    "delete_past_off_day": "刪除過去休息日",
+    "confirming_cancel_class": "確認要取消課堂?"
 }
