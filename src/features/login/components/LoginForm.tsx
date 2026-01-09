@@ -82,6 +82,15 @@ export const LoginForm = ({
           showPassword={showPassword}
           setShowPassword={setShowPassword}
         />
+        <div className="flex justify-end">
+          <button
+            type="button"
+            className="text-blue-700 underline hover:text-blue-800 text-sm"
+            onClick={() => router.push("/forgot-password")}
+          >
+            {t("forgot_password.forgot_password")}
+          </button>
+        </div>
         <SubmitButton type="submit" disabled={formState.isSubmitting}>
           {t("login.login")}
         </SubmitButton>
