@@ -11,7 +11,8 @@ export const Footer = () => {
         <InstagramSvgIcon className="fill-white hover:fill-theme-color hover:scale-110 duration-200" />
       </div>
       <p className="text-white">
-        © Copyright 2025 | Surpass Boxing Gyms | All rights reserved
+        © Copyright {new Date().getFullYear()} | Surpass Boxing Gyms | All
+        rights reserved
       </p>
     </footer>
   );
