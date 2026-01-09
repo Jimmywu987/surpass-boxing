@@ -32,11 +32,16 @@ export const generateEmailContent = (message: string, url?: string) => {
   };
 };
 
-export const sendEmail = async (to: string, message: string, url?: string) => {
+export const sendEmail = async (
+  to: string,
+  message: string,
+  url?: string,
+  subject?: string
+) => {
   await transporter.sendMail({
     from: email,
     to,
     ...generateEmailContent(message, url),
-    subject: "Surpass boxing",
+    subject: subject || "Surpass boxing",
   });
 };
